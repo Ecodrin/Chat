@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option go_package = "./internal/grps_chat";
+
+package chat;
+
+service Greeter {
+    rpc Registration(RegistrationRequest) returns (StatusResponse);
+    rpc Auth(AuthRequest) returns (StatusResponse);
+    rpc ChatSession(stream Msg) returns (stream Msg);
+} 
+
+message StartGettingMsgsRequest {
+
+}
+
+message RegistrationRequest {
+    string login = 1;
+    string password = 2;
+}
+
+message AuthRequest {
+    string login = 1;
+    string password = 2;
+}
+
+message StatusResponse {
+    int64 status = 1;
+}
+message Msg {
+    string data = 1;
+}
