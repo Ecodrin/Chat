@@ -26,6 +26,8 @@ message AuthRequest {
 
 message StatusResponse {
     int64 status = 1;
+    string token = 2;
+    string msg = 3;
 }
 message Msg {
     string data = 1;
