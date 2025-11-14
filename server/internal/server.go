@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
 	"net"
 	"os"
@@ -16,7 +17,6 @@ import (
 	"server/internal/handlers"
 	utility "server/internal/utility"
 
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
 )
@@ -29,17 +29,12 @@ type Server struct {
 	DB     *sql.DB
 }
 
-type Claims struct {
-	Exp  int
-	User handlers.UserHandler `json:"user"`
-	jwt.RegisteredClaims
-}
-
 func (s *Server) Registration(ctx context.Context, req *pb.RegistrationRequest) (*pb.StatusResponse, error) {
 	user := handlers.UserHandler{
 		Login:    req.Login,
 		Password: req.Password,
 		ID:       uuid.NewString(),
+		Online:   true,
 	}
 
 	err := database.CreateUser(s.DB, user)
@@ -49,27 +44,16 @@ func (s *Server) Registration(ctx context.Context, req *pb.RegistrationRequest) 
 			Status: 0,
 			Msg:    "incorrect login",
 		}
-		return response, err
-	}
-	err = database.UpdateUserOnline(s.DB, user.ID, true)
-	if err != nil {
-		s.logger.Println("database update user online error: ", err)
-		response := &pb.StatusResponse{
-			Status: 2,
-			Msg:    "internal error",
-		}
 		return response, nil
 	}
-	claims := &Claims{
-		Exp:              int(time.Now().Add(24 * time.Hour).Unix()),
-		User:             user,
-		RegisteredClaims: jwt.RegisteredClaims{},
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString([]byte(s.config.JWTTokenSecret))
+	tokenString, err := handlers.GetTokenFromUser(user, s.config.JWTTokenSecret)
 	if err != nil {
-		s.logger.Println("error generate jwt token: ", err)
+		s.logger.Println("jwt token generate error: ", err)
+		response := &pb.StatusResponse{
+			Status: 0,
+			Msg:    "incorrect data",
+		}
+		return response, nil
 	}
 	response := &pb.StatusResponse{
 		Status: 0,
@@ -109,16 +93,14 @@ func (s *Server) Auth(ctx context.Context, req *pb.AuthRequest) (*pb.StatusRespo
 		return response, nil
 	}
 
-	claims := &Claims{
-		Exp:              int(time.Now().Add(24 * time.Hour).Unix()),
-		User:             *user,
-		RegisteredClaims: jwt.RegisteredClaims{},
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString([]byte(s.config.JWTTokenSecret))
+	tokenString, err := handlers.GetTokenFromUser(*user, s.config.JWTTokenSecret)
 	if err != nil {
-		s.logger.Println("error generate jwt token: ", err)
+		s.logger.Println("jwt token generate error: ", err)
+		response := &pb.StatusResponse{
+			Status: 1,
+			Msg:    "incorrect data",
+		}
+		return response, nil
 	}
 	response := &pb.StatusResponse{
 		Status: 0,
@@ -128,8 +110,52 @@ func (s *Server) Auth(ctx context.Context, req *pb.AuthRequest) (*pb.StatusRespo
 }
 
 func (s *Server) ChatSession(stream pb.Greeter_ChatSessionServer) error {
-
+	// TOD
 	return nil
+}
+
+func (s *Server) AddContact(ctx context.Context, req *pb.NewContactRequest) (*pb.StatusResponse, error) {
+	user, err := handlers.GetUserHandlerFromToken(req.Token, s.config.JWTTokenSecret)
+	if err != nil {
+		s.logger.Println("get user handler from token error: ", err)
+		response := &pb.StatusResponse{
+			Status: 1,
+			Msg:    "incorrect token",
+		}
+		return response, nil
+	}
+	err = database.AddContactByID(s.DB, user.ID, req.Contact)
+	if err != nil {
+		s.logger.Println("database add contact by id error: ", err)
+		response := &pb.StatusResponse{
+			Status: 1,
+			Msg:    "incorrect contact",
+		}
+		return response, nil
+	}
+	response := &pb.StatusResponse{
+		Status: 0,
+	}
+	return response, nil
+}
+
+func (s *Server) GetContacts(ctx context.Context, req *pb.TokenRequest) (*pb.GetContactsResponse, error) {
+	user, err := handlers.GetUserHandlerFromToken(req.Token, s.config.JWTTokenSecret)
+	if err != nil {
+		s.logger.Println("get user handler from token error: ", err)
+		return nil, fmt.Errorf("incorrect token")
+	}
+
+	contacts, err := database.GetContactsByID(s.DB, user.ID)
+	if err != nil {
+		s.logger.Println("get user handler from token error: ", err)
+		return nil, fmt.Errorf("noone contact")
+	}
+
+	response := &pb.GetContactsResponse{
+		Contats: contacts,
+	}
+	return response, nil
 }
 
 func StartServer() {

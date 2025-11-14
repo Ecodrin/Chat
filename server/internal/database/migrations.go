@@ -25,7 +25,19 @@ func CreateUserTable(DB *sql.DB) error {
 	return nil
 }
 
+func UpdateContactsNull(DB *sql.DB) error {
+	query := "UPDATE users SET contacts = '[]' WHERE contacts IS NULL;"
+	_, err := DB.Exec(query)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func RunMigrations(DB *sql.DB) error {
 	err := CreateUserTable(DB)
+	if err != nil {
+		return nil
+	}
 	return err
 }

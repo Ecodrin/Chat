@@ -20,6 +20,8 @@ type GreeterClient interface {
 	Registration(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 	Auth(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 	ChatSession(ctx context.Context, opts ...grpc.CallOption) (Greeter_ChatSessionClient, error)
+	AddContact(ctx context.Context, in *NewContactRequest, opts ...grpc.CallOption) (*StatusResponse, error)
+	GetContacts(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*GetContactsResponse, error)
 }
 
 type greeterClient struct {
@@ -79,6 +81,24 @@ func (x *greeterChatSessionClient) Recv() (*Msg, error) {
 	return m, nil
 }
 
+func (c *greeterClient) AddContact(ctx context.Context, in *NewContactRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
+	out := new(StatusResponse)
+	err := c.cc.Invoke(ctx, "/chat.Greeter/AddContact", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *greeterClient) GetContacts(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*GetContactsResponse, error) {
+	out := new(GetContactsResponse)
+	err := c.cc.Invoke(ctx, "/chat.Greeter/GetContacts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GreeterServer is the server API for Greeter service.
 // All implementations must embed UnimplementedGreeterServer
 // for forward compatibility
@@ -86,6 +106,8 @@ type GreeterServer interface {
 	Registration(context.Context, *RegistrationRequest) (*StatusResponse, error)
 	Auth(context.Context, *AuthRequest) (*StatusResponse, error)
 	ChatSession(Greeter_ChatSessionServer) error
+	AddContact(context.Context, *NewContactRequest) (*StatusResponse, error)
+	GetContacts(context.Context, *TokenRequest) (*GetContactsResponse, error)
 	mustEmbedUnimplementedGreeterServer()
 }
 
@@ -101,6 +123,12 @@ func (UnimplementedGreeterServer) Auth(context.Context, *AuthRequest) (*StatusRe
 }
 func (UnimplementedGreeterServer) ChatSession(Greeter_ChatSessionServer) error {
 	return status.Errorf(codes.Unimplemented, "method ChatSession not implemented")
+}
+func (UnimplementedGreeterServer) AddContact(context.Context, *NewContactRequest) (*StatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddContact not implemented")
+}
+func (UnimplementedGreeterServer) GetContacts(context.Context, *TokenRequest) (*GetContactsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetContacts not implemented")
 }
 func (UnimplementedGreeterServer) mustEmbedUnimplementedGreeterServer() {}
 
@@ -177,6 +205,42 @@ func (x *greeterChatSessionServer) Recv() (*Msg, error) {
 	return m, nil
 }
 
+func _Greeter_AddContact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewContactRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).AddContact(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chat.Greeter/AddContact",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).AddContact(ctx, req.(*NewContactRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Greeter_GetContacts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).GetContacts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chat.Greeter/GetContacts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).GetContacts(ctx, req.(*TokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Greeter_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "chat.Greeter",
 	HandlerType: (*GreeterServer)(nil),
@@ -188,6 +252,14 @@ var _Greeter_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Auth",
 			Handler:    _Greeter_Auth_Handler,
+		},
+		{
+			MethodName: "AddContact",
+			Handler:    _Greeter_AddContact_Handler,
+		},
+		{
+			MethodName: "GetContacts",
+			Handler:    _Greeter_GetContacts_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

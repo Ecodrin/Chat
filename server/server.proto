@@ -8,7 +8,26 @@ service Greeter {
     rpc Registration(RegistrationRequest) returns (StatusResponse);
     rpc Auth(AuthRequest) returns (StatusResponse);
     rpc ChatSession(stream Msg) returns (stream Msg);
+    rpc AddContact(NewContactRequest) returns (StatusResponse);
+    rpc GetContacts(TokenRequest) returns (GetContactsResponse);
 } 
+
+message NewContactRequest {
+    string contact = 1;
+    string token = 2;
+}
+
+message NewConversationRequest {
+    string login = 1;
+}
+
+message GetContactsResponse {
+    repeated string contats = 1;
+}
+
+message TokenRequest {
+    string token = 1;
+}
 
 message StartGettingMsgsRequest {
 
@@ -30,5 +49,7 @@ message StatusResponse {
     string msg = 3;
 }
 message Msg {
-    string data = 1;
+    string token = 1;
+    string conversationId = 2;
+    string data = 3;
 }
