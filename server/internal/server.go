@@ -3,11 +3,11 @@ package server
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"log"
 	"net"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 
@@ -19,7 +19,14 @@ import (
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 )
+
+type Conns struct {
+	data map[string]pb.Greeter_ChatSessionServer
+}
 
 type Server struct {
 	pb.UnimplementedGreeterServer
@@ -27,6 +34,9 @@ type Server struct {
 	logger *log.Logger
 	config *utility.Config
 	DB     *sql.DB
+
+	conns *Conns
+	mutex sync.RWMutex
 }
 
 func (s *Server) Registration(ctx context.Context, req *pb.RegistrationRequest) (*pb.StatusRegistrationAuthResponse, error) {
@@ -40,23 +50,18 @@ func (s *Server) Registration(ctx context.Context, req *pb.RegistrationRequest) 
 	err := database.CreateUser(s.DB, user)
 	if err != nil {
 		s.logger.Println("database create user error: ", err)
-		response := &pb.StatusRegistrationAuthResponse{
-			Status: 1,
-		}
-		return response, fmt.Errorf("incorrect login")
+		return nil, status.Error(codes.InvalidArgument, "incorrect login")
 	}
 	tokenString, err := handlers.GetTokenFromUser(user, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("jwt token generate error: ", err)
-		response := &pb.StatusRegistrationAuthResponse{
-			Status: 0,
-		}
-		return response, fmt.Errorf("incorrect data")
+		return nil, status.Error(codes.InvalidArgument, "incorrect token")
 	}
 	response := &pb.StatusRegistrationAuthResponse{
 		Status: 0,
 		Token:  tokenString,
 	}
+	s.logger.Println("client + " + user.Login + " register")
 	return response, nil
 }
 
@@ -64,67 +69,96 @@ func (s *Server) Auth(ctx context.Context, req *pb.AuthRequest) (*pb.StatusRegis
 	user, err := database.GetUserByLogin(s.DB, req.Login)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			response := &pb.StatusRegistrationAuthResponse{
-				Status: 1,
-			}
-			return response, fmt.Errorf("incorrect login")
+			return nil, status.Error(codes.InvalidArgument, "incorrect login")
 		}
 		s.logger.Println("database get user by login error: ", err)
 		return &pb.StatusRegistrationAuthResponse{Status: 2}, err
 	}
 
 	if user.Online {
-		response := &pb.StatusRegistrationAuthResponse{
-			Status: 1,
-		}
-		return response, fmt.Errorf("user already online")
+		return nil, status.Error(codes.AlreadyExists, "user already online")
 	}
 
 	err = database.UpdateUserOnline(s.DB, user.ID, true)
 	if err != nil {
 		s.logger.Println("database update user online error: ", err)
-		response := &pb.StatusRegistrationAuthResponse{
-			Status: 2,
-		}
-		return response, fmt.Errorf("internal error")
+		return nil, status.Error(codes.Internal, "")
 	}
 
 	tokenString, err := handlers.GetTokenFromUser(*user, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("jwt token generate error: ", err)
-		response := &pb.StatusRegistrationAuthResponse{
-			Status: 1,
-		}
-		return response, fmt.Errorf("incorrect data")
+		return nil, status.Error(codes.InvalidArgument, "incorrect data")
 	}
 	response := &pb.StatusRegistrationAuthResponse{
 		Status: 0,
 		Token:  tokenString,
 	}
+	s.logger.Println("client + " + user.Login + " auth")
 	return response, nil
 }
 
 func (s *Server) ChatSession(stream pb.Greeter_ChatSessionServer) error {
-	// TOD
-	return nil
+	var user handlers.UserHandler
+	for {
+		select {
+		case <-stream.Context().Done():
+			if user.ID != "" {
+				s.mutex.Lock()
+				delete(s.conns.data, user.ID)
+				s.mutex.Unlock()
+				s.logger.Println("client + " + user.Login + " disconnected")
+			}
+			return stream.Context().Err()
+		default:
+			in, err := stream.Recv()
+			if err != nil {
+				if status.Code(err) == codes.Canceled {
+					s.logger.Println("user " + user.Login + "closed connection")
+
+					s.mutex.Lock()
+					delete(s.conns.data, user.ID)
+					s.mutex.Unlock()
+					return nil
+				} else {
+					s.logger.Println("stream rcv error: ", err)
+					return status.Error(codes.Internal, "")
+				}
+			}
+			user, err := handlers.GetUserHandlerFromToken(in.GetToken(), s.config.JWTTokenSecret)
+			if err != nil {
+				return status.Error(codes.InvalidArgument, "incorrect token")
+			}
+			var userRecipientStream pb.Greeter_ChatSessionServer
+			s.mutex.Lock()
+			s.conns.data[user.ID] = stream
+			userRecipientStream, ok := s.conns.data[in.GetRecipient()]
+			s.mutex.Unlock()
+			if !ok {
+				return status.Error(codes.InvalidArgument, "this user is not online")
+			}
+
+			// Запрос на дабавление в контакты
+			if in.StatusMsg == 1 {
+				// TODO придумать
+			}
+			// TODO отправка в kafka
+			userRecipientStream.SendHeader(metadata.MD{})
+		}
+	}
+
 }
 
 func (s *Server) Disconnect(ctx context.Context, req *pb.TokenRequest) (*pb.StatusResponse, error) {
 	user, err := handlers.GetUserHandlerFromToken(req.Token, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("get user handler from token error: ", err)
-		response := &pb.StatusResponse{
-			Status: 1,
-		}
-		return response, fmt.Errorf("incorrect token")
+		return nil, status.Error(codes.InvalidArgument, "incorrect token")
 	}
 	err = database.UpdateUserOnline(s.DB, user.ID, false)
 	if err != nil {
 		s.logger.Println("database update user online error: ", err)
-		response := &pb.StatusResponse{
-			Status: 2,
-		}
-		return response, fmt.Errorf("internal error")
+		return nil, status.Error(codes.Internal, "")
 	}
 	response := &pb.StatusResponse{
 		Status: 0,
@@ -136,19 +170,13 @@ func (s *Server) AddContact(ctx context.Context, req *pb.NewContactRequest) (*pb
 	user, err := handlers.GetUserHandlerFromToken(req.Token, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("get user handler from token error: ", err)
-		response := &pb.StatusResponse{
-			Status: 1,
-		}
-		return response, fmt.Errorf("incorrect token")
+		return nil, status.Error(codes.InvalidArgument, "incorrect token")
 	}
 	// TODO отправка контакту запроса в друзья
 	err = database.AddContactByID(s.DB, user.ID, req.Contact)
 	if err != nil {
 		s.logger.Println("database add contact by id error: ", err)
-		response := &pb.StatusResponse{
-			Status: 1,
-		}
-		return response, fmt.Errorf("incorrect contact")
+		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
 	}
 	response := &pb.StatusResponse{
 		Status: 0,
@@ -160,13 +188,13 @@ func (s *Server) GetContacts(ctx context.Context, req *pb.TokenRequest) (*pb.Get
 	user, err := handlers.GetUserHandlerFromToken(req.Token, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("get user handler from token error: ", err)
-		return nil, fmt.Errorf("incorrect token")
+		return nil, status.Error(codes.InvalidArgument, "incorrect token")
 	}
 
 	contacts, err := database.GetLoginContactsByID(s.DB, user.ID)
 	if err != nil {
 		s.logger.Println("get user handler from token error: ", err)
-		return nil, fmt.Errorf("noone contact")
+		return nil, status.Error(codes.InvalidArgument, "noone contact")
 	}
 
 	response := &pb.GetContactsResponse{
@@ -179,19 +207,13 @@ func (s *Server) DeleteContact(ctx context.Context, req *pb.DeleteContactRequest
 	user, err := handlers.GetUserHandlerFromToken(req.Token, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("get user handler from token error: ", err)
-		response := &pb.StatusResponse{
-			Status: 1,
-		}
-		return response, fmt.Errorf("incorrect token")
+		return nil, status.Error(codes.InvalidArgument, "incorrect token")
 	}
 	// TODO отправка контакту об удалению из друзей
 	err = database.DeleteContactByID(s.DB, user.ID, req.Contact)
 	if err != nil {
 		s.logger.Println("database delete contact by id error: ", err)
-		response := &pb.StatusResponse{
-			Status: 1,
-		}
-		return response, fmt.Errorf("incorrect contact")
+		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
 	}
 	response := &pb.StatusResponse{
 		Status: 0,

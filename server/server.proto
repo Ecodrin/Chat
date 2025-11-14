@@ -7,11 +7,13 @@ package chat;
 service Greeter {
     rpc Registration(RegistrationRequest) returns (StatusRegistrationAuthResponse);
     rpc Auth(AuthRequest) returns (StatusRegistrationAuthResponse);
-    rpc ChatSession(stream Msg) returns (stream Msg);
     rpc AddContact(NewContactRequest) returns (StatusResponse);
     rpc GetContacts(TokenRequest) returns (GetContactsResponse);
     rpc DeleteContact(DeleteContactRequest) returns (StatusResponse);
     rpc Disconnect(TokenRequest) returns (StatusResponse);
+
+    
+    rpc ChatSession(stream InputMsg) returns (stream OutpuMsg);
 } 
 
 message StatusRegistrationAuthResponse {
@@ -59,8 +61,17 @@ message StatusResponse {
     int64 status = 1;
 }
 
-message Msg {
-    string token = 1;
-    string conversationId = 2;
-    string data = 3;
+message InputMsg {
+    string recipient = 1;
+    string data = 2;
+    int64 timestamp = 3;
+    int64 statusMsg = 4;
+    string token = 5;
+}
+
+message OutpuMsg {
+    string recipient = 1;
+    string data = 2;
+    int64 timestamp = 3;
+    int64 statusMsg = 4;
 }

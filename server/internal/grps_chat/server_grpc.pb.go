@@ -19,11 +19,11 @@ const _ = grpc.SupportPackageIsVersion7
 type GreeterClient interface {
 	Registration(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*StatusRegistrationAuthResponse, error)
 	Auth(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*StatusRegistrationAuthResponse, error)
-	ChatSession(ctx context.Context, opts ...grpc.CallOption) (Greeter_ChatSessionClient, error)
 	AddContact(ctx context.Context, in *NewContactRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 	GetContacts(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*GetContactsResponse, error)
 	DeleteContact(ctx context.Context, in *DeleteContactRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 	Disconnect(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*StatusResponse, error)
+	ChatSession(ctx context.Context, opts ...grpc.CallOption) (Greeter_ChatSessionClient, error)
 }
 
 type greeterClient struct {
@@ -50,37 +50,6 @@ func (c *greeterClient) Auth(ctx context.Context, in *AuthRequest, opts ...grpc.
 		return nil, err
 	}
 	return out, nil
-}
-
-func (c *greeterClient) ChatSession(ctx context.Context, opts ...grpc.CallOption) (Greeter_ChatSessionClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Greeter_serviceDesc.Streams[0], "/chat.Greeter/ChatSession", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &greeterChatSessionClient{stream}
-	return x, nil
-}
-
-type Greeter_ChatSessionClient interface {
-	Send(*Msg) error
-	Recv() (*Msg, error)
-	grpc.ClientStream
-}
-
-type greeterChatSessionClient struct {
-	grpc.ClientStream
-}
-
-func (x *greeterChatSessionClient) Send(m *Msg) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *greeterChatSessionClient) Recv() (*Msg, error) {
-	m := new(Msg)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
 }
 
 func (c *greeterClient) AddContact(ctx context.Context, in *NewContactRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
@@ -119,17 +88,48 @@ func (c *greeterClient) Disconnect(ctx context.Context, in *TokenRequest, opts .
 	return out, nil
 }
 
+func (c *greeterClient) ChatSession(ctx context.Context, opts ...grpc.CallOption) (Greeter_ChatSessionClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Greeter_serviceDesc.Streams[0], "/chat.Greeter/ChatSession", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &greeterChatSessionClient{stream}
+	return x, nil
+}
+
+type Greeter_ChatSessionClient interface {
+	Send(*InputMsg) error
+	Recv() (*OutpuMsg, error)
+	grpc.ClientStream
+}
+
+type greeterChatSessionClient struct {
+	grpc.ClientStream
+}
+
+func (x *greeterChatSessionClient) Send(m *InputMsg) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *greeterChatSessionClient) Recv() (*OutpuMsg, error) {
+	m := new(OutpuMsg)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // GreeterServer is the server API for Greeter service.
 // All implementations must embed UnimplementedGreeterServer
 // for forward compatibility
 type GreeterServer interface {
 	Registration(context.Context, *RegistrationRequest) (*StatusRegistrationAuthResponse, error)
 	Auth(context.Context, *AuthRequest) (*StatusRegistrationAuthResponse, error)
-	ChatSession(Greeter_ChatSessionServer) error
 	AddContact(context.Context, *NewContactRequest) (*StatusResponse, error)
 	GetContacts(context.Context, *TokenRequest) (*GetContactsResponse, error)
 	DeleteContact(context.Context, *DeleteContactRequest) (*StatusResponse, error)
 	Disconnect(context.Context, *TokenRequest) (*StatusResponse, error)
+	ChatSession(Greeter_ChatSessionServer) error
 	mustEmbedUnimplementedGreeterServer()
 }
 
@@ -143,9 +143,6 @@ func (UnimplementedGreeterServer) Registration(context.Context, *RegistrationReq
 func (UnimplementedGreeterServer) Auth(context.Context, *AuthRequest) (*StatusRegistrationAuthResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Auth not implemented")
 }
-func (UnimplementedGreeterServer) ChatSession(Greeter_ChatSessionServer) error {
-	return status.Errorf(codes.Unimplemented, "method ChatSession not implemented")
-}
 func (UnimplementedGreeterServer) AddContact(context.Context, *NewContactRequest) (*StatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddContact not implemented")
 }
@@ -157,6 +154,9 @@ func (UnimplementedGreeterServer) DeleteContact(context.Context, *DeleteContactR
 }
 func (UnimplementedGreeterServer) Disconnect(context.Context, *TokenRequest) (*StatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Disconnect not implemented")
+}
+func (UnimplementedGreeterServer) ChatSession(Greeter_ChatSessionServer) error {
+	return status.Errorf(codes.Unimplemented, "method ChatSession not implemented")
 }
 func (UnimplementedGreeterServer) mustEmbedUnimplementedGreeterServer() {}
 
@@ -205,32 +205,6 @@ func _Greeter_Auth_Handler(srv interface{}, ctx context.Context, dec func(interf
 		return srv.(GreeterServer).Auth(ctx, req.(*AuthRequest))
 	}
 	return interceptor(ctx, in, info, handler)
-}
-
-func _Greeter_ChatSession_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(GreeterServer).ChatSession(&greeterChatSessionServer{stream})
-}
-
-type Greeter_ChatSessionServer interface {
-	Send(*Msg) error
-	Recv() (*Msg, error)
-	grpc.ServerStream
-}
-
-type greeterChatSessionServer struct {
-	grpc.ServerStream
-}
-
-func (x *greeterChatSessionServer) Send(m *Msg) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *greeterChatSessionServer) Recv() (*Msg, error) {
-	m := new(Msg)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
 }
 
 func _Greeter_AddContact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -303,6 +277,32 @@ func _Greeter_Disconnect_Handler(srv interface{}, ctx context.Context, dec func(
 		return srv.(GreeterServer).Disconnect(ctx, req.(*TokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
+}
+
+func _Greeter_ChatSession_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(GreeterServer).ChatSession(&greeterChatSessionServer{stream})
+}
+
+type Greeter_ChatSessionServer interface {
+	Send(*OutpuMsg) error
+	Recv() (*InputMsg, error)
+	grpc.ServerStream
+}
+
+type greeterChatSessionServer struct {
+	grpc.ServerStream
+}
+
+func (x *greeterChatSessionServer) Send(m *OutpuMsg) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *greeterChatSessionServer) Recv() (*InputMsg, error) {
+	m := new(InputMsg)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 var _Greeter_serviceDesc = grpc.ServiceDesc{
