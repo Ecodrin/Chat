@@ -5,14 +5,26 @@ option go_package = "./internal/grps_chat";
 package chat;
 
 service Greeter {
-    rpc Registration(RegistrationRequest) returns (StatusResponse);
-    rpc Auth(AuthRequest) returns (StatusResponse);
+    rpc Registration(RegistrationRequest) returns (StatusRegistrationAuthResponse);
+    rpc Auth(AuthRequest) returns (StatusRegistrationAuthResponse);
     rpc ChatSession(stream Msg) returns (stream Msg);
     rpc AddContact(NewContactRequest) returns (StatusResponse);
     rpc GetContacts(TokenRequest) returns (GetContactsResponse);
+    rpc DeleteContact(DeleteContactRequest) returns (StatusResponse);
+    rpc Disconnect(TokenRequest) returns (StatusResponse);
 } 
 
+message StatusRegistrationAuthResponse {
+    int64 status = 1;
+    string token = 2;
+}
+
 message NewContactRequest {
+    string contact = 1;
+    string token = 2;
+}
+
+message DeleteContactRequest {
     string contact = 1;
     string token = 2;
 }
@@ -45,9 +57,8 @@ message AuthRequest {
 
 message StatusResponse {
     int64 status = 1;
-    string token = 2;
-    string msg = 3;
 }
+
 message Msg {
     string token = 1;
     string conversationId = 2;

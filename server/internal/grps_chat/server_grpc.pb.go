@@ -17,11 +17,13 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GreeterClient interface {
-	Registration(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*StatusResponse, error)
-	Auth(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*StatusResponse, error)
+	Registration(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*StatusRegistrationAuthResponse, error)
+	Auth(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*StatusRegistrationAuthResponse, error)
 	ChatSession(ctx context.Context, opts ...grpc.CallOption) (Greeter_ChatSessionClient, error)
 	AddContact(ctx context.Context, in *NewContactRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 	GetContacts(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*GetContactsResponse, error)
+	DeleteContact(ctx context.Context, in *DeleteContactRequest, opts ...grpc.CallOption) (*StatusResponse, error)
+	Disconnect(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 }
 
 type greeterClient struct {
@@ -32,8 +34,8 @@ func NewGreeterClient(cc grpc.ClientConnInterface) GreeterClient {
 	return &greeterClient{cc}
 }
 
-func (c *greeterClient) Registration(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
-	out := new(StatusResponse)
+func (c *greeterClient) Registration(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*StatusRegistrationAuthResponse, error) {
+	out := new(StatusRegistrationAuthResponse)
 	err := c.cc.Invoke(ctx, "/chat.Greeter/Registration", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -41,8 +43,8 @@ func (c *greeterClient) Registration(ctx context.Context, in *RegistrationReques
 	return out, nil
 }
 
-func (c *greeterClient) Auth(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
-	out := new(StatusResponse)
+func (c *greeterClient) Auth(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*StatusRegistrationAuthResponse, error) {
+	out := new(StatusRegistrationAuthResponse)
 	err := c.cc.Invoke(ctx, "/chat.Greeter/Auth", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -99,15 +101,35 @@ func (c *greeterClient) GetContacts(ctx context.Context, in *TokenRequest, opts 
 	return out, nil
 }
 
+func (c *greeterClient) DeleteContact(ctx context.Context, in *DeleteContactRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
+	out := new(StatusResponse)
+	err := c.cc.Invoke(ctx, "/chat.Greeter/DeleteContact", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *greeterClient) Disconnect(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
+	out := new(StatusResponse)
+	err := c.cc.Invoke(ctx, "/chat.Greeter/Disconnect", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GreeterServer is the server API for Greeter service.
 // All implementations must embed UnimplementedGreeterServer
 // for forward compatibility
 type GreeterServer interface {
-	Registration(context.Context, *RegistrationRequest) (*StatusResponse, error)
-	Auth(context.Context, *AuthRequest) (*StatusResponse, error)
+	Registration(context.Context, *RegistrationRequest) (*StatusRegistrationAuthResponse, error)
+	Auth(context.Context, *AuthRequest) (*StatusRegistrationAuthResponse, error)
 	ChatSession(Greeter_ChatSessionServer) error
 	AddContact(context.Context, *NewContactRequest) (*StatusResponse, error)
 	GetContacts(context.Context, *TokenRequest) (*GetContactsResponse, error)
+	DeleteContact(context.Context, *DeleteContactRequest) (*StatusResponse, error)
+	Disconnect(context.Context, *TokenRequest) (*StatusResponse, error)
 	mustEmbedUnimplementedGreeterServer()
 }
 
@@ -115,10 +137,10 @@ type GreeterServer interface {
 type UnimplementedGreeterServer struct {
 }
 
-func (UnimplementedGreeterServer) Registration(context.Context, *RegistrationRequest) (*StatusResponse, error) {
+func (UnimplementedGreeterServer) Registration(context.Context, *RegistrationRequest) (*StatusRegistrationAuthResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Registration not implemented")
 }
-func (UnimplementedGreeterServer) Auth(context.Context, *AuthRequest) (*StatusResponse, error) {
+func (UnimplementedGreeterServer) Auth(context.Context, *AuthRequest) (*StatusRegistrationAuthResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Auth not implemented")
 }
 func (UnimplementedGreeterServer) ChatSession(Greeter_ChatSessionServer) error {
@@ -129,6 +151,12 @@ func (UnimplementedGreeterServer) AddContact(context.Context, *NewContactRequest
 }
 func (UnimplementedGreeterServer) GetContacts(context.Context, *TokenRequest) (*GetContactsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetContacts not implemented")
+}
+func (UnimplementedGreeterServer) DeleteContact(context.Context, *DeleteContactRequest) (*StatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteContact not implemented")
+}
+func (UnimplementedGreeterServer) Disconnect(context.Context, *TokenRequest) (*StatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Disconnect not implemented")
 }
 func (UnimplementedGreeterServer) mustEmbedUnimplementedGreeterServer() {}
 
@@ -241,6 +269,42 @@ func _Greeter_GetContacts_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Greeter_DeleteContact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteContactRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).DeleteContact(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chat.Greeter/DeleteContact",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).DeleteContact(ctx, req.(*DeleteContactRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Greeter_Disconnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).Disconnect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chat.Greeter/Disconnect",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).Disconnect(ctx, req.(*TokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Greeter_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "chat.Greeter",
 	HandlerType: (*GreeterServer)(nil),
@@ -260,6 +324,14 @@ var _Greeter_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetContacts",
 			Handler:    _Greeter_GetContacts_Handler,
+		},
+		{
+			MethodName: "DeleteContact",
+			Handler:    _Greeter_DeleteContact_Handler,
+		},
+		{
+			MethodName: "Disconnect",
+			Handler:    _Greeter_Disconnect_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

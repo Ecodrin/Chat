@@ -39,9 +39,11 @@ func GetUserHandlerFromToken(token string, secretToken string) (*UserHandler, er
 
 func GetTokenFromUser(user UserHandler, secretToken string) (string, error) {
 	claims := &Claims{
-		Exp:              int(time.Now().Add(24 * time.Hour).Unix()),
-		User:             user,
-		RegisteredClaims: jwt.RegisteredClaims{},
+		Exp:  int(time.Now().Add(24 * time.Hour).Unix()),
+		User: user,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Hour)),
+		},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

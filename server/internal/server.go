@@ -29,7 +29,7 @@ type Server struct {
 	DB     *sql.DB
 }
 
-func (s *Server) Registration(ctx context.Context, req *pb.RegistrationRequest) (*pb.StatusResponse, error) {
+func (s *Server) Registration(ctx context.Context, req *pb.RegistrationRequest) (*pb.StatusRegistrationAuthResponse, error) {
 	user := handlers.UserHandler{
 		Login:    req.Login,
 		Password: req.Password,
@@ -40,69 +40,64 @@ func (s *Server) Registration(ctx context.Context, req *pb.RegistrationRequest) 
 	err := database.CreateUser(s.DB, user)
 	if err != nil {
 		s.logger.Println("database create user error: ", err)
-		response := &pb.StatusResponse{
-			Status: 0,
-			Msg:    "incorrect login",
+		response := &pb.StatusRegistrationAuthResponse{
+			Status: 1,
 		}
-		return response, nil
+		return response, fmt.Errorf("incorrect login")
 	}
 	tokenString, err := handlers.GetTokenFromUser(user, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("jwt token generate error: ", err)
-		response := &pb.StatusResponse{
+		response := &pb.StatusRegistrationAuthResponse{
 			Status: 0,
-			Msg:    "incorrect data",
 		}
-		return response, nil
+		return response, fmt.Errorf("incorrect data")
 	}
-	response := &pb.StatusResponse{
+	response := &pb.StatusRegistrationAuthResponse{
 		Status: 0,
 		Token:  tokenString,
 	}
 	return response, nil
 }
 
-func (s *Server) Auth(ctx context.Context, req *pb.AuthRequest) (*pb.StatusResponse, error) {
+func (s *Server) Auth(ctx context.Context, req *pb.AuthRequest) (*pb.StatusRegistrationAuthResponse, error) {
 	user, err := database.GetUserByLogin(s.DB, req.Login)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			response := &pb.StatusResponse{
+			response := &pb.StatusRegistrationAuthResponse{
 				Status: 1,
-				Msg:    "incorrect login",
 			}
-			return response, nil
+			return response, fmt.Errorf("incorrect login")
 		}
 		s.logger.Println("database get user by login error: ", err)
-		return &pb.StatusResponse{Status: 2}, err
+		return &pb.StatusRegistrationAuthResponse{Status: 2}, err
 	}
+
 	if user.Online {
-		response := &pb.StatusResponse{
+		response := &pb.StatusRegistrationAuthResponse{
 			Status: 1,
-			Msg:    "user already online",
 		}
-		return response, nil
+		return response, fmt.Errorf("user already online")
 	}
 
 	err = database.UpdateUserOnline(s.DB, user.ID, true)
 	if err != nil {
 		s.logger.Println("database update user online error: ", err)
-		response := &pb.StatusResponse{
+		response := &pb.StatusRegistrationAuthResponse{
 			Status: 2,
-			Msg:    "internal error",
 		}
-		return response, nil
+		return response, fmt.Errorf("internal error")
 	}
 
 	tokenString, err := handlers.GetTokenFromUser(*user, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("jwt token generate error: ", err)
-		response := &pb.StatusResponse{
+		response := &pb.StatusRegistrationAuthResponse{
 			Status: 1,
-			Msg:    "incorrect data",
 		}
-		return response, nil
+		return response, fmt.Errorf("incorrect data")
 	}
-	response := &pb.StatusResponse{
+	response := &pb.StatusRegistrationAuthResponse{
 		Status: 0,
 		Token:  tokenString,
 	}
@@ -114,24 +109,46 @@ func (s *Server) ChatSession(stream pb.Greeter_ChatSessionServer) error {
 	return nil
 }
 
+func (s *Server) Disconnect(ctx context.Context, req *pb.TokenRequest) (*pb.StatusResponse, error) {
+	user, err := handlers.GetUserHandlerFromToken(req.Token, s.config.JWTTokenSecret)
+	if err != nil {
+		s.logger.Println("get user handler from token error: ", err)
+		response := &pb.StatusResponse{
+			Status: 1,
+		}
+		return response, fmt.Errorf("incorrect token")
+	}
+	err = database.UpdateUserOnline(s.DB, user.ID, false)
+	if err != nil {
+		s.logger.Println("database update user online error: ", err)
+		response := &pb.StatusResponse{
+			Status: 2,
+		}
+		return response, fmt.Errorf("internal error")
+	}
+	response := &pb.StatusResponse{
+		Status: 0,
+	}
+	return response, nil
+}
+
 func (s *Server) AddContact(ctx context.Context, req *pb.NewContactRequest) (*pb.StatusResponse, error) {
 	user, err := handlers.GetUserHandlerFromToken(req.Token, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("get user handler from token error: ", err)
 		response := &pb.StatusResponse{
 			Status: 1,
-			Msg:    "incorrect token",
 		}
-		return response, nil
+		return response, fmt.Errorf("incorrect token")
 	}
+	// TODO отправка контакту запроса в друзья
 	err = database.AddContactByID(s.DB, user.ID, req.Contact)
 	if err != nil {
 		s.logger.Println("database add contact by id error: ", err)
 		response := &pb.StatusResponse{
 			Status: 1,
-			Msg:    "incorrect contact",
 		}
-		return response, nil
+		return response, fmt.Errorf("incorrect contact")
 	}
 	response := &pb.StatusResponse{
 		Status: 0,
@@ -146,7 +163,7 @@ func (s *Server) GetContacts(ctx context.Context, req *pb.TokenRequest) (*pb.Get
 		return nil, fmt.Errorf("incorrect token")
 	}
 
-	contacts, err := database.GetContactsByID(s.DB, user.ID)
+	contacts, err := database.GetLoginContactsByID(s.DB, user.ID)
 	if err != nil {
 		s.logger.Println("get user handler from token error: ", err)
 		return nil, fmt.Errorf("noone contact")
@@ -154,6 +171,30 @@ func (s *Server) GetContacts(ctx context.Context, req *pb.TokenRequest) (*pb.Get
 
 	response := &pb.GetContactsResponse{
 		Contats: contacts,
+	}
+	return response, nil
+}
+
+func (s *Server) DeleteContact(ctx context.Context, req *pb.DeleteContactRequest) (*pb.StatusResponse, error) {
+	user, err := handlers.GetUserHandlerFromToken(req.Token, s.config.JWTTokenSecret)
+	if err != nil {
+		s.logger.Println("get user handler from token error: ", err)
+		response := &pb.StatusResponse{
+			Status: 1,
+		}
+		return response, fmt.Errorf("incorrect token")
+	}
+	// TODO отправка контакту об удалению из друзей
+	err = database.DeleteContactByID(s.DB, user.ID, req.Contact)
+	if err != nil {
+		s.logger.Println("database delete contact by id error: ", err)
+		response := &pb.StatusResponse{
+			Status: 1,
+		}
+		return response, fmt.Errorf("incorrect contact")
+	}
+	response := &pb.StatusResponse{
+		Status: 0,
 	}
 	return response, nil
 }
