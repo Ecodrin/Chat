@@ -11,7 +11,7 @@ service Greeter {
     rpc GetContacts(TokenRequest) returns (GetContactsResponse);
     rpc DeleteContact(DeleteContactRequest) returns (StatusResponse);
     rpc Disconnect(TokenRequest) returns (StatusResponse);
-
+    rpc AcceptRequestContact(NewContactRequest) returns (StatusResponse);
     
     rpc ChatSession(stream InputMsg) returns (stream OutpuMsg);
 } 
@@ -67,6 +67,7 @@ message InputMsg {
     int64 timestamp = 3;
     int64 statusMsg = 4;
     string token = 5;
+    string id = 6;
 }
 
 message OutpuMsg {
@@ -74,4 +75,5 @@ message OutpuMsg {
     string data = 2;
     int64 timestamp = 3;
     int64 statusMsg = 4;
+    string id = 5;
 }

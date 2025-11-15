@@ -3,6 +3,8 @@ package server
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"io"
 	"log"
 	"net"
 	"os"
@@ -20,12 +22,11 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
 type Conns struct {
-	data map[string]pb.Greeter_ChatSessionServer
+	data map[string]*pb.Greeter_ChatSessionServer
 }
 
 type Server struct {
@@ -35,7 +36,7 @@ type Server struct {
 	config *utility.Config
 	DB     *sql.DB
 
-	conns *Conns
+	conns Conns
 	mutex sync.RWMutex
 }
 
@@ -61,7 +62,7 @@ func (s *Server) Registration(ctx context.Context, req *pb.RegistrationRequest) 
 		Status: 0,
 		Token:  tokenString,
 	}
-	s.logger.Println("client + " + user.Login + " register")
+	s.logger.Println("client " + user.Login + " register")
 	return response, nil
 }
 
@@ -99,7 +100,8 @@ func (s *Server) Auth(ctx context.Context, req *pb.AuthRequest) (*pb.StatusRegis
 }
 
 func (s *Server) ChatSession(stream pb.Greeter_ChatSessionServer) error {
-	var user handlers.UserHandler
+	var user *handlers.UserHandler
+	connect := false
 	for {
 		select {
 		case <-stream.Context().Done():
@@ -112,10 +114,9 @@ func (s *Server) ChatSession(stream pb.Greeter_ChatSessionServer) error {
 			return stream.Context().Err()
 		default:
 			in, err := stream.Recv()
-			if err != nil {
-				if status.Code(err) == codes.Canceled {
+			if err != nil && user != nil {
+				if status.Code(err) == codes.Canceled || err == io.EOF {
 					s.logger.Println("user " + user.Login + "closed connection")
-
 					s.mutex.Lock()
 					delete(s.conns.data, user.ID)
 					s.mutex.Unlock()
@@ -124,26 +125,25 @@ func (s *Server) ChatSession(stream pb.Greeter_ChatSessionServer) error {
 					s.logger.Println("stream rcv error: ", err)
 					return status.Error(codes.Internal, "")
 				}
+			} else if err != nil {
+				s.logger.Println("stream error: nil user: ", err)
+				return nil
 			}
-			user, err := handlers.GetUserHandlerFromToken(in.GetToken(), s.config.JWTTokenSecret)
-			if err != nil {
-				return status.Error(codes.InvalidArgument, "incorrect token")
+			if !connect {
+				user, err = handlers.GetUserHandlerFromToken(in.GetToken(), s.config.JWTTokenSecret)
+				if err != nil {
+					return status.Error(codes.InvalidArgument, "incorrect token")
+				}
+				s.mutex.Lock()
+				s.conns.data[user.ID] = &stream
+				fmt.Println(s.conns.data)
+				s.mutex.Unlock()
+				connect = true
+				continue
 			}
-			var userRecipientStream pb.Greeter_ChatSessionServer
-			s.mutex.Lock()
-			s.conns.data[user.ID] = stream
-			userRecipientStream, ok := s.conns.data[in.GetRecipient()]
-			s.mutex.Unlock()
-			if !ok {
-				return status.Error(codes.InvalidArgument, "this user is not online")
-			}
+			// userRecipientStream.SendHeader(metadata.MD{})
 
-			// Запрос на дабавление в контакты
-			if in.StatusMsg == 1 {
-				// TODO придумать
-			}
-			// TODO отправка в kafka
-			userRecipientStream.SendHeader(metadata.MD{})
+			// TODO add kafka
 		}
 	}
 
@@ -163,6 +163,7 @@ func (s *Server) Disconnect(ctx context.Context, req *pb.TokenRequest) (*pb.Stat
 	response := &pb.StatusResponse{
 		Status: 0,
 	}
+	s.logger.Println("client " + user.Login + " disconnect")
 	return response, nil
 }
 
@@ -172,8 +173,46 @@ func (s *Server) AddContact(ctx context.Context, req *pb.NewContactRequest) (*pb
 		s.logger.Println("get user handler from token error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect token")
 	}
-	// TODO отправка контакту запроса в друзья
+	userContact, err := database.GetUserByLogin(s.DB, req.Contact)
+	if err != nil {
+		s.logger.Println("database get user by login error:", err)
+		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
+	}
+	s.mutex.Lock()
+	contactStream, ok := s.conns.data[userContact.ID]
+	fmt.Println(s.conns.data)
+	s.mutex.Unlock()
+	if !ok {
+		return nil, status.Error(codes.InvalidArgument, "incorrect contact or contact not online")
+	}
+	err = (*contactStream).Send(&pb.OutpuMsg{
+		Data:      user.Login,
+		StatusMsg: 1, // заявка на добавление в друзья
+		Id:        uuid.NewString(),
+	})
+	response := &pb.StatusResponse{
+		Status: 0,
+	}
+	return response, nil
+}
+
+func (s *Server) AcceptRequestContact(ctx context.Context, req *pb.NewContactRequest) (*pb.StatusResponse, error) {
+	user, err := handlers.GetUserHandlerFromToken(req.Token, s.config.JWTTokenSecret)
+	if err != nil {
+		s.logger.Println("get user handler from token error: ", err)
+		return nil, status.Error(codes.InvalidArgument, "incorrect token")
+	}
 	err = database.AddContactByID(s.DB, user.ID, req.Contact)
+	if err != nil {
+		s.logger.Println("database add contact by id error: ", err)
+		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
+	}
+	userContact, err := database.GetUserByLogin(s.DB, req.Contact)
+	if err != nil {
+		s.logger.Println("database get user by login error: ", err)
+		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
+	}
+	err = database.AddContactByID(s.DB, userContact.ID, user.Login)
 	if err != nil {
 		s.logger.Println("database add contact by id error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
@@ -209,12 +248,23 @@ func (s *Server) DeleteContact(ctx context.Context, req *pb.DeleteContactRequest
 		s.logger.Println("get user handler from token error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect token")
 	}
-	// TODO отправка контакту об удалению из друзей
+	contactUser, err := database.GetUserByLogin(s.DB, req.Contact)
+	if err != nil {
+		s.logger.Println("database get user by id error: ", err)
+		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
+	}
 	err = database.DeleteContactByID(s.DB, user.ID, req.Contact)
 	if err != nil {
 		s.logger.Println("database delete contact by id error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
 	}
+
+	err = database.DeleteContactByID(s.DB, contactUser.ID, user.Login)
+	if err != nil {
+		s.logger.Println("database delete contact by id error: ", err)
+		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
+	}
+
 	response := &pb.StatusResponse{
 		Status: 0,
 	}
@@ -257,6 +307,7 @@ func StartServer() {
 		logger: &logger,
 		config: config,
 		DB:     DB,
+		conns:  Conns{data: make(map[string]*pb.Greeter_ChatSessionServer)},
 	})
 
 	sigs := make(chan os.Signal, 1)

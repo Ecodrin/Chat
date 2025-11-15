@@ -137,6 +137,36 @@ func GetLoginContactsByID(DB *sql.DB, id string) ([]string, error) {
 	return contactsLogins, nil
 }
 
+func GetIDContactsByID(DB *sql.DB, id string) ([]string, error) {
+	err := UpdateContactsNull(DB)
+	if err != nil {
+		return nil, err
+	}
+
+	query := "SELECT contacts FROM users WHERE text_id = ?"
+	var contacts []handlers.ContactHandler
+	var contactsJSON string
+	err = DB.QueryRow(query, id).Scan(&contactsJSON)
+	if err != nil {
+		return nil, err
+	}
+	if contactsJSON != "" {
+		err = json.Unmarshal([]byte(contactsJSON), &contacts)
+		if err != nil {
+			return nil, err
+		}
+	}
+	contactsID := make([]string, len(contacts))
+	for i := range contacts {
+		user, err := GetUserByID(DB, contacts[i].ID)
+		if err != nil {
+			return nil, err
+		}
+		contactsID[i] = user.ID
+	}
+	return contactsID, nil
+}
+
 func DeleteContactByID(DB *sql.DB, id string, contact string) error {
 	contactsLogins, err := GetLoginContactsByID(DB, id)
 	if err != nil {

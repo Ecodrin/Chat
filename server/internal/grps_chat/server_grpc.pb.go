@@ -23,6 +23,7 @@ type GreeterClient interface {
 	GetContacts(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*GetContactsResponse, error)
 	DeleteContact(ctx context.Context, in *DeleteContactRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 	Disconnect(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*StatusResponse, error)
+	AcceptRequestContact(ctx context.Context, in *NewContactRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 	ChatSession(ctx context.Context, opts ...grpc.CallOption) (Greeter_ChatSessionClient, error)
 }
 
@@ -88,6 +89,15 @@ func (c *greeterClient) Disconnect(ctx context.Context, in *TokenRequest, opts .
 	return out, nil
 }
 
+func (c *greeterClient) AcceptRequestContact(ctx context.Context, in *NewContactRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
+	out := new(StatusResponse)
+	err := c.cc.Invoke(ctx, "/chat.Greeter/AcceptRequestContact", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *greeterClient) ChatSession(ctx context.Context, opts ...grpc.CallOption) (Greeter_ChatSessionClient, error) {
 	stream, err := c.cc.NewStream(ctx, &_Greeter_serviceDesc.Streams[0], "/chat.Greeter/ChatSession", opts...)
 	if err != nil {
@@ -129,6 +139,7 @@ type GreeterServer interface {
 	GetContacts(context.Context, *TokenRequest) (*GetContactsResponse, error)
 	DeleteContact(context.Context, *DeleteContactRequest) (*StatusResponse, error)
 	Disconnect(context.Context, *TokenRequest) (*StatusResponse, error)
+	AcceptRequestContact(context.Context, *NewContactRequest) (*StatusResponse, error)
 	ChatSession(Greeter_ChatSessionServer) error
 	mustEmbedUnimplementedGreeterServer()
 }
@@ -154,6 +165,9 @@ func (UnimplementedGreeterServer) DeleteContact(context.Context, *DeleteContactR
 }
 func (UnimplementedGreeterServer) Disconnect(context.Context, *TokenRequest) (*StatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Disconnect not implemented")
+}
+func (UnimplementedGreeterServer) AcceptRequestContact(context.Context, *NewContactRequest) (*StatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AcceptRequestContact not implemented")
 }
 func (UnimplementedGreeterServer) ChatSession(Greeter_ChatSessionServer) error {
 	return status.Errorf(codes.Unimplemented, "method ChatSession not implemented")
@@ -279,6 +293,24 @@ func _Greeter_Disconnect_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Greeter_AcceptRequestContact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewContactRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).AcceptRequestContact(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chat.Greeter/AcceptRequestContact",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).AcceptRequestContact(ctx, req.(*NewContactRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Greeter_ChatSession_Handler(srv interface{}, stream grpc.ServerStream) error {
 	return srv.(GreeterServer).ChatSession(&greeterChatSessionServer{stream})
 }
@@ -332,6 +364,10 @@ var _Greeter_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Disconnect",
 			Handler:    _Greeter_Disconnect_Handler,
+		},
+		{
+			MethodName: "AcceptRequestContact",
+			Handler:    _Greeter_AcceptRequestContact_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
