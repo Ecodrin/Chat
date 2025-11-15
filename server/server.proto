@@ -12,7 +12,7 @@ service Greeter {
     rpc DeleteContact(DeleteContactRequest) returns (StatusResponse);
     rpc Disconnect(TokenRequest) returns (StatusResponse);
     rpc AcceptRequestContact(NewContactRequest) returns (StatusResponse);
-    
+    rpc DeclineRequestContact(NewContactRequest) returns (StatusResponse);
     rpc ChatSession(stream InputMsg) returns (stream OutpuMsg);
 } 
 
@@ -37,6 +37,7 @@ message NewConversationRequest {
 
 message GetContactsResponse {
     repeated string contats = 1;
+    repeated int64 statuses = 2;
 }
 
 message TokenRequest {

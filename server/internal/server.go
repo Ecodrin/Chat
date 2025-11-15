@@ -178,6 +178,7 @@ func (s *Server) AddContact(ctx context.Context, req *pb.NewContactRequest) (*pb
 		s.logger.Println("database get user by login error:", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
 	}
+
 	s.mutex.Lock()
 	contactStream, ok := s.conns.data[userContact.ID]
 	fmt.Println(s.conns.data)
@@ -185,6 +186,13 @@ func (s *Server) AddContact(ctx context.Context, req *pb.NewContactRequest) (*pb
 	if !ok {
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact or contact not online")
 	}
+
+	err = database.AddContactByID(s.DB, user.ID, req.Contact, 0)
+	if err != nil {
+		s.logger.Println("database add contact by id error: ", err)
+		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
+	}
+
 	err = (*contactStream).Send(&pb.OutpuMsg{
 		Data:      user.Login,
 		StatusMsg: 1, // заявка на добавление в друзья
@@ -202,17 +210,40 @@ func (s *Server) AcceptRequestContact(ctx context.Context, req *pb.NewContactReq
 		s.logger.Println("get user handler from token error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect token")
 	}
-	err = database.AddContactByID(s.DB, user.ID, req.Contact)
+	userContact, err := database.GetUserByLogin(s.DB, req.Contact)
+	if err != nil {
+		s.logger.Println("database get user by login error: ", err)
+		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
+	}
+	err = database.UpdateStatusContactByID(s.DB, userContact.ID, user.Login, 1)
+	if err != nil {
+		s.logger.Println("database update contact by id error: ", err)
+		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
+	}
+
+	err = database.AddContactByID(s.DB, user.ID, userContact.Login, 1)
 	if err != nil {
 		s.logger.Println("database add contact by id error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
+	}
+	response := &pb.StatusResponse{
+		Status: 0,
+	}
+	return response, nil
+}
+
+func (s *Server) DeclineRequestContact(ctx context.Context, req *pb.NewContactRequest) (*pb.StatusResponse, error) {
+	user, err := handlers.GetUserHandlerFromToken(req.Token, s.config.JWTTokenSecret)
+	if err != nil {
+		s.logger.Println("get user handler from token error: ", err)
+		return nil, status.Error(codes.InvalidArgument, "incorrect token")
 	}
 	userContact, err := database.GetUserByLogin(s.DB, req.Contact)
 	if err != nil {
 		s.logger.Println("database get user by login error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
 	}
-	err = database.AddContactByID(s.DB, userContact.ID, user.Login)
+	err = database.DeleteContactByID(s.DB, userContact.ID, user.Login)
 	if err != nil {
 		s.logger.Println("database add contact by id error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
@@ -230,14 +261,15 @@ func (s *Server) GetContacts(ctx context.Context, req *pb.TokenRequest) (*pb.Get
 		return nil, status.Error(codes.InvalidArgument, "incorrect token")
 	}
 
-	contacts, err := database.GetLoginContactsByID(s.DB, user.ID)
+	contacts, statuses, err := database.GetContactsByID(s.DB, user.ID)
 	if err != nil {
 		s.logger.Println("get user handler from token error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "noone contact")
 	}
 
 	response := &pb.GetContactsResponse{
-		Contats: contacts,
+		Contats:  contacts,
+		Statuses: statuses,
 	}
 	return response, nil
 }
@@ -248,7 +280,7 @@ func (s *Server) DeleteContact(ctx context.Context, req *pb.DeleteContactRequest
 		s.logger.Println("get user handler from token error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect token")
 	}
-	contactUser, err := database.GetUserByLogin(s.DB, req.Contact)
+	_, err = database.GetUserByLogin(s.DB, req.Contact)
 	if err != nil {
 		s.logger.Println("database get user by id error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
@@ -259,7 +291,12 @@ func (s *Server) DeleteContact(ctx context.Context, req *pb.DeleteContactRequest
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
 	}
 
-	err = database.DeleteContactByID(s.DB, contactUser.ID, user.Login)
+	userContact, err := database.GetUserByLogin(s.DB, req.Contact)
+	if err != nil {
+		s.logger.Println("database get user by login error: ", err)
+		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
+	}
+	err = database.DeleteContactByID(s.DB, userContact.ID, user.Login)
 	if err != nil {
 		s.logger.Println("database delete contact by id error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact")

@@ -1,5 +1,6 @@
 package handlers
 
 type ContactHandler struct {
-	ID string `json:"text_id"`
+	ID     string `json:"text_id"`
+	Status int    `json:"status"`
 }
