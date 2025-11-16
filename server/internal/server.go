@@ -187,7 +187,13 @@ func (s *Server) AddContact(ctx context.Context, req *pb.NewContactRequest) (*pb
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact or contact not online")
 	}
 
-	err = database.AddContactByID(s.DB, user.ID, req.Contact, 0)
+	err = database.AddContactByID(s.DB, user.ID, req.Contact, 1)
+	if err != nil {
+		s.logger.Println("database add contact by id error: ", err)
+		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
+	}
+
+	err = database.AddContactByID(s.DB, userContact.ID, user.Login, 2)
 	if err != nil {
 		s.logger.Println("database add contact by id error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
@@ -215,15 +221,15 @@ func (s *Server) AcceptRequestContact(ctx context.Context, req *pb.NewContactReq
 		s.logger.Println("database get user by login error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
 	}
-	err = database.UpdateStatusContactByID(s.DB, userContact.ID, user.Login, 1)
+	err = database.UpdateStatusContactByID(s.DB, userContact.ID, user.Login, 0)
 	if err != nil {
 		s.logger.Println("database update contact by id error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
 	}
 
-	err = database.AddContactByID(s.DB, user.ID, userContact.Login, 1)
+	err = database.UpdateStatusContactByID(s.DB, user.ID, userContact.Login, 0)
 	if err != nil {
-		s.logger.Println("database add contact by id error: ", err)
+		s.logger.Println("database update contact by id error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
 	}
 	response := &pb.StatusResponse{
@@ -248,6 +254,13 @@ func (s *Server) DeclineRequestContact(ctx context.Context, req *pb.NewContactRe
 		s.logger.Println("database add contact by id error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
 	}
+
+	err = database.DeleteContactByID(s.DB, user.ID, userContact.Login)
+	if err != nil {
+		s.logger.Println("database add contact by id error: ", err)
+		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
+	}
+
 	response := &pb.StatusResponse{
 		Status: 0,
 	}

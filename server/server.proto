@@ -64,7 +64,7 @@ message StatusResponse {
 
 message InputMsg {
     string recipient = 1;
-    string data = 2;
+    bytes data = 2;
     int64 timestamp = 3;
     int64 statusMsg = 4;
     string token = 5;
