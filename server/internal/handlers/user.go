@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -21,6 +22,7 @@ type Claims struct {
 }
 
 func GetUserHandlerFromToken(token string, secretToken string) (*UserHandler, error) {
+	token, _ = strings.CutPrefix(token, "Bearer ")
 	claims := &Claims{}
 	outputToken, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

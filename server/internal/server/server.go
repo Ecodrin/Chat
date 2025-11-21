@@ -3,7 +3,7 @@ package server
 import (
 	"context"
 	"database/sql"
-	"fmt"
+	"encoding/json"
 	"io"
 	"log"
 	"net"
@@ -22,7 +22,10 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type Conns struct {
@@ -32,13 +35,19 @@ type Conns struct {
 type Server struct {
 	pb.UnimplementedGreeterServer
 
-	logger *log.Logger
-	config *utility.Config
-	DB     *sql.DB
+	logger          *log.Logger
+	config          *utility.Config
+	DB              *sql.DB
+	queueMQRabbit   amqp.Queue
+	channelMQRabbit *amqp.Channel
 
 	conns Conns
 	mutex sync.RWMutex
 }
+
+var (
+	tokenMetadataID = "authorization"
+)
 
 func (s *Server) Registration(ctx context.Context, req *pb.RegistrationRequest) (*pb.StatusRegistrationAuthResponse, error) {
 	user := handlers.UserHandler{
@@ -101,7 +110,22 @@ func (s *Server) Auth(ctx context.Context, req *pb.AuthRequest) (*pb.StatusRegis
 
 func (s *Server) ChatSession(stream pb.Greeter_ChatSessionServer) error {
 	var user *handlers.UserHandler
-	connect := false
+	md, ok := metadata.FromIncomingContext(stream.Context())
+	if !ok {
+		return status.Error(codes.InvalidArgument, "missing metadata")
+	}
+	tokenVector := md[tokenMetadataID]
+	if len(tokenVector) == 0 {
+		return status.Error(codes.InvalidArgument, "no token in metadata")
+	}
+	token := tokenVector[0]
+	user, err := handlers.GetUserHandlerFromToken(token, s.config.JWTTokenSecret)
+	if err != nil {
+		return status.Error(codes.InvalidArgument, "incorrect token")
+	}
+	s.mutex.Lock()
+	s.conns.data[user.ID] = &stream
+	s.mutex.Unlock()
 	for {
 		select {
 		case <-stream.Context().Done():
@@ -109,17 +133,25 @@ func (s *Server) ChatSession(stream pb.Greeter_ChatSessionServer) error {
 				s.mutex.Lock()
 				delete(s.conns.data, user.ID)
 				s.mutex.Unlock()
+				err := database.UpdateUserOnline(s.DB, user.ID, false)
+				if err != nil {
+					s.logger.Println("update user online error: ", err)
+				}
 				s.logger.Println("client + " + user.Login + " disconnected")
 			}
 			return stream.Context().Err()
 		default:
-			in, err := stream.Recv()
+			msg, err := stream.Recv()
 			if err != nil && user != nil {
 				if status.Code(err) == codes.Canceled || err == io.EOF {
 					s.logger.Println("user " + user.Login + "closed connection")
 					s.mutex.Lock()
 					delete(s.conns.data, user.ID)
 					s.mutex.Unlock()
+					err := database.UpdateUserOnline(s.DB, user.ID, false)
+					if err != nil {
+						s.logger.Println("update user online error: ", err)
+					}
 					return nil
 				} else {
 					s.logger.Println("stream rcv error: ", err)
@@ -129,28 +161,39 @@ func (s *Server) ChatSession(stream pb.Greeter_ChatSessionServer) error {
 				s.logger.Println("stream error: nil user: ", err)
 				return nil
 			}
-			if !connect {
-				user, err = handlers.GetUserHandlerFromToken(in.GetToken(), s.config.JWTTokenSecret)
-				if err != nil {
-					return status.Error(codes.InvalidArgument, "incorrect token")
-				}
-				s.mutex.Lock()
-				s.conns.data[user.ID] = &stream
-				fmt.Println(s.conns.data)
-				s.mutex.Unlock()
-				connect = true
+
+			JSONmsg, err := json.Marshal(msg)
+			if err != nil {
+				s.logger.Println("json marshal error: ", err)
 				continue
 			}
-			// userRecipientStream.SendHeader(metadata.MD{})
 
-			// TODO add kafka
+			err = s.channelMQRabbit.Publish(
+				"",
+				s.queueMQRabbit.Name,
+				false,
+				false,
+				amqp.Publishing{
+					ContentType: "application/json",
+					Body:        JSONmsg,
+				},
+			)
 		}
 	}
 
 }
 
-func (s *Server) Disconnect(ctx context.Context, req *pb.TokenRequest) (*pb.StatusResponse, error) {
-	user, err := handlers.GetUserHandlerFromToken(req.Token, s.config.JWTTokenSecret)
+func (s *Server) Disconnect(ctx context.Context, req *pb.EmptyMsg) (*pb.StatusResponse, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, status.Error(codes.InvalidArgument, "missing metadata")
+	}
+	tokenVector := md[tokenMetadataID]
+	if len(tokenVector) == 0 {
+		return nil, status.Error(codes.InvalidArgument, "no token in metadata")
+	}
+	token := tokenVector[0]
+	user, err := handlers.GetUserHandlerFromToken(token, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("get user handler from token error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect token")
@@ -168,7 +211,16 @@ func (s *Server) Disconnect(ctx context.Context, req *pb.TokenRequest) (*pb.Stat
 }
 
 func (s *Server) AddContact(ctx context.Context, req *pb.NewContactRequest) (*pb.StatusResponse, error) {
-	user, err := handlers.GetUserHandlerFromToken(req.Token, s.config.JWTTokenSecret)
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, status.Error(codes.InvalidArgument, "missing metadata")
+	}
+	tokenVector := md[tokenMetadataID]
+	if len(tokenVector) == 0 {
+		return nil, status.Error(codes.InvalidArgument, "no token in metadata")
+	}
+	token := tokenVector[0]
+	user, err := handlers.GetUserHandlerFromToken(token, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("get user handler from token error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect token")
@@ -178,11 +230,6 @@ func (s *Server) AddContact(ctx context.Context, req *pb.NewContactRequest) (*pb
 		s.logger.Println("database get user by login error:", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
 	}
-
-	s.mutex.Lock()
-	contactStream, ok := s.conns.data[userContact.ID]
-	fmt.Println(s.conns.data)
-	s.mutex.Unlock()
 	if !ok {
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact or contact not online")
 	}
@@ -198,12 +245,6 @@ func (s *Server) AddContact(ctx context.Context, req *pb.NewContactRequest) (*pb
 		s.logger.Println("database add contact by id error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect contact")
 	}
-
-	err = (*contactStream).Send(&pb.OutpuMsg{
-		Data:      user.Login,
-		StatusMsg: 1, // заявка на добавление в друзья
-		Id:        uuid.NewString(),
-	})
 	response := &pb.StatusResponse{
 		Status: 0,
 	}
@@ -211,7 +252,16 @@ func (s *Server) AddContact(ctx context.Context, req *pb.NewContactRequest) (*pb
 }
 
 func (s *Server) AcceptRequestContact(ctx context.Context, req *pb.NewContactRequest) (*pb.StatusResponse, error) {
-	user, err := handlers.GetUserHandlerFromToken(req.Token, s.config.JWTTokenSecret)
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, status.Error(codes.InvalidArgument, "missing metadata")
+	}
+	tokenVector := md[tokenMetadataID]
+	if len(tokenVector) == 0 {
+		return nil, status.Error(codes.InvalidArgument, "no token in metadata")
+	}
+	token := tokenVector[0]
+	user, err := handlers.GetUserHandlerFromToken(token, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("get user handler from token error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect token")
@@ -239,7 +289,16 @@ func (s *Server) AcceptRequestContact(ctx context.Context, req *pb.NewContactReq
 }
 
 func (s *Server) DeclineRequestContact(ctx context.Context, req *pb.NewContactRequest) (*pb.StatusResponse, error) {
-	user, err := handlers.GetUserHandlerFromToken(req.Token, s.config.JWTTokenSecret)
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, status.Error(codes.InvalidArgument, "missing metadata")
+	}
+	tokenVector := md[tokenMetadataID]
+	if len(tokenVector) == 0 {
+		return nil, status.Error(codes.InvalidArgument, "no token in metadata")
+	}
+	token := tokenVector[0]
+	user, err := handlers.GetUserHandlerFromToken(token, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("get user handler from token error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect token")
@@ -267,8 +326,17 @@ func (s *Server) DeclineRequestContact(ctx context.Context, req *pb.NewContactRe
 	return response, nil
 }
 
-func (s *Server) GetContacts(ctx context.Context, req *pb.TokenRequest) (*pb.GetContactsResponse, error) {
-	user, err := handlers.GetUserHandlerFromToken(req.Token, s.config.JWTTokenSecret)
+func (s *Server) GetContacts(ctx context.Context, req *pb.EmptyMsg) (*pb.GetContactsResponse, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, status.Error(codes.InvalidArgument, "missing metadata")
+	}
+	tokenVector := md[tokenMetadataID]
+	if len(tokenVector) == 0 {
+		return nil, status.Error(codes.InvalidArgument, "no token in metadata")
+	}
+	token := tokenVector[0]
+	user, err := handlers.GetUserHandlerFromToken(token, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("get user handler from token error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect token")
@@ -288,7 +356,16 @@ func (s *Server) GetContacts(ctx context.Context, req *pb.TokenRequest) (*pb.Get
 }
 
 func (s *Server) DeleteContact(ctx context.Context, req *pb.DeleteContactRequest) (*pb.StatusResponse, error) {
-	user, err := handlers.GetUserHandlerFromToken(req.Token, s.config.JWTTokenSecret)
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, status.Error(codes.InvalidArgument, "missing metadata")
+	}
+	tokenVector := md[tokenMetadataID]
+	if len(tokenVector) == 0 {
+		return nil, status.Error(codes.InvalidArgument, "no token in metadata")
+	}
+	token := tokenVector[0]
+	user, err := handlers.GetUserHandlerFromToken(token, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("get user handler from token error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "incorrect token")
@@ -333,18 +410,20 @@ func StartServer() {
 	}
 	defer log_file.Close()
 	logger := *log.New(log_file, "", log.LstdFlags)
+	logger.Println("logger init successful")
 
 	lis, err := net.Listen("tcp", config.Address+":"+config.Port)
 	if err != nil {
 		panic(err)
 	}
+	logger.Println("open tcp connection successful")
 
-	DB, err := database.InitDB(config.DataBaseUser + ":" + config.DataBasePassword +
-		"@tcp(" + config.DataBaseAddress + ":" + config.DataBasePort + ")/" + config.DataBaseName + "?charset=utf8mb4&parseTime=True&loc=Local")
+	DB, err := database.InitDB(config.DataBaseURLCoonntection)
 	if err != nil {
 		logger.Fatal("database error init: ", err)
 		panic(err)
 	}
+	logger.Println("init DB successful")
 
 	err = database.RunMigrations(DB)
 	if err != nil {
@@ -352,13 +431,42 @@ func StartServer() {
 		panic(err)
 	}
 
+	connMQRabbit, err := amqp.Dial(config.MQRabbitURLConnection)
+	if err != nil {
+		logger.Fatalln("amqp Dial error: ", err)
+		return
+	}
+	channelMQRabbit, err := connMQRabbit.Channel()
+	if err != nil {
+		logger.Fatalln("connMqRabbit Channel error: ", err)
+		return
+	}
+	queueMQRabbit, err := channelMQRabbit.QueueDeclare(
+		config.MQRabbitMsgQueueName,
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		logger.Fatalln("Queue Declare error: ", err)
+		return
+	}
+
+	logger.Println("init mq rabbit successful")
+
 	s := grpc.NewServer()
-	pb.RegisterGreeterServer(s, &Server{
-		logger: &logger,
-		config: config,
-		DB:     DB,
-		conns:  Conns{data: make(map[string]*pb.Greeter_ChatSessionServer)},
-	})
+	server := &Server{
+		logger:          &logger,
+		config:          config,
+		DB:              DB,
+		queueMQRabbit:   queueMQRabbit,
+		channelMQRabbit: channelMQRabbit,
+		conns:           Conns{data: make(map[string]*pb.Greeter_ChatSessionServer)},
+	}
+
+	pb.RegisterGreeterServer(s, server)
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGTERM, syscall.SIGINT)
@@ -366,6 +474,13 @@ func StartServer() {
 	go func() {
 		if err := s.Serve(lis); err != nil {
 			logger.Fatal(err)
+			panic(err)
+		}
+	}()
+
+	go func() {
+		if err := server.MsgsProccessing(); err != nil {
+			logger.Fatalln(err)
 			panic(err)
 		}
 	}()
@@ -382,6 +497,11 @@ func StartServer() {
 		logger.Println("gRPC-server stopped")
 		done <- true
 	}()
+
+	_, err = server.DB.Exec("update users set online = 0;")
+	if err != nil {
+		server.logger.Println("update users set online = 0 error: ", err)
+	}
 
 	select {
 	case <-done:

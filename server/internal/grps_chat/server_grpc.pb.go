@@ -20,9 +20,9 @@ type GreeterClient interface {
 	Registration(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*StatusRegistrationAuthResponse, error)
 	Auth(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*StatusRegistrationAuthResponse, error)
 	AddContact(ctx context.Context, in *NewContactRequest, opts ...grpc.CallOption) (*StatusResponse, error)
-	GetContacts(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*GetContactsResponse, error)
+	GetContacts(ctx context.Context, in *EmptyMsg, opts ...grpc.CallOption) (*GetContactsResponse, error)
 	DeleteContact(ctx context.Context, in *DeleteContactRequest, opts ...grpc.CallOption) (*StatusResponse, error)
-	Disconnect(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*StatusResponse, error)
+	Disconnect(ctx context.Context, in *EmptyMsg, opts ...grpc.CallOption) (*StatusResponse, error)
 	AcceptRequestContact(ctx context.Context, in *NewContactRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 	DeclineRequestContact(ctx context.Context, in *NewContactRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 	ChatSession(ctx context.Context, opts ...grpc.CallOption) (Greeter_ChatSessionClient, error)
@@ -63,7 +63,7 @@ func (c *greeterClient) AddContact(ctx context.Context, in *NewContactRequest, o
 	return out, nil
 }
 
-func (c *greeterClient) GetContacts(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*GetContactsResponse, error) {
+func (c *greeterClient) GetContacts(ctx context.Context, in *EmptyMsg, opts ...grpc.CallOption) (*GetContactsResponse, error) {
 	out := new(GetContactsResponse)
 	err := c.cc.Invoke(ctx, "/chat.Greeter/GetContacts", in, out, opts...)
 	if err != nil {
@@ -81,7 +81,7 @@ func (c *greeterClient) DeleteContact(ctx context.Context, in *DeleteContactRequ
 	return out, nil
 }
 
-func (c *greeterClient) Disconnect(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
+func (c *greeterClient) Disconnect(ctx context.Context, in *EmptyMsg, opts ...grpc.CallOption) (*StatusResponse, error) {
 	out := new(StatusResponse)
 	err := c.cc.Invoke(ctx, "/chat.Greeter/Disconnect", in, out, opts...)
 	if err != nil {
@@ -146,9 +146,9 @@ type GreeterServer interface {
 	Registration(context.Context, *RegistrationRequest) (*StatusRegistrationAuthResponse, error)
 	Auth(context.Context, *AuthRequest) (*StatusRegistrationAuthResponse, error)
 	AddContact(context.Context, *NewContactRequest) (*StatusResponse, error)
-	GetContacts(context.Context, *TokenRequest) (*GetContactsResponse, error)
+	GetContacts(context.Context, *EmptyMsg) (*GetContactsResponse, error)
 	DeleteContact(context.Context, *DeleteContactRequest) (*StatusResponse, error)
-	Disconnect(context.Context, *TokenRequest) (*StatusResponse, error)
+	Disconnect(context.Context, *EmptyMsg) (*StatusResponse, error)
 	AcceptRequestContact(context.Context, *NewContactRequest) (*StatusResponse, error)
 	DeclineRequestContact(context.Context, *NewContactRequest) (*StatusResponse, error)
 	ChatSession(Greeter_ChatSessionServer) error
@@ -168,13 +168,13 @@ func (UnimplementedGreeterServer) Auth(context.Context, *AuthRequest) (*StatusRe
 func (UnimplementedGreeterServer) AddContact(context.Context, *NewContactRequest) (*StatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddContact not implemented")
 }
-func (UnimplementedGreeterServer) GetContacts(context.Context, *TokenRequest) (*GetContactsResponse, error) {
+func (UnimplementedGreeterServer) GetContacts(context.Context, *EmptyMsg) (*GetContactsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetContacts not implemented")
 }
 func (UnimplementedGreeterServer) DeleteContact(context.Context, *DeleteContactRequest) (*StatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteContact not implemented")
 }
-func (UnimplementedGreeterServer) Disconnect(context.Context, *TokenRequest) (*StatusResponse, error) {
+func (UnimplementedGreeterServer) Disconnect(context.Context, *EmptyMsg) (*StatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Disconnect not implemented")
 }
 func (UnimplementedGreeterServer) AcceptRequestContact(context.Context, *NewContactRequest) (*StatusResponse, error) {
@@ -254,7 +254,7 @@ func _Greeter_AddContact_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 func _Greeter_GetContacts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TokenRequest)
+	in := new(EmptyMsg)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -266,7 +266,7 @@ func _Greeter_GetContacts_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: "/chat.Greeter/GetContacts",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GreeterServer).GetContacts(ctx, req.(*TokenRequest))
+		return srv.(GreeterServer).GetContacts(ctx, req.(*EmptyMsg))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -290,7 +290,7 @@ func _Greeter_DeleteContact_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _Greeter_Disconnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TokenRequest)
+	in := new(EmptyMsg)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -302,7 +302,7 @@ func _Greeter_Disconnect_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: "/chat.Greeter/Disconnect",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GreeterServer).Disconnect(ctx, req.(*TokenRequest))
+		return srv.(GreeterServer).Disconnect(ctx, req.(*EmptyMsg))
 	}
 	return interceptor(ctx, in, info, handler)
 }

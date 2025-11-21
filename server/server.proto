@@ -8,9 +8,9 @@ service Greeter {
     rpc Registration(RegistrationRequest) returns (StatusRegistrationAuthResponse);
     rpc Auth(AuthRequest) returns (StatusRegistrationAuthResponse);
     rpc AddContact(NewContactRequest) returns (StatusResponse);
-    rpc GetContacts(TokenRequest) returns (GetContactsResponse);
+    rpc GetContacts(EmptyMsg) returns (GetContactsResponse);
     rpc DeleteContact(DeleteContactRequest) returns (StatusResponse);
-    rpc Disconnect(TokenRequest) returns (StatusResponse);
+    rpc Disconnect(EmptyMsg) returns (StatusResponse);
     rpc AcceptRequestContact(NewContactRequest) returns (StatusResponse);
     rpc DeclineRequestContact(NewContactRequest) returns (StatusResponse);
     rpc ChatSession(stream InputMsg) returns (stream OutpuMsg);
@@ -23,12 +23,10 @@ message StatusRegistrationAuthResponse {
 
 message NewContactRequest {
     string contact = 1;
-    string token = 2;
 }
 
 message DeleteContactRequest {
     string contact = 1;
-    string token = 2;
 }
 
 message NewConversationRequest {
@@ -40,11 +38,9 @@ message GetContactsResponse {
     repeated int64 statuses = 2;
 }
 
-message TokenRequest {
-    string token = 1;
-}
 
-message StartGettingMsgsRequest {
+
+message EmptyMsg {
 
 }
 
@@ -63,18 +59,25 @@ message StatusResponse {
 }
 
 message InputMsg {
-    string recipient = 1;
-    bytes data = 2;
-    int64 timestamp = 3;
-    int64 statusMsg = 4;
-    string token = 5;
+    string sender = 1;
+    string recipient = 2;
+    bytes data = 3;
+    int64 timestamp = 4;
+    int64 statusMsg = 5;
     string id = 6;
+    bool is_file = 7;
+    int64 index_file_chunk = 8;
+    int64 total_file_chunk = 9;
 }
 
 message OutpuMsg {
-    string recipient = 1;
-    string data = 2;
-    int64 timestamp = 3;
-    int64 statusMsg = 4;
-    string id = 5;
+    string sender = 1;
+    string recipient = 2;
+    bytes data = 3;
+    int64 timestamp = 4;
+    int64 statusMsg = 5;
+    string id = 6;
+    bool is_file = 7;
+    int64 index_file_chunk = 8;
+    int64 total_file_chunk = 9;
 }

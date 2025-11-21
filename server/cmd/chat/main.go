@@ -1,7 +1,7 @@
 package main
 
 import (
-	server "server/internal"
+	server "server/internal/server"
 )
 
 func main() {

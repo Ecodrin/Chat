@@ -9,16 +9,12 @@ type Config struct {
 	Address       string `json:"address"`
 	Port          string `json:"port"`
 	LogsDirectory string `json:"logs directory"`
-	KafkaAddress  string `json:"kafka address"`
-	KafkaPort     string `json:"kafka port"`
 
-	DataBaseUser     string `json:"database user"`
-	DataBaseName     string `json:"database name"`
-	DataBasePassword string `json:"database password"`
-	DataBaseAddress  string `json:"database address"`
-	DataBasePort     string `json:"database port"`
+	DataBaseURLCoonntection string `json:"database_url_connection"`
 
-	JWTTokenSecret string `json:"jwt token secret"`
+	JWTTokenSecret        string `json:"jwt token secret"`
+	MQRabbitURLConnection string `json:"mqrabbit_url_connection"`
+	MQRabbitMsgQueueName  string `json:"mqrabbit_msgs_queue_name"`
 }
 
 func LoadConfig(filename string) (*Config, error) {
