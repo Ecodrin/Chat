@@ -1,6 +1,5 @@
 syntax = "proto3";
 
-option go_package = "./internal/grps_chat";
 
 package chat;
 
@@ -38,8 +37,6 @@ message GetContactsResponse {
     repeated int64 statuses = 2;
 }
 
-
-
 message EmptyMsg {
 
 }
@@ -55,7 +52,7 @@ message AuthRequest {
 }
 
 message StatusResponse {
-    int64 status = 1;   
+    int64 status = 1;
 }
 
 message InputMsg {

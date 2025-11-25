@@ -60,12 +60,12 @@ func (s *Server) Registration(ctx context.Context, req *pb.RegistrationRequest) 
 	err := database.CreateUser(s.DB, user)
 	if err != nil {
 		s.logger.Println("database create user error: ", err)
-		return nil, status.Error(codes.InvalidArgument, "incorrect login")
+		return nil, status.Error(codes.InvalidArgument, "none exist user")
 	}
 	tokenString, err := handlers.GetTokenFromUser(user, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("jwt token generate error: ", err)
-		return nil, status.Error(codes.InvalidArgument, "incorrect token")
+		return nil, status.Error(codes.InvalidArgument, "incorrect data")
 	}
 	response := &pb.StatusRegistrationAuthResponse{
 		Status: 0,
@@ -104,7 +104,7 @@ func (s *Server) Auth(ctx context.Context, req *pb.AuthRequest) (*pb.StatusRegis
 		Status: 0,
 		Token:  tokenString,
 	}
-	s.logger.Println("client + " + user.Login + " auth")
+	s.logger.Println("client " + user.Login + " auth")
 	return response, nil
 }
 
