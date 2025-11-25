@@ -30,6 +30,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         grpc_client/include/grpc_client.hpp grpc_client/pb/client.grpc.pb.cc grpc_client/pb/client.grpc.pb.h grpc_client/pb/client.pb.cc grpc_client/pb/client.pb.h grpc_client/pb/CMakeLists.txt grpc_client/src/grpc_client.cpp grpc_client/client.proto grpc_client/CMakeLists.txt
         mainwindow.h mainwindow.cpp mainwindow.ui
         contactdialog.h contactdialog.cpp contactdialog.ui
+        newconversationdialog.h newconversationdialog.cpp newconversationdialog.ui
 
 
 

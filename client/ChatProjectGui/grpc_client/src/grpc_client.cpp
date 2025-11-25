@@ -151,6 +151,21 @@ std::pair<bool, std::string> GreeterClient::accept_contact(const std::string & c
     }
 }
 
+
+std::pair<bool, std::string> GreeterClient::decline_contact(const std::string & contact) const {
+    grpc::ClientContext context;
+    context.AddMetadata("authorization", token);
+    chat::NewContactRequest request;
+    request.set_contact(contact);
+    chat::StatusResponse response;
+    grpc::Status status = stub_->DeclineRequestContact(&context, request, &response);
+    if (status.ok()) {
+        return {true, ""};
+    } else {
+        return {false, status.error_message()};
+    }
+}
+
 std::pair<bool, std::string> GreeterClient::add_contact(const std::string & contact) const {
     auto t = validate_login(contact);
     if(!t.first) {
@@ -162,6 +177,25 @@ std::pair<bool, std::string> GreeterClient::add_contact(const std::string & cont
     request.set_contact(contact);
     chat::StatusResponse response;
     grpc::Status status = stub_->AddContact(&context, request, &response);
+    if (status.ok()) {
+        return {true, ""};
+    } else {
+        return {false, status.error_message()};
+    }
+}
+
+
+std::pair<bool, std::string> GreeterClient::delete_contact(const std::string & contact) const {
+    auto t = validate_login(contact);
+    if(!t.first) {
+        return t;
+    }
+    grpc::ClientContext context;
+    context.AddMetadata("authorization", token);
+    chat::DeleteContactRequest request;
+    request.set_contact(contact);
+    chat::StatusResponse response;
+    grpc::Status status = stub_->DeleteContact(&context, request, &response);
     if (status.ok()) {
         return {true, ""};
     } else {

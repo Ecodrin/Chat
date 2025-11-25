@@ -66,5 +66,6 @@ void MainWindow::on_AddContactButton_clicked() {
         return;
     }
     on_UpdateContactsButton_clicked();
+    ui->LineContactEdit->clear();
 }
 

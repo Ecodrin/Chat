@@ -36,7 +36,9 @@ public:
     std::pair<bool, std::string> disconnect();
     std::pair<std::vector<Contact>, std::string> get_all_contacts() const;
     std::pair<bool, std::string> accept_contact(const std::string & contact) const;
+    std::pair<bool, std::string> decline_contact(const std::string & contact) const;
     std::pair<bool, std::string> add_contact(const std::string & contact) const;
+    std::pair<bool, std::string> delete_contact(const std::string & contact) const;
 private:
     std::string token;
 

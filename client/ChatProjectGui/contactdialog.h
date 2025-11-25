@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 
 #include "grpc_client.hpp"
+#include "newconversationdialog.h"
 
 namespace Ui {
 class ContactDialog;
@@ -22,6 +23,9 @@ public:
 
 
     void on_AcceptContactButton_clicked();
+    void on_DeleteContactButton_clicked();
+    void on_DeclineContactButton_clicked();
+    void on_NewChatButton_clicked();
 
 private:
     std::string login;
