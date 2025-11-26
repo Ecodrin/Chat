@@ -100,7 +100,6 @@ func AddContactByID(DB *sql.DB, id string, contact string, status int) error {
 			return fmt.Errorf("contact alreay in contacts")
 		}
 	}
-	fmt.Println(user.ID)
 	query = `
         UPDATE users
         SET contacts = JSON_ARRAY_APPEND(contacts, '$', JSON_OBJECT('text_id', ?, 'status', ?))

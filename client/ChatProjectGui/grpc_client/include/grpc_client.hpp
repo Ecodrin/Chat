@@ -5,7 +5,10 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <memory>
+#include <thread>
 #include <format>
+#include <tuple>
 
 // для sha256
 #include <openssl/sha.h>
@@ -14,6 +17,7 @@
 #include <grpcpp/grpcpp.h>
 #include "../pb/client.pb.h"
 #include "../pb/client.grpc.pb.h"
+
 
 
 
@@ -28,6 +32,12 @@ struct Contact {
 };
 
 
+struct ChatSessionCallResult {
+    std::unique_ptr<grpc::ClientReaderWriter<chat::InputMsg, chat::OutputMsg>> writer;
+    std::string error;
+};
+
+
 class GreeterClient {
 public:
     GreeterClient(std::shared_ptr<Channel> channel);
@@ -39,6 +49,7 @@ public:
     std::pair<bool, std::string> decline_contact(const std::string & contact) const;
     std::pair<bool, std::string> add_contact(const std::string & contact) const;
     std::pair<bool, std::string> delete_contact(const std::string & contact) const;
+    ChatSessionCallResult chat_session(grpc::ClientContext *context) const;
 private:
     std::string token;
 

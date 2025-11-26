@@ -47,7 +47,7 @@ func (s *Server) MsgsProccessing() error {
 			s.logger.Println("none exist user "+msgH.Recipient+" in MsgsProccessing error: ", err)
 			continue
 		}
-		outputMsg := &pb.OutpuMsg{
+		outputMsg := &pb.OutputMsg{
 			Sender:         msgH.Sender,
 			Recipient:      msgH.Recipient,
 			Data:           msgH.Data,

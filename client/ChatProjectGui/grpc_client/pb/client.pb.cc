@@ -162,7 +162,7 @@ struct InputMsgDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 InputMsgDefaultTypeInternal _InputMsg_default_instance_;
-PROTOBUF_CONSTEXPR OutpuMsg::OutpuMsg(
+PROTOBUF_CONSTEXPR OutputMsg::OutputMsg(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.sender_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.recipient_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
@@ -174,15 +174,15 @@ PROTOBUF_CONSTEXPR OutpuMsg::OutpuMsg(
   , /*decltype(_impl_.total_file_chunk_)*/int64_t{0}
   , /*decltype(_impl_.is_file_)*/false
   , /*decltype(_impl_._cached_size_)*/{}} {}
-struct OutpuMsgDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR OutpuMsgDefaultTypeInternal()
+struct OutputMsgDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR OutputMsgDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~OutpuMsgDefaultTypeInternal() {}
+  ~OutputMsgDefaultTypeInternal() {}
   union {
-    OutpuMsg _instance;
+    OutputMsg _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 OutpuMsgDefaultTypeInternal _OutpuMsg_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 OutputMsgDefaultTypeInternal _OutputMsg_default_instance_;
 }  // namespace chat
 static ::_pb::Metadata file_level_metadata_client_2eproto[11];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_client_2eproto = nullptr;
@@ -271,20 +271,20 @@ const uint32_t TableStruct_client_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::chat::InputMsg, _impl_.index_file_chunk_),
   PROTOBUF_FIELD_OFFSET(::chat::InputMsg, _impl_.total_file_chunk_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::chat::OutpuMsg, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::chat::OutputMsg, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::chat::OutpuMsg, _impl_.sender_),
-  PROTOBUF_FIELD_OFFSET(::chat::OutpuMsg, _impl_.recipient_),
-  PROTOBUF_FIELD_OFFSET(::chat::OutpuMsg, _impl_.data_),
-  PROTOBUF_FIELD_OFFSET(::chat::OutpuMsg, _impl_.timestamp_),
-  PROTOBUF_FIELD_OFFSET(::chat::OutpuMsg, _impl_.statusmsg_),
-  PROTOBUF_FIELD_OFFSET(::chat::OutpuMsg, _impl_.id_),
-  PROTOBUF_FIELD_OFFSET(::chat::OutpuMsg, _impl_.is_file_),
-  PROTOBUF_FIELD_OFFSET(::chat::OutpuMsg, _impl_.index_file_chunk_),
-  PROTOBUF_FIELD_OFFSET(::chat::OutpuMsg, _impl_.total_file_chunk_),
+  PROTOBUF_FIELD_OFFSET(::chat::OutputMsg, _impl_.sender_),
+  PROTOBUF_FIELD_OFFSET(::chat::OutputMsg, _impl_.recipient_),
+  PROTOBUF_FIELD_OFFSET(::chat::OutputMsg, _impl_.data_),
+  PROTOBUF_FIELD_OFFSET(::chat::OutputMsg, _impl_.timestamp_),
+  PROTOBUF_FIELD_OFFSET(::chat::OutputMsg, _impl_.statusmsg_),
+  PROTOBUF_FIELD_OFFSET(::chat::OutputMsg, _impl_.id_),
+  PROTOBUF_FIELD_OFFSET(::chat::OutputMsg, _impl_.is_file_),
+  PROTOBUF_FIELD_OFFSET(::chat::OutputMsg, _impl_.index_file_chunk_),
+  PROTOBUF_FIELD_OFFSET(::chat::OutputMsg, _impl_.total_file_chunk_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::chat::StatusRegistrationAuthResponse)},
@@ -297,7 +297,7 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 51, -1, -1, sizeof(::chat::AuthRequest)},
   { 59, -1, -1, sizeof(::chat::StatusResponse)},
   { 66, -1, -1, sizeof(::chat::InputMsg)},
-  { 81, -1, -1, sizeof(::chat::OutpuMsg)},
+  { 81, -1, -1, sizeof(::chat::OutputMsg)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -311,7 +311,7 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::chat::_AuthRequest_default_instance_._instance,
   &::chat::_StatusResponse_default_instance_._instance,
   &::chat::_InputMsg_default_instance_._instance,
-  &::chat::_OutpuMsg_default_instance_._instance,
+  &::chat::_OutputMsg_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_client_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -329,31 +329,31 @@ const char descriptor_table_protodef_client_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "(\t\022\021\n\trecipient\030\002 \001(\t\022\014\n\004data\030\003 \001(\014\022\021\n\tt"
   "imestamp\030\004 \001(\003\022\021\n\tstatusMsg\030\005 \001(\003\022\n\n\002id\030"
   "\006 \001(\t\022\017\n\007is_file\030\007 \001(\010\022\030\n\020index_file_chu"
-  "nk\030\010 \001(\003\022\030\n\020total_file_chunk\030\t \001(\003\"\262\001\n\010O"
-  "utpuMsg\022\016\n\006sender\030\001 \001(\t\022\021\n\trecipient\030\002 \001"
-  "(\t\022\014\n\004data\030\003 \001(\014\022\021\n\ttimestamp\030\004 \001(\003\022\021\n\ts"
-  "tatusMsg\030\005 \001(\003\022\n\n\002id\030\006 \001(\t\022\017\n\007is_file\030\007 "
-  "\001(\010\022\030\n\020index_file_chunk\030\010 \001(\003\022\030\n\020total_f"
-  "ile_chunk\030\t \001(\0032\313\004\n\007Greeter\022O\n\014Registrat"
-  "ion\022\031.chat.RegistrationRequest\032$.chat.St"
-  "atusRegistrationAuthResponse\022\?\n\004Auth\022\021.c"
-  "hat.AuthRequest\032$.chat.StatusRegistratio"
-  "nAuthResponse\022;\n\nAddContact\022\027.chat.NewCo"
-  "ntactRequest\032\024.chat.StatusResponse\0228\n\013Ge"
-  "tContacts\022\016.chat.EmptyMsg\032\031.chat.GetCont"
-  "actsResponse\022A\n\rDeleteContact\022\032.chat.Del"
-  "eteContactRequest\032\024.chat.StatusResponse\022"
-  "2\n\nDisconnect\022\016.chat.EmptyMsg\032\024.chat.Sta"
-  "tusResponse\022E\n\024AcceptRequestContact\022\027.ch"
-  "at.NewContactRequest\032\024.chat.StatusRespon"
-  "se\022F\n\025DeclineRequestContact\022\027.chat.NewCo"
-  "ntactRequest\032\024.chat.StatusResponse\0221\n\013Ch"
-  "atSession\022\016.chat.InputMsg\032\016.chat.OutpuMs"
-  "g(\0010\001b\006proto3"
+  "nk\030\010 \001(\003\022\030\n\020total_file_chunk\030\t \001(\003\"\263\001\n\tO"
+  "utputMsg\022\016\n\006sender\030\001 \001(\t\022\021\n\trecipient\030\002 "
+  "\001(\t\022\014\n\004data\030\003 \001(\014\022\021\n\ttimestamp\030\004 \001(\003\022\021\n\t"
+  "statusMsg\030\005 \001(\003\022\n\n\002id\030\006 \001(\t\022\017\n\007is_file\030\007"
+  " \001(\010\022\030\n\020index_file_chunk\030\010 \001(\003\022\030\n\020total_"
+  "file_chunk\030\t \001(\0032\314\004\n\007Greeter\022O\n\014Registra"
+  "tion\022\031.chat.RegistrationRequest\032$.chat.S"
+  "tatusRegistrationAuthResponse\022\?\n\004Auth\022\021."
+  "chat.AuthRequest\032$.chat.StatusRegistrati"
+  "onAuthResponse\022;\n\nAddContact\022\027.chat.NewC"
+  "ontactRequest\032\024.chat.StatusResponse\0228\n\013G"
+  "etContacts\022\016.chat.EmptyMsg\032\031.chat.GetCon"
+  "tactsResponse\022A\n\rDeleteContact\022\032.chat.De"
+  "leteContactRequest\032\024.chat.StatusResponse"
+  "\0222\n\nDisconnect\022\016.chat.EmptyMsg\032\024.chat.St"
+  "atusResponse\022E\n\024AcceptRequestContact\022\027.c"
+  "hat.NewContactRequest\032\024.chat.StatusRespo"
+  "nse\022F\n\025DeclineRequestContact\022\027.chat.NewC"
+  "ontactRequest\032\024.chat.StatusResponse\0222\n\013C"
+  "hatSession\022\016.chat.InputMsg\032\017.chat.Output"
+  "Msg(\0010\001B\026Z\024./internal/grps_chatb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_client_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_client_2eproto = {
-    false, false, 1373, descriptor_table_protodef_client_2eproto,
+    false, false, 1399, descriptor_table_protodef_client_2eproto,
     "client.proto",
     &descriptor_table_client_2eproto_once, nullptr, 0, 11,
     schemas, file_default_instances, TableStruct_client_2eproto::offsets,
@@ -2645,19 +2645,19 @@ void InputMsg::InternalSwap(InputMsg* other) {
 
 // ===================================================================
 
-class OutpuMsg::_Internal {
+class OutputMsg::_Internal {
  public:
 };
 
-OutpuMsg::OutpuMsg(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+OutputMsg::OutputMsg(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:chat.OutpuMsg)
+  // @@protoc_insertion_point(arena_constructor:chat.OutputMsg)
 }
-OutpuMsg::OutpuMsg(const OutpuMsg& from)
+OutputMsg::OutputMsg(const OutputMsg& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  OutpuMsg* const _this = this; (void)_this;
+  OutputMsg* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.sender_){}
     , decltype(_impl_.recipient_){}
@@ -2706,10 +2706,10 @@ OutpuMsg::OutpuMsg(const OutpuMsg& from)
   ::memcpy(&_impl_.timestamp_, &from._impl_.timestamp_,
     static_cast<size_t>(reinterpret_cast<char*>(&_impl_.is_file_) -
     reinterpret_cast<char*>(&_impl_.timestamp_)) + sizeof(_impl_.is_file_));
-  // @@protoc_insertion_point(copy_constructor:chat.OutpuMsg)
+  // @@protoc_insertion_point(copy_constructor:chat.OutputMsg)
 }
 
-inline void OutpuMsg::SharedCtor(
+inline void OutputMsg::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
@@ -2743,8 +2743,8 @@ inline void OutpuMsg::SharedCtor(
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
-OutpuMsg::~OutpuMsg() {
-  // @@protoc_insertion_point(destructor:chat.OutpuMsg)
+OutputMsg::~OutputMsg() {
+  // @@protoc_insertion_point(destructor:chat.OutputMsg)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -2752,7 +2752,7 @@ OutpuMsg::~OutpuMsg() {
   SharedDtor();
 }
 
-inline void OutpuMsg::SharedDtor() {
+inline void OutputMsg::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.sender_.Destroy();
   _impl_.recipient_.Destroy();
@@ -2760,12 +2760,12 @@ inline void OutpuMsg::SharedDtor() {
   _impl_.id_.Destroy();
 }
 
-void OutpuMsg::SetCachedSize(int size) const {
+void OutputMsg::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void OutpuMsg::Clear() {
-// @@protoc_insertion_point(message_clear_start:chat.OutpuMsg)
+void OutputMsg::Clear() {
+// @@protoc_insertion_point(message_clear_start:chat.OutputMsg)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -2780,7 +2780,7 @@ void OutpuMsg::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* OutpuMsg::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* OutputMsg::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
@@ -2792,7 +2792,7 @@ const char* OutpuMsg::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx)
           auto str = _internal_mutable_sender();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "chat.OutpuMsg.sender"));
+          CHK_(::_pbi::VerifyUTF8(str, "chat.OutputMsg.sender"));
         } else
           goto handle_unusual;
         continue;
@@ -2802,7 +2802,7 @@ const char* OutpuMsg::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx)
           auto str = _internal_mutable_recipient();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "chat.OutpuMsg.recipient"));
+          CHK_(::_pbi::VerifyUTF8(str, "chat.OutputMsg.recipient"));
         } else
           goto handle_unusual;
         continue;
@@ -2837,7 +2837,7 @@ const char* OutpuMsg::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx)
           auto str = _internal_mutable_id();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "chat.OutpuMsg.id"));
+          CHK_(::_pbi::VerifyUTF8(str, "chat.OutputMsg.id"));
         } else
           goto handle_unusual;
         continue;
@@ -2888,9 +2888,9 @@ failure:
 #undef CHK_
 }
 
-uint8_t* OutpuMsg::_InternalSerialize(
+uint8_t* OutputMsg::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:chat.OutpuMsg)
+  // @@protoc_insertion_point(serialize_to_array_start:chat.OutputMsg)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -2899,7 +2899,7 @@ uint8_t* OutpuMsg::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_sender().data(), static_cast<int>(this->_internal_sender().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "chat.OutpuMsg.sender");
+      "chat.OutputMsg.sender");
     target = stream->WriteStringMaybeAliased(
         1, this->_internal_sender(), target);
   }
@@ -2909,7 +2909,7 @@ uint8_t* OutpuMsg::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_recipient().data(), static_cast<int>(this->_internal_recipient().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "chat.OutpuMsg.recipient");
+      "chat.OutputMsg.recipient");
     target = stream->WriteStringMaybeAliased(
         2, this->_internal_recipient(), target);
   }
@@ -2937,7 +2937,7 @@ uint8_t* OutpuMsg::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_id().data(), static_cast<int>(this->_internal_id().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "chat.OutpuMsg.id");
+      "chat.OutputMsg.id");
     target = stream->WriteStringMaybeAliased(
         6, this->_internal_id(), target);
   }
@@ -2964,12 +2964,12 @@ uint8_t* OutpuMsg::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:chat.OutpuMsg)
+  // @@protoc_insertion_point(serialize_to_array_end:chat.OutputMsg)
   return target;
 }
 
-size_t OutpuMsg::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:chat.OutpuMsg)
+size_t OutputMsg::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:chat.OutputMsg)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -3032,17 +3032,17 @@ size_t OutpuMsg::ByteSizeLong() const {
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData OutpuMsg::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData OutputMsg::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    OutpuMsg::MergeImpl
+    OutputMsg::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*OutpuMsg::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*OutputMsg::GetClassData() const { return &_class_data_; }
 
 
-void OutpuMsg::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<OutpuMsg*>(&to_msg);
-  auto& from = static_cast<const OutpuMsg&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:chat.OutpuMsg)
+void OutputMsg::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<OutputMsg*>(&to_msg);
+  auto& from = static_cast<const OutputMsg&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:chat.OutputMsg)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -3077,18 +3077,18 @@ void OutpuMsg::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTO
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void OutpuMsg::CopyFrom(const OutpuMsg& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:chat.OutpuMsg)
+void OutputMsg::CopyFrom(const OutputMsg& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:chat.OutputMsg)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool OutpuMsg::IsInitialized() const {
+bool OutputMsg::IsInitialized() const {
   return true;
 }
 
-void OutpuMsg::InternalSwap(OutpuMsg* other) {
+void OutputMsg::InternalSwap(OutputMsg* other) {
   using std::swap;
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
@@ -3110,14 +3110,14 @@ void OutpuMsg::InternalSwap(OutpuMsg* other) {
       &other->_impl_.id_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(OutpuMsg, _impl_.is_file_)
-      + sizeof(OutpuMsg::_impl_.is_file_)
-      - PROTOBUF_FIELD_OFFSET(OutpuMsg, _impl_.timestamp_)>(
+      PROTOBUF_FIELD_OFFSET(OutputMsg, _impl_.is_file_)
+      + sizeof(OutputMsg::_impl_.is_file_)
+      - PROTOBUF_FIELD_OFFSET(OutputMsg, _impl_.timestamp_)>(
           reinterpret_cast<char*>(&_impl_.timestamp_),
           reinterpret_cast<char*>(&other->_impl_.timestamp_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata OutpuMsg::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata OutputMsg::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_client_2eproto_getter, &descriptor_table_client_2eproto_once,
       file_level_metadata_client_2eproto[10]);
@@ -3166,9 +3166,9 @@ template<> PROTOBUF_NOINLINE ::chat::InputMsg*
 Arena::CreateMaybeMessage< ::chat::InputMsg >(Arena* arena) {
   return Arena::CreateMessageInternal< ::chat::InputMsg >(arena);
 }
-template<> PROTOBUF_NOINLINE ::chat::OutpuMsg*
-Arena::CreateMaybeMessage< ::chat::OutpuMsg >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::chat::OutpuMsg >(arena);
+template<> PROTOBUF_NOINLINE ::chat::OutputMsg*
+Arena::CreateMaybeMessage< ::chat::OutputMsg >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::chat::OutputMsg >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

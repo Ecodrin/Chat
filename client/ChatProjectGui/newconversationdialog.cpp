@@ -10,5 +10,8 @@ NewConversationDialog::NewConversationDialog(GreeterClient *client, QWidget *par
 
 NewConversationDialog::~NewConversationDialog()
 {
+    ui->comboBoxAlg->clear();
+    ui->comboBoxEncMode->clear();
+    ui->comboBoxPadding->clear();
     delete ui;
 }

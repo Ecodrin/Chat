@@ -15,6 +15,9 @@
 #include <QRect>
 #include <QStringListModel>
 
+#include <memory>
+#include <thread>
+
 #include "grpc_client.hpp"
 #include "contactdialog.h"
 
@@ -29,6 +32,7 @@ class MainWindow : public QWidget
 public:
     explicit MainWindow(GreeterClient * client, QWidget *parent = nullptr);
     ~MainWindow();
+    void Disconnect();
 
 private slots:
     void on_DisconnectButton_clicked();
@@ -39,6 +43,9 @@ signals:
     void requestBack();
 
 private:
+    std::unique_ptr<grpc::ClientReaderWriter<chat::InputMsg, chat::OutputMsg>> msgs_writer = nullptr;
+    std::thread getting_msgs_thread;
+    grpc::ClientContext clientcontext_chat_session;
 
     GreeterClient * client;
     QWidget * parent = nullptr;

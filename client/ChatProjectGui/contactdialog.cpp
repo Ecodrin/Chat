@@ -48,7 +48,7 @@ void ContactDialog::on_AcceptContactButton_clicked() {
 
 void ContactDialog::on_DeclineContactButton_clicked() {
     auto t = client->decline_contact(login);
-    if (!t.first) {11111111111111111111111111111111111
+    if (!t.first) {
         QMessageBox::information(this, "error", QString::fromStdString(t.second));
     }
     this->close();

@@ -31,9 +31,9 @@ int main(int argc, char *argv[])
 
     RegistrationWindow window(&greeter);
     window.show();
-    QObject::connect(qApp, &QCoreApplication::aboutToQuit, [&greeter]() {
+    QObject::connect(qApp, &QCoreApplication::aboutToQuit, [&window, &greeter]() {
         // добавить сохранение состояния в бд
-        greeter.disconnect();
+        window.main_window->Disconnect();
     });
     return a.exec();
 }

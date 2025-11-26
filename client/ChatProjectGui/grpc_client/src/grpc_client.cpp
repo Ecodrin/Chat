@@ -62,11 +62,13 @@ std::pair<bool, std::string> GreeterClient::disconnect() {
     grpc::ClientContext context;
     context.AddMetadata("authorization", token);
     grpc::Status status = stub_->Disconnect(&context, request, &response);
-
     if(status.ok()) {
         token = "";
         return {true, ""};
     } else {
+        if(status.error_code() == grpc::StatusCode::UNAVAILABLE) {
+            return {false, "failed connection"};
+        }
         return {false, status.error_message()};
     }
 
@@ -133,6 +135,9 @@ std::pair<std::vector<Contact>, std::string> GreeterClient::get_all_contacts() c
         }
         return {contacts, ""};
     } else {
+        if(status.error_code() == grpc::StatusCode::UNAVAILABLE) {
+            return {{}, "failed connection"};
+        }
         return {{}, status.error_message()};
     }
 }
@@ -147,6 +152,9 @@ std::pair<bool, std::string> GreeterClient::accept_contact(const std::string & c
     if (status.ok()) {
         return {true, ""};
     } else {
+        if(status.error_code() == grpc::StatusCode::UNAVAILABLE) {
+            return {false, "failed connection"};
+        }
         return {false, status.error_message()};
     }
 }
@@ -162,6 +170,9 @@ std::pair<bool, std::string> GreeterClient::decline_contact(const std::string & 
     if (status.ok()) {
         return {true, ""};
     } else {
+        if(status.error_code() == grpc::StatusCode::UNAVAILABLE) {
+            return {false, "failed connection"};
+        }
         return {false, status.error_message()};
     }
 }
@@ -180,6 +191,9 @@ std::pair<bool, std::string> GreeterClient::add_contact(const std::string & cont
     if (status.ok()) {
         return {true, ""};
     } else {
+        if(status.error_code() == grpc::StatusCode::UNAVAILABLE) {
+            return {false, "failed connection"};
+        }
         return {false, status.error_message()};
     }
 }
@@ -199,7 +213,21 @@ std::pair<bool, std::string> GreeterClient::delete_contact(const std::string & c
     if (status.ok()) {
         return {true, ""};
     } else {
+        if(status.error_code() == grpc::StatusCode::UNAVAILABLE) {
+            return {false, "failed connection"};
+        }
         return {false, status.error_message()};
     }
 }
+
+ChatSessionCallResult GreeterClient::chat_session(grpc::ClientContext *context) const {
+    context->AddMetadata("authorization", token);
+    auto msgs_writer = stub_->ChatSession(context);
+    if (msgs_writer == nullptr) {
+        return ChatSessionCallResult{std::unique_ptr<grpc::ClientReaderWriter<chat::InputMsg, chat::OutputMsg>>{nullptr}, "bad token error"};
+    }
+
+    return ChatSessionCallResult{std::move(msgs_writer), ""};
+}
+
 

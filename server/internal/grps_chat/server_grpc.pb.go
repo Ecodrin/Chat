@@ -119,7 +119,7 @@ func (c *greeterClient) ChatSession(ctx context.Context, opts ...grpc.CallOption
 
 type Greeter_ChatSessionClient interface {
 	Send(*InputMsg) error
-	Recv() (*OutpuMsg, error)
+	Recv() (*OutputMsg, error)
 	grpc.ClientStream
 }
 
@@ -131,8 +131,8 @@ func (x *greeterChatSessionClient) Send(m *InputMsg) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *greeterChatSessionClient) Recv() (*OutpuMsg, error) {
-	m := new(OutpuMsg)
+func (x *greeterChatSessionClient) Recv() (*OutputMsg, error) {
+	m := new(OutputMsg)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -348,7 +348,7 @@ func _Greeter_ChatSession_Handler(srv interface{}, stream grpc.ServerStream) err
 }
 
 type Greeter_ChatSessionServer interface {
-	Send(*OutpuMsg) error
+	Send(*OutputMsg) error
 	Recv() (*InputMsg, error)
 	grpc.ServerStream
 }
@@ -357,7 +357,7 @@ type greeterChatSessionServer struct {
 	grpc.ServerStream
 }
 
-func (x *greeterChatSessionServer) Send(m *OutpuMsg) error {
+func (x *greeterChatSessionServer) Send(m *OutputMsg) error {
 	return x.ServerStream.SendMsg(m)
 }
 

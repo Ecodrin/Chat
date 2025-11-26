@@ -16,25 +16,63 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="1" column="0">
-      <widget class="QComboBox" name="comboBox_2">
+     <item row="3" column="0">
+      <widget class="QComboBox" name="comboBoxEncMode">
+       <property name="contextMenuPolicy">
+        <enum>Qt::DefaultContextMenu</enum>
+       </property>
+       <property name="currentText">
+        <string/>
+       </property>
        <property name="placeholderText">
-        <string>Паддинг</string>
+        <string>Режим шифрования</string>
        </property>
        <item>
         <property name="text">
-         <string>Zeros</string>
+         <string>ECB</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>PKCS#7</string>
+         <string>CBC</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>PCBC</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>CFB</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>OFB</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>CTR</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>RandomDelta</string>
         </property>
        </item>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QComboBox" name="comboBox">
+     <item row="2" column="0" alignment="Qt::AlignLeft|Qt::AlignBottom">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Выберите режим шифрования</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QComboBox" name="comboBoxAlg">
        <property name="placeholderText">
         <string>Алгоритм шифрования</string>
        </property>
@@ -53,10 +91,55 @@
          <string>TripleDES</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>Serpent</string>
+        </property>
+       </item>
       </widget>
      </item>
-     <item row="2" column="0" alignment="Qt::AlignRight">
-      <widget class="QPushButton" name="pushButton">
+     <item row="4" column="0" alignment="Qt::AlignLeft|Qt::AlignBottom">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Выберите паддинг</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QComboBox" name="comboBoxPadding">
+       <property name="editable">
+        <bool>false</bool>
+       </property>
+       <property name="currentText">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>Паддинг</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>Zeros</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>ANSIX923</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>PRCS7</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>ISO10126</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="6" column="0" alignment="Qt::AlignRight">
+      <widget class="QPushButton" name="CreateChatButton">
        <property name="minimumSize">
         <size>
          <width>150</width>
@@ -65,6 +148,13 @@
        </property>
        <property name="text">
         <string>Создать</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0" alignment="Qt::AlignLeft|Qt::AlignBottom">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Выберите алгоритм шифрования</string>
        </property>
       </widget>
      </item>

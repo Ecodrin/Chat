@@ -22,13 +22,14 @@ class RegistrationWindow : public QDialog
     Q_OBJECT
 
 public:
+    MainWindow *main_window = nullptr;
+
     explicit RegistrationWindow(GreeterClient * client, QWidget *parent = nullptr);
     ~RegistrationWindow();
 private slots:
     void on_registerButton_clicked();
     void on_AuthButton_clicked();
 private:
-    MainWindow *main_window = nullptr;
     GreeterClient * client;
     Ui::RegistrationWindow *ui;
 };
