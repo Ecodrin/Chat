@@ -224,7 +224,7 @@ ChatSessionCallResult GreeterClient::chat_session(grpc::ClientContext *context) 
     context->AddMetadata("authorization", token);
     auto msgs_writer = stub_->ChatSession(context);
     if (msgs_writer == nullptr) {
-        return ChatSessionCallResult{std::unique_ptr<grpc::ClientReaderWriter<chat::InputMsg, chat::OutputMsg>>{nullptr}, "bad token error"};
+        return ChatSessionCallResult{std::unique_ptr<grpc::ClientReaderWriter<chat::ChatMsg, chat::ChatMsg>>{nullptr}, "bad token error"};
     }
 
     return ChatSessionCallResult{std::move(msgs_writer), ""};

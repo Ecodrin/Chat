@@ -118,8 +118,8 @@ func (c *greeterClient) ChatSession(ctx context.Context, opts ...grpc.CallOption
 }
 
 type Greeter_ChatSessionClient interface {
-	Send(*InputMsg) error
-	Recv() (*OutputMsg, error)
+	Send(*ChatMsg) error
+	Recv() (*ChatMsg, error)
 	grpc.ClientStream
 }
 
@@ -127,12 +127,12 @@ type greeterChatSessionClient struct {
 	grpc.ClientStream
 }
 
-func (x *greeterChatSessionClient) Send(m *InputMsg) error {
+func (x *greeterChatSessionClient) Send(m *ChatMsg) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *greeterChatSessionClient) Recv() (*OutputMsg, error) {
-	m := new(OutputMsg)
+func (x *greeterChatSessionClient) Recv() (*ChatMsg, error) {
+	m := new(ChatMsg)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -348,8 +348,8 @@ func _Greeter_ChatSession_Handler(srv interface{}, stream grpc.ServerStream) err
 }
 
 type Greeter_ChatSessionServer interface {
-	Send(*OutputMsg) error
-	Recv() (*InputMsg, error)
+	Send(*ChatMsg) error
+	Recv() (*ChatMsg, error)
 	grpc.ServerStream
 }
 
@@ -357,12 +357,12 @@ type greeterChatSessionServer struct {
 	grpc.ServerStream
 }
 
-func (x *greeterChatSessionServer) Send(m *OutputMsg) error {
+func (x *greeterChatSessionServer) Send(m *ChatMsg) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *greeterChatSessionServer) Recv() (*InputMsg, error) {
-	m := new(InputMsg)
+func (x *greeterChatSessionServer) Recv() (*ChatMsg, error) {
+	m := new(ChatMsg)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}

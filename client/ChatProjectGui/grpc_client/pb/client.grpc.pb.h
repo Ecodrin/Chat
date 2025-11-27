@@ -91,14 +91,14 @@ class Greeter final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chat::StatusResponse>> PrepareAsyncDeclineRequestContact(::grpc::ClientContext* context, const ::chat::NewContactRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::chat::StatusResponse>>(PrepareAsyncDeclineRequestContactRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::chat::InputMsg, ::chat::OutputMsg>> ChatSession(::grpc::ClientContext* context) {
-      return std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::chat::InputMsg, ::chat::OutputMsg>>(ChatSessionRaw(context));
+    std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::chat::ChatMsg, ::chat::ChatMsg>> ChatSession(::grpc::ClientContext* context) {
+      return std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::chat::ChatMsg, ::chat::ChatMsg>>(ChatSessionRaw(context));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::chat::InputMsg, ::chat::OutputMsg>> AsyncChatSession(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::chat::InputMsg, ::chat::OutputMsg>>(AsyncChatSessionRaw(context, cq, tag));
+    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::chat::ChatMsg, ::chat::ChatMsg>> AsyncChatSession(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::chat::ChatMsg, ::chat::ChatMsg>>(AsyncChatSessionRaw(context, cq, tag));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::chat::InputMsg, ::chat::OutputMsg>> PrepareAsyncChatSession(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::chat::InputMsg, ::chat::OutputMsg>>(PrepareAsyncChatSessionRaw(context, cq));
+    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::chat::ChatMsg, ::chat::ChatMsg>> PrepareAsyncChatSession(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::chat::ChatMsg, ::chat::ChatMsg>>(PrepareAsyncChatSessionRaw(context, cq));
     }
     class async_interface {
      public:
@@ -119,7 +119,7 @@ class Greeter final {
       virtual void AcceptRequestContact(::grpc::ClientContext* context, const ::chat::NewContactRequest* request, ::chat::StatusResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void DeclineRequestContact(::grpc::ClientContext* context, const ::chat::NewContactRequest* request, ::chat::StatusResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void DeclineRequestContact(::grpc::ClientContext* context, const ::chat::NewContactRequest* request, ::chat::StatusResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      virtual void ChatSession(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::chat::InputMsg,::chat::OutputMsg>* reactor) = 0;
+      virtual void ChatSession(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::chat::ChatMsg,::chat::ChatMsg>* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -141,9 +141,9 @@ class Greeter final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::chat::StatusResponse>* PrepareAsyncAcceptRequestContactRaw(::grpc::ClientContext* context, const ::chat::NewContactRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::chat::StatusResponse>* AsyncDeclineRequestContactRaw(::grpc::ClientContext* context, const ::chat::NewContactRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::chat::StatusResponse>* PrepareAsyncDeclineRequestContactRaw(::grpc::ClientContext* context, const ::chat::NewContactRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientReaderWriterInterface< ::chat::InputMsg, ::chat::OutputMsg>* ChatSessionRaw(::grpc::ClientContext* context) = 0;
-    virtual ::grpc::ClientAsyncReaderWriterInterface< ::chat::InputMsg, ::chat::OutputMsg>* AsyncChatSessionRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) = 0;
-    virtual ::grpc::ClientAsyncReaderWriterInterface< ::chat::InputMsg, ::chat::OutputMsg>* PrepareAsyncChatSessionRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientReaderWriterInterface< ::chat::ChatMsg, ::chat::ChatMsg>* ChatSessionRaw(::grpc::ClientContext* context) = 0;
+    virtual ::grpc::ClientAsyncReaderWriterInterface< ::chat::ChatMsg, ::chat::ChatMsg>* AsyncChatSessionRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncReaderWriterInterface< ::chat::ChatMsg, ::chat::ChatMsg>* PrepareAsyncChatSessionRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -204,14 +204,14 @@ class Greeter final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chat::StatusResponse>> PrepareAsyncDeclineRequestContact(::grpc::ClientContext* context, const ::chat::NewContactRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::chat::StatusResponse>>(PrepareAsyncDeclineRequestContactRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientReaderWriter< ::chat::InputMsg, ::chat::OutputMsg>> ChatSession(::grpc::ClientContext* context) {
-      return std::unique_ptr< ::grpc::ClientReaderWriter< ::chat::InputMsg, ::chat::OutputMsg>>(ChatSessionRaw(context));
+    std::unique_ptr< ::grpc::ClientReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>> ChatSession(::grpc::ClientContext* context) {
+      return std::unique_ptr< ::grpc::ClientReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>>(ChatSessionRaw(context));
     }
-    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::chat::InputMsg, ::chat::OutputMsg>> AsyncChatSession(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::chat::InputMsg, ::chat::OutputMsg>>(AsyncChatSessionRaw(context, cq, tag));
+    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>> AsyncChatSession(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>>(AsyncChatSessionRaw(context, cq, tag));
     }
-    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::chat::InputMsg, ::chat::OutputMsg>> PrepareAsyncChatSession(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::chat::InputMsg, ::chat::OutputMsg>>(PrepareAsyncChatSessionRaw(context, cq));
+    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>> PrepareAsyncChatSession(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>>(PrepareAsyncChatSessionRaw(context, cq));
     }
     class async final :
       public StubInterface::async_interface {
@@ -232,7 +232,7 @@ class Greeter final {
       void AcceptRequestContact(::grpc::ClientContext* context, const ::chat::NewContactRequest* request, ::chat::StatusResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void DeclineRequestContact(::grpc::ClientContext* context, const ::chat::NewContactRequest* request, ::chat::StatusResponse* response, std::function<void(::grpc::Status)>) override;
       void DeclineRequestContact(::grpc::ClientContext* context, const ::chat::NewContactRequest* request, ::chat::StatusResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void ChatSession(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::chat::InputMsg,::chat::OutputMsg>* reactor) override;
+      void ChatSession(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::chat::ChatMsg,::chat::ChatMsg>* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -260,9 +260,9 @@ class Greeter final {
     ::grpc::ClientAsyncResponseReader< ::chat::StatusResponse>* PrepareAsyncAcceptRequestContactRaw(::grpc::ClientContext* context, const ::chat::NewContactRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::chat::StatusResponse>* AsyncDeclineRequestContactRaw(::grpc::ClientContext* context, const ::chat::NewContactRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::chat::StatusResponse>* PrepareAsyncDeclineRequestContactRaw(::grpc::ClientContext* context, const ::chat::NewContactRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientReaderWriter< ::chat::InputMsg, ::chat::OutputMsg>* ChatSessionRaw(::grpc::ClientContext* context) override;
-    ::grpc::ClientAsyncReaderWriter< ::chat::InputMsg, ::chat::OutputMsg>* AsyncChatSessionRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) override;
-    ::grpc::ClientAsyncReaderWriter< ::chat::InputMsg, ::chat::OutputMsg>* PrepareAsyncChatSessionRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>* ChatSessionRaw(::grpc::ClientContext* context) override;
+    ::grpc::ClientAsyncReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>* AsyncChatSessionRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>* PrepareAsyncChatSessionRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_Registration_;
     const ::grpc::internal::RpcMethod rpcmethod_Auth_;
     const ::grpc::internal::RpcMethod rpcmethod_AddContact_;
@@ -287,7 +287,7 @@ class Greeter final {
     virtual ::grpc::Status Disconnect(::grpc::ServerContext* context, const ::chat::EmptyMsg* request, ::chat::StatusResponse* response);
     virtual ::grpc::Status AcceptRequestContact(::grpc::ServerContext* context, const ::chat::NewContactRequest* request, ::chat::StatusResponse* response);
     virtual ::grpc::Status DeclineRequestContact(::grpc::ServerContext* context, const ::chat::NewContactRequest* request, ::chat::StatusResponse* response);
-    virtual ::grpc::Status ChatSession(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::chat::OutputMsg, ::chat::InputMsg>* stream);
+    virtual ::grpc::Status ChatSession(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>* stream);
   };
   template <class BaseClass>
   class WithAsyncMethod_Registration : public BaseClass {
@@ -461,11 +461,11 @@ class Greeter final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ChatSession(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::chat::OutputMsg, ::chat::InputMsg>* /*stream*/)  override {
+    ::grpc::Status ChatSession(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>* /*stream*/)  override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestChatSession(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::chat::OutputMsg, ::chat::InputMsg>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestChatSession(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncBidiStreaming(8, context, stream, new_call_cq, notification_cq, tag);
     }
   };
@@ -693,7 +693,7 @@ class Greeter final {
    public:
     WithCallbackMethod_ChatSession() {
       ::grpc::Service::MarkMethodCallback(8,
-          new ::grpc::internal::CallbackBidiHandler< ::chat::InputMsg, ::chat::OutputMsg>(
+          new ::grpc::internal::CallbackBidiHandler< ::chat::ChatMsg, ::chat::ChatMsg>(
             [this](
                    ::grpc::CallbackServerContext* context) { return this->ChatSession(context); }));
     }
@@ -701,11 +701,11 @@ class Greeter final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ChatSession(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::chat::OutputMsg, ::chat::InputMsg>* /*stream*/)  override {
+    ::grpc::Status ChatSession(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>* /*stream*/)  override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerBidiReactor< ::chat::InputMsg, ::chat::OutputMsg>* ChatSession(
+    virtual ::grpc::ServerBidiReactor< ::chat::ChatMsg, ::chat::ChatMsg>* ChatSession(
       ::grpc::CallbackServerContext* /*context*/)
       { return nullptr; }
   };
@@ -859,7 +859,7 @@ class Greeter final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ChatSession(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::chat::OutputMsg, ::chat::InputMsg>* /*stream*/)  override {
+    ::grpc::Status ChatSession(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>* /*stream*/)  override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1036,7 +1036,7 @@ class Greeter final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ChatSession(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::chat::OutputMsg, ::chat::InputMsg>* /*stream*/)  override {
+    ::grpc::Status ChatSession(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>* /*stream*/)  override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1235,7 +1235,7 @@ class Greeter final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status ChatSession(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::chat::OutputMsg, ::chat::InputMsg>* /*stream*/)  override {
+    ::grpc::Status ChatSession(::grpc::ServerContext* /*context*/, ::grpc::ServerReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>* /*stream*/)  override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }

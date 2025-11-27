@@ -3,3 +3,7 @@
 **/configs/**
 **/logs/**
 **/build/**
+**/keys/**
+**/**.mp4
+**/**.png
+**/**.jpg

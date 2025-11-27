@@ -3,9 +3,9 @@
 
 
 
-ContactDialog::ContactDialog(const std::string & contact, GreeterClient * client, QWidget *parent)
-    : QDialog(parent)
-    , ui(new Ui::ContactDialog), client{client}
+ContactDialog::ContactDialog(const std::string & contact, GreeterClient * client, std::shared_ptr<ChatStreamgRPCWorker> writer, QWidget *parent)
+    : QDialog(parent), writer{writer},
+    ui(new Ui::ContactDialog), client{client}
 {
     ui->setupUi(this);
     size_t find_i = contact.find(" ");
@@ -65,7 +65,7 @@ void ContactDialog::on_DeleteContactButton_clicked() {
 
 
 void ContactDialog::on_NewChatButton_clicked() {
-    NewConversationDialog * new_chat_dialog = new NewConversationDialog(client, this);
+    NewConversationDialog * new_chat_dialog = new NewConversationDialog(client, writer, this);
     new_chat_dialog->setAttribute(Qt::WA_DeleteOnClose);
     new_chat_dialog->exec();
     this->close();

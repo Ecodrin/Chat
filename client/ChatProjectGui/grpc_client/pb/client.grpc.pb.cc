@@ -235,20 +235,20 @@ void Greeter::Stub::async::DeclineRequestContact(::grpc::ClientContext* context,
   return result;
 }
 
-::grpc::ClientReaderWriter< ::chat::InputMsg, ::chat::OutputMsg>* Greeter::Stub::ChatSessionRaw(::grpc::ClientContext* context) {
-  return ::grpc::internal::ClientReaderWriterFactory< ::chat::InputMsg, ::chat::OutputMsg>::Create(channel_.get(), rpcmethod_ChatSession_, context);
+::grpc::ClientReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>* Greeter::Stub::ChatSessionRaw(::grpc::ClientContext* context) {
+  return ::grpc::internal::ClientReaderWriterFactory< ::chat::ChatMsg, ::chat::ChatMsg>::Create(channel_.get(), rpcmethod_ChatSession_, context);
 }
 
-void Greeter::Stub::async::ChatSession(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::chat::InputMsg,::chat::OutputMsg>* reactor) {
-  ::grpc::internal::ClientCallbackReaderWriterFactory< ::chat::InputMsg,::chat::OutputMsg>::Create(stub_->channel_.get(), stub_->rpcmethod_ChatSession_, context, reactor);
+void Greeter::Stub::async::ChatSession(::grpc::ClientContext* context, ::grpc::ClientBidiReactor< ::chat::ChatMsg,::chat::ChatMsg>* reactor) {
+  ::grpc::internal::ClientCallbackReaderWriterFactory< ::chat::ChatMsg,::chat::ChatMsg>::Create(stub_->channel_.get(), stub_->rpcmethod_ChatSession_, context, reactor);
 }
 
-::grpc::ClientAsyncReaderWriter< ::chat::InputMsg, ::chat::OutputMsg>* Greeter::Stub::AsyncChatSessionRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
-  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::chat::InputMsg, ::chat::OutputMsg>::Create(channel_.get(), cq, rpcmethod_ChatSession_, context, true, tag);
+::grpc::ClientAsyncReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>* Greeter::Stub::AsyncChatSessionRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::chat::ChatMsg, ::chat::ChatMsg>::Create(channel_.get(), cq, rpcmethod_ChatSession_, context, true, tag);
 }
 
-::grpc::ClientAsyncReaderWriter< ::chat::InputMsg, ::chat::OutputMsg>* Greeter::Stub::PrepareAsyncChatSessionRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::chat::InputMsg, ::chat::OutputMsg>::Create(channel_.get(), cq, rpcmethod_ChatSession_, context, false, nullptr);
+::grpc::ClientAsyncReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>* Greeter::Stub::PrepareAsyncChatSessionRaw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncReaderWriterFactory< ::chat::ChatMsg, ::chat::ChatMsg>::Create(channel_.get(), cq, rpcmethod_ChatSession_, context, false, nullptr);
 }
 
 Greeter::Service::Service() {
@@ -335,11 +335,11 @@ Greeter::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Greeter_method_names[8],
       ::grpc::internal::RpcMethod::BIDI_STREAMING,
-      new ::grpc::internal::BidiStreamingHandler< Greeter::Service, ::chat::InputMsg, ::chat::OutputMsg>(
+      new ::grpc::internal::BidiStreamingHandler< Greeter::Service, ::chat::ChatMsg, ::chat::ChatMsg>(
           [](Greeter::Service* service,
              ::grpc::ServerContext* ctx,
-             ::grpc::ServerReaderWriter<::chat::OutputMsg,
-             ::chat::InputMsg>* stream) {
+             ::grpc::ServerReaderWriter<::chat::ChatMsg,
+             ::chat::ChatMsg>* stream) {
                return service->ChatSession(ctx, stream);
              }, this)));
 }
@@ -403,7 +403,7 @@ Greeter::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status Greeter::Service::ChatSession(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::chat::OutputMsg, ::chat::InputMsg>* stream) {
+::grpc::Status Greeter::Service::ChatSession(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::chat::ChatMsg, ::chat::ChatMsg>* stream) {
   (void) context;
   (void) stream;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");

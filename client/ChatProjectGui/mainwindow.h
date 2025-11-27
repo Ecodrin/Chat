@@ -21,6 +21,8 @@
 #include "grpc_client.hpp"
 #include "contactdialog.h"
 
+#include "streamgrpcworker.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -43,14 +45,14 @@ signals:
     void requestBack();
 
 private:
-    std::unique_ptr<grpc::ClientReaderWriter<chat::InputMsg, chat::OutputMsg>> msgs_writer = nullptr;
-    std::thread getting_msgs_thread;
     grpc::ClientContext clientcontext_chat_session;
 
     GreeterClient * client;
     QWidget * parent = nullptr;
     Ui::MainWindow *ui;
     std::unique_ptr<QStringListModel> contacts_model;
+
+    std::shared_ptr<ChatStreamgRPCWorker> writer;
 };
 
 

@@ -31,6 +31,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         mainwindow.h mainwindow.cpp mainwindow.ui
         contactdialog.h contactdialog.cpp contactdialog.ui
         newconversationdialog.h newconversationdialog.cpp newconversationdialog.ui
+        streamgrpcworker.h streamgrpcworker.cpp
+        workwithdata.h workwithdata.cpp
 
 
 
@@ -60,7 +62,14 @@ else()
 endif()
 
 add_subdirectory(grpc_client)
-target_link_libraries(ChatProject PRIVATE grpc_client Qt${QT_VERSION_MAJOR}::Widgets)
+add_subdirectory(libs)
+target_link_libraries(ChatProject PRIVATE
+    grpc_client
+    Qt${QT_VERSION_MAJOR}::Widgets
+    symmetric_interface_library
+    symmetric_algorithms
+    diffie_hellman_key_exchange
+)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
-    <layout class="QGridLayout" name="gridLayout_2">
+    <layout class="QGridLayout" name="ButtonChatGridLayout">
      <item row="3" column="0">
       <widget class="QComboBox" name="comboBoxEncMode">
        <property name="contextMenuPolicy">

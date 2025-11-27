@@ -20,7 +20,6 @@
 
 
 
-
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::Status;
@@ -33,7 +32,7 @@ struct Contact {
 
 
 struct ChatSessionCallResult {
-    std::unique_ptr<grpc::ClientReaderWriter<chat::InputMsg, chat::OutputMsg>> writer;
+    std::unique_ptr<grpc::ClientReaderWriter<chat::ChatMsg, chat::ChatMsg>> writer;
     std::string error;
 };
 
