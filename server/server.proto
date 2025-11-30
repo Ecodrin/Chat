@@ -62,6 +62,16 @@ message NewChatMsg {
     string chat_id = 1;
     string sender = 2;
     string recipient = 3;
+    int64 alg = 4;
+    int64 enc_mode = 5;
+    int64 padd_mode = 6;
+    string g_for_key = 7;
+    string p_for_key = 8;
+    string AB_for_key = 9;
+    string g_for_iv = 10;
+    string p_for_iv = 11;
+    string AB_for_iv = 12;   
+    int64 status = 13;
 }
 
 message DefaultChatMsg {

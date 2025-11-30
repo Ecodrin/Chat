@@ -1,5 +1,6 @@
 syntax = "proto3";
 
+option go_package = "./internal/grps_chat";
 
 package chat;
 
@@ -12,7 +13,7 @@ service Greeter {
     rpc Disconnect(EmptyMsg) returns (StatusResponse);
     rpc AcceptRequestContact(NewContactRequest) returns (StatusResponse);
     rpc DeclineRequestContact(NewContactRequest) returns (StatusResponse);
-    rpc ChatSession(stream InputMsg) returns (stream OutpuMsg);
+    rpc ChatSession(stream ChatMsg) returns (stream ChatMsg);
 } 
 
 message StatusRegistrationAuthResponse {
@@ -37,6 +38,8 @@ message GetContactsResponse {
     repeated int64 statuses = 2;
 }
 
+
+
 message EmptyMsg {
 
 }
@@ -52,29 +55,48 @@ message AuthRequest {
 }
 
 message StatusResponse {
-    int64 status = 1;
+    int64 status = 1;   
 }
 
-message InputMsg {
-    string sender = 1;
-    string recipient = 2;
-    bytes data = 3;
-    int64 timestamp = 4;
-    int64 statusMsg = 5;
-    string id = 6;
-    bool is_file = 7;
-    int64 index_file_chunk = 8;
-    int64 total_file_chunk = 9;
+message NewChatMsg {
+    string chat_id = 1;
+    string sender = 2;
+    string recipient = 3;
+    int64 alg = 4;
+    int64 enc_mode = 5;
+    int64 padd_mode = 6;
+    string g_for_key = 7;
+    string p_for_key = 8;
+    string AB_for_key = 9;
+    string g_for_iv = 10;
+    string p_for_iv = 11;
+    string AB_for_iv = 12;   
+    int64 status = 13;
 }
 
-message OutpuMsg {
-    string sender = 1;
-    string recipient = 2;
-    bytes data = 3;
-    int64 timestamp = 4;
-    int64 statusMsg = 5;
-    string id = 6;
-    bool is_file = 7;
-    int64 index_file_chunk = 8;
-    int64 total_file_chunk = 9;
+message DefaultChatMsg {
+    string chat_id = 1;
+    string sender = 2;
+    string recipient = 3;
+    bytes data = 4;
+    int64 timestamp = 5;
+}
+
+message FileMsg {
+    string chat_id = 1;
+    string sender = 2;
+    string recipient = 3;
+    int64 index_file_chunk = 4;
+    int64 total_file_chunk = 5;
+    bytes data = 6;
+    int64 timestamp = 7;
+
+}
+
+message ChatMsg {
+    oneof payload {
+        NewChatMsg new_chat_msg = 1;
+        FileMsg file_msg = 2;
+        DefaultChatMsg default_msg = 3;
+    }
 }

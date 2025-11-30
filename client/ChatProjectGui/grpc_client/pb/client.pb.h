@@ -1644,6 +1644,16 @@ class NewChatMsg final :
     kChatIdFieldNumber = 1,
     kSenderFieldNumber = 2,
     kRecipientFieldNumber = 3,
+    kGForKeyFieldNumber = 7,
+    kPForKeyFieldNumber = 8,
+    kABForKeyFieldNumber = 9,
+    kGForIvFieldNumber = 10,
+    kPForIvFieldNumber = 11,
+    kABForIvFieldNumber = 12,
+    kAlgFieldNumber = 4,
+    kEncModeFieldNumber = 5,
+    kPaddModeFieldNumber = 6,
+    kStatusFieldNumber = 13,
   };
   // string chat_id = 1;
   void clear_chat_id();
@@ -1687,6 +1697,126 @@ class NewChatMsg final :
   std::string* _internal_mutable_recipient();
   public:
 
+  // string g_for_key = 7;
+  void clear_g_for_key();
+  const std::string& g_for_key() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_g_for_key(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_g_for_key();
+  PROTOBUF_NODISCARD std::string* release_g_for_key();
+  void set_allocated_g_for_key(std::string* g_for_key);
+  private:
+  const std::string& _internal_g_for_key() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_g_for_key(const std::string& value);
+  std::string* _internal_mutable_g_for_key();
+  public:
+
+  // string p_for_key = 8;
+  void clear_p_for_key();
+  const std::string& p_for_key() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_p_for_key(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_p_for_key();
+  PROTOBUF_NODISCARD std::string* release_p_for_key();
+  void set_allocated_p_for_key(std::string* p_for_key);
+  private:
+  const std::string& _internal_p_for_key() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_p_for_key(const std::string& value);
+  std::string* _internal_mutable_p_for_key();
+  public:
+
+  // string AB_for_key = 9;
+  void clear_ab_for_key();
+  const std::string& ab_for_key() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_ab_for_key(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_ab_for_key();
+  PROTOBUF_NODISCARD std::string* release_ab_for_key();
+  void set_allocated_ab_for_key(std::string* ab_for_key);
+  private:
+  const std::string& _internal_ab_for_key() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_ab_for_key(const std::string& value);
+  std::string* _internal_mutable_ab_for_key();
+  public:
+
+  // string g_for_iv = 10;
+  void clear_g_for_iv();
+  const std::string& g_for_iv() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_g_for_iv(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_g_for_iv();
+  PROTOBUF_NODISCARD std::string* release_g_for_iv();
+  void set_allocated_g_for_iv(std::string* g_for_iv);
+  private:
+  const std::string& _internal_g_for_iv() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_g_for_iv(const std::string& value);
+  std::string* _internal_mutable_g_for_iv();
+  public:
+
+  // string p_for_iv = 11;
+  void clear_p_for_iv();
+  const std::string& p_for_iv() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_p_for_iv(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_p_for_iv();
+  PROTOBUF_NODISCARD std::string* release_p_for_iv();
+  void set_allocated_p_for_iv(std::string* p_for_iv);
+  private:
+  const std::string& _internal_p_for_iv() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_p_for_iv(const std::string& value);
+  std::string* _internal_mutable_p_for_iv();
+  public:
+
+  // string AB_for_iv = 12;
+  void clear_ab_for_iv();
+  const std::string& ab_for_iv() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_ab_for_iv(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_ab_for_iv();
+  PROTOBUF_NODISCARD std::string* release_ab_for_iv();
+  void set_allocated_ab_for_iv(std::string* ab_for_iv);
+  private:
+  const std::string& _internal_ab_for_iv() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_ab_for_iv(const std::string& value);
+  std::string* _internal_mutable_ab_for_iv();
+  public:
+
+  // int64 alg = 4;
+  void clear_alg();
+  int64_t alg() const;
+  void set_alg(int64_t value);
+  private:
+  int64_t _internal_alg() const;
+  void _internal_set_alg(int64_t value);
+  public:
+
+  // int64 enc_mode = 5;
+  void clear_enc_mode();
+  int64_t enc_mode() const;
+  void set_enc_mode(int64_t value);
+  private:
+  int64_t _internal_enc_mode() const;
+  void _internal_set_enc_mode(int64_t value);
+  public:
+
+  // int64 padd_mode = 6;
+  void clear_padd_mode();
+  int64_t padd_mode() const;
+  void set_padd_mode(int64_t value);
+  private:
+  int64_t _internal_padd_mode() const;
+  void _internal_set_padd_mode(int64_t value);
+  public:
+
+  // int64 status = 13;
+  void clear_status();
+  int64_t status() const;
+  void set_status(int64_t value);
+  private:
+  int64_t _internal_status() const;
+  void _internal_set_status(int64_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:chat.NewChatMsg)
  private:
   class _Internal;
@@ -1698,6 +1828,16 @@ class NewChatMsg final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr chat_id_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr sender_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr recipient_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr g_for_key_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr p_for_key_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr ab_for_key_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr g_for_iv_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr p_for_iv_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr ab_for_iv_;
+    int64_t alg_;
+    int64_t enc_mode_;
+    int64_t padd_mode_;
+    int64_t status_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -3124,6 +3264,386 @@ inline void NewChatMsg::set_allocated_recipient(std::string* recipient) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:chat.NewChatMsg.recipient)
+}
+
+// int64 alg = 4;
+inline void NewChatMsg::clear_alg() {
+  _impl_.alg_ = int64_t{0};
+}
+inline int64_t NewChatMsg::_internal_alg() const {
+  return _impl_.alg_;
+}
+inline int64_t NewChatMsg::alg() const {
+  // @@protoc_insertion_point(field_get:chat.NewChatMsg.alg)
+  return _internal_alg();
+}
+inline void NewChatMsg::_internal_set_alg(int64_t value) {
+  
+  _impl_.alg_ = value;
+}
+inline void NewChatMsg::set_alg(int64_t value) {
+  _internal_set_alg(value);
+  // @@protoc_insertion_point(field_set:chat.NewChatMsg.alg)
+}
+
+// int64 enc_mode = 5;
+inline void NewChatMsg::clear_enc_mode() {
+  _impl_.enc_mode_ = int64_t{0};
+}
+inline int64_t NewChatMsg::_internal_enc_mode() const {
+  return _impl_.enc_mode_;
+}
+inline int64_t NewChatMsg::enc_mode() const {
+  // @@protoc_insertion_point(field_get:chat.NewChatMsg.enc_mode)
+  return _internal_enc_mode();
+}
+inline void NewChatMsg::_internal_set_enc_mode(int64_t value) {
+  
+  _impl_.enc_mode_ = value;
+}
+inline void NewChatMsg::set_enc_mode(int64_t value) {
+  _internal_set_enc_mode(value);
+  // @@protoc_insertion_point(field_set:chat.NewChatMsg.enc_mode)
+}
+
+// int64 padd_mode = 6;
+inline void NewChatMsg::clear_padd_mode() {
+  _impl_.padd_mode_ = int64_t{0};
+}
+inline int64_t NewChatMsg::_internal_padd_mode() const {
+  return _impl_.padd_mode_;
+}
+inline int64_t NewChatMsg::padd_mode() const {
+  // @@protoc_insertion_point(field_get:chat.NewChatMsg.padd_mode)
+  return _internal_padd_mode();
+}
+inline void NewChatMsg::_internal_set_padd_mode(int64_t value) {
+  
+  _impl_.padd_mode_ = value;
+}
+inline void NewChatMsg::set_padd_mode(int64_t value) {
+  _internal_set_padd_mode(value);
+  // @@protoc_insertion_point(field_set:chat.NewChatMsg.padd_mode)
+}
+
+// string g_for_key = 7;
+inline void NewChatMsg::clear_g_for_key() {
+  _impl_.g_for_key_.ClearToEmpty();
+}
+inline const std::string& NewChatMsg::g_for_key() const {
+  // @@protoc_insertion_point(field_get:chat.NewChatMsg.g_for_key)
+  return _internal_g_for_key();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void NewChatMsg::set_g_for_key(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.g_for_key_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.NewChatMsg.g_for_key)
+}
+inline std::string* NewChatMsg::mutable_g_for_key() {
+  std::string* _s = _internal_mutable_g_for_key();
+  // @@protoc_insertion_point(field_mutable:chat.NewChatMsg.g_for_key)
+  return _s;
+}
+inline const std::string& NewChatMsg::_internal_g_for_key() const {
+  return _impl_.g_for_key_.Get();
+}
+inline void NewChatMsg::_internal_set_g_for_key(const std::string& value) {
+  
+  _impl_.g_for_key_.Set(value, GetArenaForAllocation());
+}
+inline std::string* NewChatMsg::_internal_mutable_g_for_key() {
+  
+  return _impl_.g_for_key_.Mutable(GetArenaForAllocation());
+}
+inline std::string* NewChatMsg::release_g_for_key() {
+  // @@protoc_insertion_point(field_release:chat.NewChatMsg.g_for_key)
+  return _impl_.g_for_key_.Release();
+}
+inline void NewChatMsg::set_allocated_g_for_key(std::string* g_for_key) {
+  if (g_for_key != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.g_for_key_.SetAllocated(g_for_key, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.g_for_key_.IsDefault()) {
+    _impl_.g_for_key_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.NewChatMsg.g_for_key)
+}
+
+// string p_for_key = 8;
+inline void NewChatMsg::clear_p_for_key() {
+  _impl_.p_for_key_.ClearToEmpty();
+}
+inline const std::string& NewChatMsg::p_for_key() const {
+  // @@protoc_insertion_point(field_get:chat.NewChatMsg.p_for_key)
+  return _internal_p_for_key();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void NewChatMsg::set_p_for_key(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.p_for_key_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.NewChatMsg.p_for_key)
+}
+inline std::string* NewChatMsg::mutable_p_for_key() {
+  std::string* _s = _internal_mutable_p_for_key();
+  // @@protoc_insertion_point(field_mutable:chat.NewChatMsg.p_for_key)
+  return _s;
+}
+inline const std::string& NewChatMsg::_internal_p_for_key() const {
+  return _impl_.p_for_key_.Get();
+}
+inline void NewChatMsg::_internal_set_p_for_key(const std::string& value) {
+  
+  _impl_.p_for_key_.Set(value, GetArenaForAllocation());
+}
+inline std::string* NewChatMsg::_internal_mutable_p_for_key() {
+  
+  return _impl_.p_for_key_.Mutable(GetArenaForAllocation());
+}
+inline std::string* NewChatMsg::release_p_for_key() {
+  // @@protoc_insertion_point(field_release:chat.NewChatMsg.p_for_key)
+  return _impl_.p_for_key_.Release();
+}
+inline void NewChatMsg::set_allocated_p_for_key(std::string* p_for_key) {
+  if (p_for_key != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.p_for_key_.SetAllocated(p_for_key, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.p_for_key_.IsDefault()) {
+    _impl_.p_for_key_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.NewChatMsg.p_for_key)
+}
+
+// string AB_for_key = 9;
+inline void NewChatMsg::clear_ab_for_key() {
+  _impl_.ab_for_key_.ClearToEmpty();
+}
+inline const std::string& NewChatMsg::ab_for_key() const {
+  // @@protoc_insertion_point(field_get:chat.NewChatMsg.AB_for_key)
+  return _internal_ab_for_key();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void NewChatMsg::set_ab_for_key(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.ab_for_key_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.NewChatMsg.AB_for_key)
+}
+inline std::string* NewChatMsg::mutable_ab_for_key() {
+  std::string* _s = _internal_mutable_ab_for_key();
+  // @@protoc_insertion_point(field_mutable:chat.NewChatMsg.AB_for_key)
+  return _s;
+}
+inline const std::string& NewChatMsg::_internal_ab_for_key() const {
+  return _impl_.ab_for_key_.Get();
+}
+inline void NewChatMsg::_internal_set_ab_for_key(const std::string& value) {
+  
+  _impl_.ab_for_key_.Set(value, GetArenaForAllocation());
+}
+inline std::string* NewChatMsg::_internal_mutable_ab_for_key() {
+  
+  return _impl_.ab_for_key_.Mutable(GetArenaForAllocation());
+}
+inline std::string* NewChatMsg::release_ab_for_key() {
+  // @@protoc_insertion_point(field_release:chat.NewChatMsg.AB_for_key)
+  return _impl_.ab_for_key_.Release();
+}
+inline void NewChatMsg::set_allocated_ab_for_key(std::string* ab_for_key) {
+  if (ab_for_key != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.ab_for_key_.SetAllocated(ab_for_key, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.ab_for_key_.IsDefault()) {
+    _impl_.ab_for_key_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.NewChatMsg.AB_for_key)
+}
+
+// string g_for_iv = 10;
+inline void NewChatMsg::clear_g_for_iv() {
+  _impl_.g_for_iv_.ClearToEmpty();
+}
+inline const std::string& NewChatMsg::g_for_iv() const {
+  // @@protoc_insertion_point(field_get:chat.NewChatMsg.g_for_iv)
+  return _internal_g_for_iv();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void NewChatMsg::set_g_for_iv(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.g_for_iv_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.NewChatMsg.g_for_iv)
+}
+inline std::string* NewChatMsg::mutable_g_for_iv() {
+  std::string* _s = _internal_mutable_g_for_iv();
+  // @@protoc_insertion_point(field_mutable:chat.NewChatMsg.g_for_iv)
+  return _s;
+}
+inline const std::string& NewChatMsg::_internal_g_for_iv() const {
+  return _impl_.g_for_iv_.Get();
+}
+inline void NewChatMsg::_internal_set_g_for_iv(const std::string& value) {
+  
+  _impl_.g_for_iv_.Set(value, GetArenaForAllocation());
+}
+inline std::string* NewChatMsg::_internal_mutable_g_for_iv() {
+  
+  return _impl_.g_for_iv_.Mutable(GetArenaForAllocation());
+}
+inline std::string* NewChatMsg::release_g_for_iv() {
+  // @@protoc_insertion_point(field_release:chat.NewChatMsg.g_for_iv)
+  return _impl_.g_for_iv_.Release();
+}
+inline void NewChatMsg::set_allocated_g_for_iv(std::string* g_for_iv) {
+  if (g_for_iv != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.g_for_iv_.SetAllocated(g_for_iv, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.g_for_iv_.IsDefault()) {
+    _impl_.g_for_iv_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.NewChatMsg.g_for_iv)
+}
+
+// string p_for_iv = 11;
+inline void NewChatMsg::clear_p_for_iv() {
+  _impl_.p_for_iv_.ClearToEmpty();
+}
+inline const std::string& NewChatMsg::p_for_iv() const {
+  // @@protoc_insertion_point(field_get:chat.NewChatMsg.p_for_iv)
+  return _internal_p_for_iv();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void NewChatMsg::set_p_for_iv(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.p_for_iv_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.NewChatMsg.p_for_iv)
+}
+inline std::string* NewChatMsg::mutable_p_for_iv() {
+  std::string* _s = _internal_mutable_p_for_iv();
+  // @@protoc_insertion_point(field_mutable:chat.NewChatMsg.p_for_iv)
+  return _s;
+}
+inline const std::string& NewChatMsg::_internal_p_for_iv() const {
+  return _impl_.p_for_iv_.Get();
+}
+inline void NewChatMsg::_internal_set_p_for_iv(const std::string& value) {
+  
+  _impl_.p_for_iv_.Set(value, GetArenaForAllocation());
+}
+inline std::string* NewChatMsg::_internal_mutable_p_for_iv() {
+  
+  return _impl_.p_for_iv_.Mutable(GetArenaForAllocation());
+}
+inline std::string* NewChatMsg::release_p_for_iv() {
+  // @@protoc_insertion_point(field_release:chat.NewChatMsg.p_for_iv)
+  return _impl_.p_for_iv_.Release();
+}
+inline void NewChatMsg::set_allocated_p_for_iv(std::string* p_for_iv) {
+  if (p_for_iv != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.p_for_iv_.SetAllocated(p_for_iv, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.p_for_iv_.IsDefault()) {
+    _impl_.p_for_iv_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.NewChatMsg.p_for_iv)
+}
+
+// string AB_for_iv = 12;
+inline void NewChatMsg::clear_ab_for_iv() {
+  _impl_.ab_for_iv_.ClearToEmpty();
+}
+inline const std::string& NewChatMsg::ab_for_iv() const {
+  // @@protoc_insertion_point(field_get:chat.NewChatMsg.AB_for_iv)
+  return _internal_ab_for_iv();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void NewChatMsg::set_ab_for_iv(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.ab_for_iv_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.NewChatMsg.AB_for_iv)
+}
+inline std::string* NewChatMsg::mutable_ab_for_iv() {
+  std::string* _s = _internal_mutable_ab_for_iv();
+  // @@protoc_insertion_point(field_mutable:chat.NewChatMsg.AB_for_iv)
+  return _s;
+}
+inline const std::string& NewChatMsg::_internal_ab_for_iv() const {
+  return _impl_.ab_for_iv_.Get();
+}
+inline void NewChatMsg::_internal_set_ab_for_iv(const std::string& value) {
+  
+  _impl_.ab_for_iv_.Set(value, GetArenaForAllocation());
+}
+inline std::string* NewChatMsg::_internal_mutable_ab_for_iv() {
+  
+  return _impl_.ab_for_iv_.Mutable(GetArenaForAllocation());
+}
+inline std::string* NewChatMsg::release_ab_for_iv() {
+  // @@protoc_insertion_point(field_release:chat.NewChatMsg.AB_for_iv)
+  return _impl_.ab_for_iv_.Release();
+}
+inline void NewChatMsg::set_allocated_ab_for_iv(std::string* ab_for_iv) {
+  if (ab_for_iv != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.ab_for_iv_.SetAllocated(ab_for_iv, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.ab_for_iv_.IsDefault()) {
+    _impl_.ab_for_iv_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.NewChatMsg.AB_for_iv)
+}
+
+// int64 status = 13;
+inline void NewChatMsg::clear_status() {
+  _impl_.status_ = int64_t{0};
+}
+inline int64_t NewChatMsg::_internal_status() const {
+  return _impl_.status_;
+}
+inline int64_t NewChatMsg::status() const {
+  // @@protoc_insertion_point(field_get:chat.NewChatMsg.status)
+  return _internal_status();
+}
+inline void NewChatMsg::_internal_set_status(int64_t value) {
+  
+  _impl_.status_ = value;
+}
+inline void NewChatMsg::set_status(int64_t value) {
+  _internal_set_status(value);
+  // @@protoc_insertion_point(field_set:chat.NewChatMsg.status)
 }
 
 // -------------------------------------------------------------------
