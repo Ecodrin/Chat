@@ -144,7 +144,7 @@ func (s *Server) ChatSession(stream pb.Greeter_ChatSessionServer) error {
 			msg, err := stream.Recv()
 			if err != nil && user != nil {
 				if status.Code(err) == codes.Canceled || err == io.EOF {
-					s.logger.Println("user " + user.Login + "closed connection")
+					s.logger.Println("user " + user.Login + " closed connection")
 					s.mutex.Lock()
 					delete(s.conns.data, user.ID)
 					s.mutex.Unlock()
@@ -404,12 +404,13 @@ func StartServer() {
 		panic(err)
 	}
 
-	log_file, err := os.Create(config.LogsDirectory + "/" + "server.log")
-	if err != nil {
-		panic(err)
-	}
-	defer log_file.Close()
-	logger := *log.New(log_file, "", log.LstdFlags)
+	// log_file, err := os.Create(config.LogsDirectory + "/" + "server.log")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// defer log_file.Close()
+	// logger := *log.New(log_file, "", log.LstdFlags)
+	logger := *log.Default()
 	logger.Println("logger init successful")
 
 	lis, err := net.Listen("tcp", config.Address+":"+config.Port)

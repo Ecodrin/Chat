@@ -1,7 +1,6 @@
 package utility
 
 import (
-	"encoding/json"
 	"os"
 )
 
@@ -18,14 +17,24 @@ type Config struct {
 }
 
 func LoadConfig(filename string) (*Config, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	var config Config
-	err = json.NewDecoder(file).Decode(&config)
-	if err != nil {
-		return nil, err
+	// file, err := os.Open(filename)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// var config Config
+	// err = json.NewDecoder(file).Decode(&config)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	config := Config{
+		Address:                 os.Getenv("HOST"),
+		Port:                    os.Getenv("PORT"),
+		LogsDirectory:           "",
+		DataBaseURLCoonntection: os.Getenv("DataBaseURLCoonntection"),
+		JWTTokenSecret:          os.Getenv("JWTTokenSecret"),
+		MQRabbitURLConnection:   os.Getenv("MQRabbitURLConnection"),
+		MQRabbitMsgQueueName:    os.Getenv("MQRabbitMsgQueueName"),
 	}
 	return &config, nil
 }
