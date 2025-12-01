@@ -17,6 +17,9 @@ target_link_libraries(grpc_client
     gRPC::grpc
     protobuf::libprotobuf
     pthread
+    symmetric_interface_library
+    Diffie_Hellman_key_exchange
+    symmetric_algorithms
 )
 
 target_include_directories(grpc_client PUBLIC include)

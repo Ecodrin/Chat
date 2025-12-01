@@ -1,11 +1,13 @@
-add_library(diffie_hellman_key_exchange SHARED
-    include/diffie_hellman_key_exchange.hpp
-    src/diffie_hellman_key_exchange.cpp
+find_package(Boost REQUIRED COMPONENTS filesystem random system)
+
+add_library(Diffie_Hellman_key_exchange SHARED
+    include/Diffie_Hellman_key_exchange.hpp
+    src/Diffie_Hellman_key_exchange.cpp
 )
 
-target_include_directories(diffie_hellman_key_exchange PUBLIC include)
+target_include_directories(Diffie_Hellman_key_exchange PUBLIC include)
 
-target_link_libraries(diffie_hellman_key_exchange 
+target_link_libraries(Diffie_Hellman_key_exchange 
     Boost::random 
     Boost::system
     bytes_utility
@@ -13,10 +15,10 @@ target_link_libraries(diffie_hellman_key_exchange
 )
 
 
-add_executable(tests_diffie_hellman_key_exchange
-    tests/tests_diffie_hellman_key_exchange.cpp
+add_executable(tests_Diffie_Hellman_key_exchange
+    tests/tests_Diffie_Hellman_key_exchange.cpp
 )
 
-target_link_libraries(tests_diffie_hellman_key_exchange
-    diffie_hellman_key_exchange
+target_link_libraries(tests_Diffie_Hellman_key_exchange
+    Diffie_Hellman_key_exchange
 )

@@ -3,8 +3,8 @@
 
 
 
-ContactDialog::ContactDialog(const std::string & contact, GreeterClient * client, std::shared_ptr<ChatStreamgRPCWorker> writer, QWidget *parent)
-    : QDialog(parent), writer{writer},
+ContactDialog::ContactDialog(const std::string & contact, GreeterClient * client, std::shared_ptr<ChatStreamgRPCWorker> writer, std::shared_ptr<WorkWithData> database, QWidget *parent)
+    : QDialog(parent), writer{writer}, database{database},
     ui(new Ui::ContactDialog), client{client}
 {
     ui->setupUi(this);
@@ -65,7 +65,7 @@ void ContactDialog::on_DeleteContactButton_clicked() {
 
 
 void ContactDialog::on_NewChatButton_clicked() {
-    NewConversationDialog * new_chat_dialog = new NewConversationDialog(client, writer, this);
+    NewConversationDialog * new_chat_dialog = new NewConversationDialog(client, writer, database, login, this);
     new_chat_dialog->setAttribute(Qt::WA_DeleteOnClose);
     new_chat_dialog->exec();
     this->close();

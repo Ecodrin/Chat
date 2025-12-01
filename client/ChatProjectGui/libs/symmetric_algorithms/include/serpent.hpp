@@ -32,7 +32,7 @@ namespace symmetric_algorithms {
 
     class Serpent : public symmetric_interface_library::InterfaceSymmetricAlgorithm {
     private:
-        size_t block_size = 16;
+        static inline size_t block_size = 16;
         SPNetwork sp_network;
         
 
@@ -158,6 +158,7 @@ namespace symmetric_algorithms {
         static std::vector<std::byte> inverse_p_layer(const std::vector<std::byte> & block);
     public:
         size_t get_block_size() override;
+        static size_t get_standart_block_size();
         void set_key(const std::vector<std::byte> & key) override;
         Serpent(const std::vector<std::byte> & key);
 

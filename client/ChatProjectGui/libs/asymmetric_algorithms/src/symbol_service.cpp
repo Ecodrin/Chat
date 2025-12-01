@@ -3,7 +3,7 @@
 
 namespace asymmetric_algorithms {
 
-    boost::multiprecision::cpp_int SymbolService::calculate_legendre_symbol(const boost::multiprecision::cpp_int & a, const boost::multiprecision::cpp_int & p) {
+    boost::multiprecision::cpp_int SymbolService::calculate_Legendre_symbol(const boost::multiprecision::cpp_int & a, const boost::multiprecision::cpp_int & p) {
         if (p < 3) {
             throw std::invalid_argument("p must be != 2");
         }
@@ -71,7 +71,7 @@ namespace asymmetric_algorithms {
     }
 
     
-    boost::multiprecision::cpp_int SymbolService::calculate_jakobi_symbol(const boost::multiprecision::cpp_int & a, const boost::multiprecision::cpp_int & p) {
+    boost::multiprecision::cpp_int SymbolService::calculate_Jakobi_symbol(const boost::multiprecision::cpp_int & a, const boost::multiprecision::cpp_int & p) {
         if(p % 2 == 0) {
             throw std::invalid_argument("p must be odd");
         }

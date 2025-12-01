@@ -72,7 +72,7 @@ namespace asymmetric_algorithms {
         if(gcd(n, a) != 1) {
             return PrimalityTest::ProccessIterationStatus::NOTPRIME;
         }
-        return (PrimalityTest::ProccessIterationStatus)(SymbolService::mod_pow(a, (n - 1) / 2, n) == (n + SymbolService::calculate_jakobi_symbol(a, n)) % n);
+        return (PrimalityTest::ProccessIterationStatus)(SymbolService::mod_pow(a, (n - 1) / 2, n) == (n + SymbolService::calculate_Jakobi_symbol(a, n)) % n);
     }
 
     size_t MillerRabinPrimalityTest::calculate_k(double probability) {

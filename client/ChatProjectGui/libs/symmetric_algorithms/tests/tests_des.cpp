@@ -297,8 +297,8 @@ void check_time_tests(std::function<void(void)> f) {
 
 int main() {
     
-    // tests();
-    check_time_tests(check_file);
+    tests();
+    // check_time_tests(check_file);
 
     // std::vector<std::byte> key = bytes_utility::random_bytes_vector(7);
     // symmetric_algorithms::DESGenerationRoundKeys d;

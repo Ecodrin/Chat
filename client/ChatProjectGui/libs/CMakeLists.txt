@@ -1,6 +1,3 @@
-find_package(Boost REQUIRED COMPONENTS random filesystem system)
-
-
 add_subdirectory(bytes_utility)
 add_subdirectory(symmetric_interface_library)
 add_subdirectory(symmetric_algorithms)

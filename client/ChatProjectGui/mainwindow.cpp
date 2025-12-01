@@ -12,17 +12,41 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
         QMessageBox::information(this, "error", QString::fromStdString(res.error));
         return;
     }
-    writer = std::make_shared<ChatStreamgRPCWorker>(std::move(res.writer), [](const chat::ChatMsg & msg){
-        qDebug("Hello!");
-    });
 
+
+    database = std::make_shared<WorkWithData>();
+
+    writer = std::make_shared<ChatStreamgRPCWorker>(std::move(res.writer), [&](const chat::ChatMsg & msg){
+        if(msg.has_new_chat_msg()) {
+            auto new_chat_msg = msg.new_chat_msg();
+            ChatInfo info{
+                .interlocutor = new_chat_msg.sender(),
+                .chat_id = new_chat_msg.chat_id(),
+                .ab_key = new_chat_msg.ab_for_key(),
+                .g_key = new_chat_msg.g_for_key(),
+                .p_key = new_chat_msg.p_for_key(),
+                .ab_iv = new_chat_msg.ab_for_iv(),
+                .g_iv = new_chat_msg.g_for_iv(),
+                .p_iv = new_chat_msg.p_for_iv(),
+                .alg_index = int(new_chat_msg.alg()),
+                .enc_mode_index = int(new_chat_msg.enc_mode()),
+                .padd_mode_index = int(new_chat_msg.padd_mode()),
+            };
+            auto new_chat_info = database->update_chat_status(info);
+            if(new_chat_info.first) {
+                std::mutex mutex;
+                std::lock_guard<std::mutex> locker(mutex);
+                client->add_chat(writer, new_chat_info.second);
+            }
+        }
+    });
 
 
     contacts_model = std::make_unique<QStringListModel>();
     on_UpdateContactsButton_clicked();
     QObject::connect(ui->ContactsListView, &QListView::doubleClicked, [=](const QModelIndex & index){
         QString text = contacts_model->data(index, Qt::DisplayRole).toString();
-        ContactDialog *contact_dialog = new ContactDialog(text.toStdString(), client, writer, this);
+        ContactDialog *contact_dialog = new ContactDialog(text.toStdString(), client, writer, database, this);
         contact_dialog->setAttribute(Qt::WA_DeleteOnClose);
         contact_dialog->exec();
 
@@ -37,6 +61,7 @@ void MainWindow::Disconnect() {
 
 MainWindow::~MainWindow()
 {
+    Disconnect();
     delete ui;
 }
 

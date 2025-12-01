@@ -11,11 +11,13 @@ add_library(symmetric_algorithms SHARED
     src/serpent.cpp
     include/sp_network.hpp
     src/sp_network.cpp
+    include/enc_utility.hpp
+    src/enc_utility.cpp
 )
 
 target_include_directories(symmetric_algorithms PUBLIC include)
 
-target_link_libraries(symmetric_algorithms
+target_link_libraries(symmetric_algorithms 
     symmetric_interface_library
 )
 

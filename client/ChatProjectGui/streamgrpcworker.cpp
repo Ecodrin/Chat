@@ -3,7 +3,7 @@
 ChatStreamgRPCWorker::ChatStreamgRPCWorker(std::unique_ptr<grpc::ClientReaderWriter<chat::ChatMsg, chat::ChatMsg>> stream, CallBack callback) :
     stream{std::move(stream)},
     callback{callback} {
-
+    start();
 }
 
 ChatStreamgRPCWorker::~ChatStreamgRPCWorker() {

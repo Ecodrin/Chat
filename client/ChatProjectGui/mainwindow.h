@@ -21,6 +21,7 @@
 #include "grpc_client.hpp"
 #include "contactdialog.h"
 
+#include "workwithdata.h"
 #include "streamgrpcworker.h"
 
 namespace Ui {
@@ -53,6 +54,7 @@ private:
     std::unique_ptr<QStringListModel> contacts_model;
 
     std::shared_ptr<ChatStreamgRPCWorker> writer;
+    std::shared_ptr<WorkWithData> database;
 };
 
 

@@ -1,3 +1,5 @@
+find_package(Boost REQUIRED COMPONENTS filesystem random system)
+
 add_library(asymmetric_algorithms SHARED
     include/symbol_service.hpp
     src/symbol_service.cpp

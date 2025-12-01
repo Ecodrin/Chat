@@ -10,9 +10,9 @@ int main() {
     std::cout << d << std::endl;
 
 
-    boost::multiprecision::cpp_int e{"1073780833"};
-        std::cout << boost::multiprecision::msb(e) << std::endl;
-    RSAGenerationKeys generator(PrimalityTestEnum::FermatPrimalityTest, 0.9, 127);
+    // boost::multiprecision::cpp_int e{"1073780833"};
+    //     std::cout << boost::multiprecision::msb(e) << std::endl;
+    // RSAGenerationKeys generator(PrimalityTestEnum::FermatPrimalityTest, 0.9, 127);
     
     // auto keys = generator.generate_bad_keys();
     // std::cout << keys.second.first << " " << boost::multiprecision::msb(keys.second.second)<< std::endl;

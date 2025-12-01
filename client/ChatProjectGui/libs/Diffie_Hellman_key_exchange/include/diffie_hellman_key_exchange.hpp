@@ -10,7 +10,7 @@
 #include "primality_tests.hpp"
 #include "symbol_service.hpp"
 
-namespace diffie_hellman_key_exchange {
+namespace Diffie_Hellman_key_exchange {
 
     // a g p
     std::tuple<boost::multiprecision::cpp_int, boost::multiprecision::cpp_int, boost::multiprecision::cpp_int> get_random_keys(size_t number_p_bits=3072);

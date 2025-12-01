@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"io"
 	"log"
 	"net"
@@ -24,6 +23,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/encoding/protojson"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -162,7 +162,12 @@ func (s *Server) ChatSession(stream pb.Greeter_ChatSessionServer) error {
 				return nil
 			}
 
-			JSONmsg, err := json.Marshal(msg)
+			marshaler := protojson.MarshalOptions{
+				EmitUnpopulated: true,
+				UseProtoNames:   true,
+			}
+
+			JSONmsg, err := marshaler.Marshal(msg)
 			if err != nil {
 				s.logger.Println("json marshal error: ", err)
 				continue

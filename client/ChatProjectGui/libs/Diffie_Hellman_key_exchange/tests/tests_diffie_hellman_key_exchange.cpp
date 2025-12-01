@@ -1,8 +1,8 @@
-#include "diffie_hellman_key_exchange.hpp"
+#include "../include/Diffie_Hellman_key_exchange.hpp"
 
 #include <iostream>
 
-using namespace diffie_hellman_key_exchange;
+using namespace Diffie_Hellman_key_exchange;
 
 int main() {
     auto [a, g, p] = get_random_string_keys(256);

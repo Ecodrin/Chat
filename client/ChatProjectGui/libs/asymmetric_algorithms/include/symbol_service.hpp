@@ -8,8 +8,8 @@
 namespace asymmetric_algorithms {
     class SymbolService {
     public:
-        static boost::multiprecision::cpp_int calculate_legendre_symbol(const boost::multiprecision::cpp_int & a, const boost::multiprecision::cpp_int & p); 
-        static boost::multiprecision::cpp_int calculate_jakobi_symbol(const boost::multiprecision::cpp_int & a, const boost::multiprecision::cpp_int & p);
+        static boost::multiprecision::cpp_int calculate_Legendre_symbol(const boost::multiprecision::cpp_int & a, const boost::multiprecision::cpp_int & p); 
+        static boost::multiprecision::cpp_int calculate_Jakobi_symbol(const boost::multiprecision::cpp_int & a, const boost::multiprecision::cpp_int & p);
         
         static boost::multiprecision::cpp_int 
                     mod_pow(const boost::multiprecision::cpp_int & a, const boost::multiprecision::cpp_int & exp, boost::multiprecision::cpp_int mod);

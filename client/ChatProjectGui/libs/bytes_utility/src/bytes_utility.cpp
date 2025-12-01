@@ -193,4 +193,12 @@ namespace bytes_utility {
         }
         return t;
     }
+
+    std::vector<std::byte> get_bytes_from_string(const std::string & s, size_t block_size) {
+        std::vector<std::byte> res;
+        for(size_t i = 0; i < block_size; ++i) {
+            res.emplace_back(std::byte{s[i]});
+        }
+        return res;
+    }
 }

@@ -33,6 +33,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         newconversationdialog.h newconversationdialog.cpp newconversationdialog.ui
         streamgrpcworker.h streamgrpcworker.cpp
         workwithdata.h workwithdata.cpp
+        utility.h
+        utility.cpp
 
 
 
@@ -68,7 +70,7 @@ target_link_libraries(ChatProject PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     symmetric_interface_library
     symmetric_algorithms
-    diffie_hellman_key_exchange
+    Diffie_Hellman_key_exchange
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

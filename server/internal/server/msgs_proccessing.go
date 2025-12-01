@@ -1,9 +1,11 @@
 package server
 
 import (
-	"encoding/json"
 	"server/internal/database"
 	pb "server/internal/grps_chat"
+	"time"
+
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func (s *Server) MsgsProccessing() error {
@@ -20,9 +22,12 @@ func (s *Server) MsgsProccessing() error {
 		return err
 	}
 
+	unmarshaler := protojson.UnmarshalOptions{
+		DiscardUnknown: true,
+	}
 	for msg := range msgs {
 		var msgH pb.ChatMsg
-		err = json.Unmarshal(msg.Body, &msgH)
+		err = unmarshaler.Unmarshal(msg.Body, &msgH)
 		if err != nil {
 			s.logger.Println("json unmarshal in MsgsProccessing error: ", err)
 			continue
@@ -31,13 +36,13 @@ func (s *Server) MsgsProccessing() error {
 		var sender, recipient string
 		switch msgH.Payload.(type) {
 		case *pb.ChatMsg_NewChatMsg:
-			sender = msgH.GetNewChatMsg().Sender
+			sender = msgH.GetNewChatMsg().GetSender()
 			recipient = msgH.GetNewChatMsg().GetRecipient()
 		case *pb.ChatMsg_FileMsg:
-			sender = msgH.GetFileMsg().Sender
-			recipient = msgH.GetFileMsg().Recipient
+			sender = msgH.GetFileMsg().GetSender()
+			recipient = msgH.GetFileMsg().GetRecipient()
 		case *pb.ChatMsg_DefaultMsg:
-			sender = msgH.GetDefaultMsg().Sender
+			sender = msgH.GetDefaultMsg().GetSender()
 			recipient = msgH.GetDefaultMsg().GetRecipient()
 		default:
 			s.logger.Println("unrecognized type of msg")
@@ -46,13 +51,13 @@ func (s *Server) MsgsProccessing() error {
 
 		_, err := database.GetUserByLogin(s.DB, sender)
 		if err != nil {
-			s.logger.Println("no real user error: ", err)
+			s.logger.Println("no real user sender "+sender+" in MsgsProccessing error: ", err)
 			continue
 		}
 
 		userRecipient, err := database.GetUserByLogin(s.DB, recipient)
 		if err != nil {
-			s.logger.Println("no real user error: ", err)
+			s.logger.Println("no real user recipient "+recipient+" in MsgsProccessing error: ", err)
 			continue
 		}
 
@@ -64,6 +69,7 @@ func (s *Server) MsgsProccessing() error {
 			continue
 		}
 		outputMsg := &msgH
+		s.logger.Println("msg send at", time.Now(), "to ", recipient)
 		err = (*recipientStream).Send(outputMsg)
 		if err != nil {
 			s.logger.Println("send msg in MsgsProccessing error: ", err)

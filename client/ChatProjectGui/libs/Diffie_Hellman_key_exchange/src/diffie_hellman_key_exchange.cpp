@@ -1,7 +1,7 @@
-#include "../include/diffie_hellman_key_exchange.hpp"
+#include "../include/Diffie_Hellman_key_exchange.hpp"
 
 
-namespace diffie_hellman_key_exchange {
+namespace Diffie_Hellman_key_exchange {
     std::tuple<boost::multiprecision::cpp_int, boost::multiprecision::cpp_int, boost::multiprecision::cpp_int> get_random_keys(size_t number_p_bits) {
         // a g p
         boost::multiprecision::cpp_int g = 2;

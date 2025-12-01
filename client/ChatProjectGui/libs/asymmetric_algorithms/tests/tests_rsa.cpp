@@ -77,8 +77,8 @@ void test_convert() {
 }
 
 int main() {   
-    // check_time_tests(check_file_2);
-    test_block();
+    check_time_tests(check_file_2);
+    // test_block();
     // test_convert();
     //     std::byte{0},
     //     std::byte{3},

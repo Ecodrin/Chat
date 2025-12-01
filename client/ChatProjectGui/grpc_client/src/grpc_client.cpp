@@ -20,6 +20,7 @@ std::pair<bool, std::string> GreeterClient::registration(const std::string & log
     grpc::Status status = stub_->Registration(&context, request, &reply);
     if (status.ok()) {
         token = reply.token();
+        this->login = login;
         return {true, ""};
     }
     else {
@@ -46,6 +47,7 @@ std::pair<bool, std::string> GreeterClient::auth(const std::string & login, cons
     grpc::Status status = stub_->Auth(&context, request, &reply);
     if (status.ok()) {
         token = reply.token();
+        this->login = login;
         return {true, ""};
     }
     else {
@@ -62,6 +64,8 @@ std::pair<bool, std::string> GreeterClient::disconnect() {
     grpc::ClientContext context;
     context.AddMetadata("authorization", token);
     grpc::Status status = stub_->Disconnect(&context, request, &response);
+    token = "";
+    login = "";
     if(status.ok()) {
         token = "";
         return {true, ""};
@@ -228,6 +232,26 @@ ChatSessionCallResult GreeterClient::chat_session(grpc::ClientContext *context) 
     }
 
     return ChatSessionCallResult{std::move(msgs_writer), ""};
+}
+
+std::pair<bool, std::string> GreeterClient::add_chat(std::shared_ptr<ChatStreamgRPCWorker> writer, ChatInfo chat_info) const {
+    grpc::ClientContext context;
+    context.AddMetadata("authorization", token);
+    chat::ChatMsg chat_msg;
+    chat::NewChatMsg *new_chat_msg = chat_msg.mutable_new_chat_msg();
+    new_chat_msg->set_chat_id(chat_info.chat_id);
+    new_chat_msg->set_sender(login);
+    new_chat_msg->set_recipient(chat_info.interlocutor);
+    new_chat_msg->set_ab_for_key(chat_info.ab_key);
+    new_chat_msg->set_g_for_key(chat_info.g_key);
+    new_chat_msg->set_p_for_key(chat_info.p_key);
+    new_chat_msg->set_ab_for_iv({chat_info.ab_iv});
+    new_chat_msg->set_g_for_iv(chat_info.g_iv);
+    new_chat_msg->set_p_for_iv(chat_info.p_iv);
+    if(writer->write(chat_msg)) {
+        return {false, "error in send msg"};
+    }
+    return {true, ""};
 }
 
 

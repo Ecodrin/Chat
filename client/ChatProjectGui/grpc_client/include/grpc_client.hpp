@@ -17,7 +17,8 @@
 #include <grpcpp/grpcpp.h>
 #include "../pb/client.pb.h"
 #include "../pb/client.grpc.pb.h"
-
+#include "../../streamgrpcworker.h"
+#include "../../workwithdata.h"
 
 
 using grpc::Channel;
@@ -49,8 +50,11 @@ public:
     std::pair<bool, std::string> add_contact(const std::string & contact) const;
     std::pair<bool, std::string> delete_contact(const std::string & contact) const;
     ChatSessionCallResult chat_session(grpc::ClientContext *context) const;
+
+    std::pair<bool, std::string> add_chat(std::shared_ptr<ChatStreamgRPCWorker> writer, ChatInfo chat_info) const;
 private:
     std::string token;
+    std::string login;
 
     static std::pair<bool, std::string> validate_login_and_password(const std::string & login, const std::string& password);
     static std::pair<bool, std::string> validate_login(const std::string & login);

@@ -33,4 +33,6 @@ namespace bytes_utility {
     void trim_trailing_zeros(std::vector<std::byte>& vec);
 
     std::byte adding_mod2(const std::vector<std::byte> & data, std::vector<size_t> indices);
+
+    std::vector<std::byte> get_bytes_from_string(const std::string & s, size_t block_size);
 }

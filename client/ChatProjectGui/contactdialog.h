@@ -9,6 +9,7 @@
 #include "grpc_client.hpp"
 #include "newconversationdialog.h"
 #include "streamgrpcworker.h"
+#include "workwithdata.h"
 
 namespace Ui {
 class ContactDialog;
@@ -19,7 +20,7 @@ class ContactDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ContactDialog(const std::string & contact, GreeterClient * client, std::shared_ptr<ChatStreamgRPCWorker> writer, QWidget *parent = nullptr);
+    explicit ContactDialog(const std::string & contact, GreeterClient * client, std::shared_ptr<ChatStreamgRPCWorker> writer, std::shared_ptr<WorkWithData> database, QWidget *parent = nullptr);
     ~ContactDialog();
 
 
@@ -34,6 +35,7 @@ private:
     GreeterClient * client;
     Ui::ContactDialog *ui;
     std::shared_ptr<ChatStreamgRPCWorker> writer;
+    std::shared_ptr<WorkWithData> database;
 };
 
 #endif // CONTACTDIALOG_H

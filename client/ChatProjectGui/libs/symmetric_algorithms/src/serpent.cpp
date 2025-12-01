@@ -46,6 +46,10 @@ namespace symmetric_algorithms {
         return block_size;
     }
 
+    size_t Serpent::get_standart_block_size() {
+        return block_size;
+    }
+
     void Serpent::set_key(const std::vector<std::byte> & key) {
         std::vector<std::byte> copy_key(key);
         if (copy_key.size() != 32) {
