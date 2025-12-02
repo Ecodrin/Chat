@@ -65,6 +65,7 @@ public:
     std::pair<bool, ChatInfo> update_chat_status(const ChatInfo & info);
     std::vector<ChatInfo> get_chats();
     bool add_msg(const MsgData & msg_data);
+    std::pair<bool, MsgData> send_msg(const MsgData & msg_data);
     std::vector<MsgData> get_msgs(const std::string & chat_id);
 
 

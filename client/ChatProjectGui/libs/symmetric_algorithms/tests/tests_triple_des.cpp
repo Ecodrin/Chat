@@ -209,7 +209,7 @@ void tests() {
         PaddingModeEnum::ISO10126,
     };
 
-    std::vector<size_t> lengths = {0, 1, 15, 16, 17, 31, 32, 33, 100, 257};
+    std::vector<size_t> lengths = {0, 1, 15, 16, 17, 31, 32, 33, 100, 257, 20000};
 
     int total = 0, passed = 0;
 

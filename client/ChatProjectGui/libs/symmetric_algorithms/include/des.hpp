@@ -162,10 +162,12 @@ namespace symmetric_algorithms {
         DES(const std::vector<std::byte> & key);
         DES();
         size_t get_block_size() override;
-        static size_t get_standart_block_size();
         void set_key(const std::vector<std::byte> & key) override;
         std::vector<std::byte> encryption(const std::vector<std::byte> & encrypted_block) override;
         std::vector<std::byte> decryption(const std::vector<std::byte> & encrypted_block) override;
+
+        
+        static inline size_t standart_key_size = 7;
     };
 
 

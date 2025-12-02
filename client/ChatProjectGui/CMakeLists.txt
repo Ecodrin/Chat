@@ -9,7 +9,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 
 set(TS_FILES ChatProject_ru_RU.ts)
@@ -36,6 +36,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         utility.h
         utility.cpp
         chatwidget.h chatwidget.cpp
+
+
 
 
 
@@ -69,9 +71,11 @@ add_subdirectory(libs)
 target_link_libraries(ChatProject PRIVATE
     grpc_client
     Qt${QT_VERSION_MAJOR}::Widgets
+    Qt6::Core
     symmetric_interface_library
     symmetric_algorithms
     Diffie_Hellman_key_exchange
+    bytes_utility
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

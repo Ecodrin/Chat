@@ -235,9 +235,6 @@ ChatSessionCallResult GreeterClient::chat_session(grpc::ClientContext *context) 
 }
 
 std::pair<bool, std::string> GreeterClient::add_chat(std::shared_ptr<ChatStreamgRPCWorker> writer, ChatInfo chat_info) const {
-    grpc::ClientContext context;
-    context.AddMetadata("authorization", token);
-
     chat::ChatMsg chat_msg;
     chat::NewChatMsg *new_chat_msg = chat_msg.mutable_new_chat_msg();
     new_chat_msg->set_chat_id(chat_info.chat_id);
@@ -249,10 +246,32 @@ std::pair<bool, std::string> GreeterClient::add_chat(std::shared_ptr<ChatStreamg
     new_chat_msg->set_ab_for_iv({chat_info.ab_iv});
     new_chat_msg->set_g_for_iv(chat_info.g_iv);
     new_chat_msg->set_p_for_iv(chat_info.p_iv);
+    new_chat_msg->set_alg(chat_info.alg_index);
+    new_chat_msg->set_enc_mode(chat_info.enc_mode_index);
+    new_chat_msg->set_padd_mode(chat_info.padd_mode_index);
     if(writer->write(chat_msg)) {
         return {false, "error in send msg"};
     }
     return {true, ""};
+}
+
+
+std::pair<bool, std::string> GreeterClient::send_msg(std::shared_ptr<ChatStreamgRPCWorker> writer, MsgData msg_data) const {
+    chat::ChatMsg chat_msg;
+    chat::DefaultChatMsg *msg = chat_msg.mutable_default_msg();
+    msg->set_chat_id(msg_data.chat_id);
+    msg->set_data(msg_data.data);
+    msg->set_sender(msg_data.sender);
+    msg->set_recipient(msg_data.recipient);
+    msg->set_timestamp(msg_data.timestamp);
+    if(writer->write(chat_msg)) {
+        return {false, "error in send msg"};
+    }
+    return {true, ""};
+}
+
+std::string GreeterClient::get_login() const {
+    return login;
 }
 
 

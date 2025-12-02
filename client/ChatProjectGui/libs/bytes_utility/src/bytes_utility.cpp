@@ -194,7 +194,7 @@ namespace bytes_utility {
         return t;
     }
 
-    std::vector<std::byte> get_bytes_from_string(const std::string & s, size_t block_size) {
+    std::vector<std::byte> get_bytes_from_string_numbers(const std::string & s) {
         std::vector<std::byte> res;
         boost::multiprecision::cpp_int block(s);
         while(block > 0) {
@@ -202,7 +202,23 @@ namespace bytes_utility {
             block >>= 8;
         }
         std::reverse(res.begin(), res.end());
-        res.resize(block_size);
         return res;
+    }
+
+    std::vector<std::byte> get_bytes_from_string(const std::string & s) {
+        std::vector<std::byte> res;
+        for(const auto & b : s) {
+            res.emplace_back(std::byte{b});
+        }
+        return res;
+    }
+
+    std::string get_string_from_bytes(const std::vector<std::byte> & bytes) {
+        std::string str;
+        str.reserve(bytes.size());
+        for (auto b : bytes) {
+            str.push_back(static_cast<char>(b));
+        }
+        return str;
     }
 }

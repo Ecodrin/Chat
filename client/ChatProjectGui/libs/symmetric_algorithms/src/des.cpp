@@ -6,9 +6,6 @@ namespace symmetric_algorithms {
     }
 
     
-    size_t DES::get_standart_block_size() {
-        return block_size;    
-    }
 
     void DES::set_key(const std::vector<std::byte> & key) {
         feistel_network.set_key(key);

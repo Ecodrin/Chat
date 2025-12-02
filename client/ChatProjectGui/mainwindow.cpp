@@ -17,41 +17,51 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
     database = std::make_shared<WorkWithData>();
     chats_model = std::make_unique<QStandardItemModel>();
 
+    connect(this, &MainWindow::updateChatSignal, this, &MainWindow::show_chat, Qt::QueuedConnection);
+    connect(this, &MainWindow::updateChatsSignal, this, &MainWindow::update_chats, Qt::QueuedConnection);
+
     writer = std::make_shared<ChatStreamgRPCWorker>(std::move(res.writer), [=](const chat::ChatMsg & msg){
         if(msg.has_new_chat_msg()) {
-            auto new_chat_msg = msg.new_chat_msg();
-            ChatInfo info{
-                .interlocutor = new_chat_msg.sender(),
-                .chat_id = new_chat_msg.chat_id(),
-                .ab_key = new_chat_msg.ab_for_key(),
-                .g_key = new_chat_msg.g_for_key(),
-                .p_key = new_chat_msg.p_for_key(),
-                .ab_iv = new_chat_msg.ab_for_iv(),
-                .g_iv = new_chat_msg.g_for_iv(),
-                .p_iv = new_chat_msg.p_for_iv(),
-                .alg_index = int(new_chat_msg.alg()),
-                .enc_mode_index = int(new_chat_msg.enc_mode()),
-                .padd_mode_index = int(new_chat_msg.padd_mode()),
-            };
-            auto new_chat_info = database->update_chat_status(info);
-            if(new_chat_info.first) {
-                std::mutex mutex;
-                std::lock_guard<std::mutex> locker(mutex);
-                client->add_chat(writer, new_chat_info.second);
-            }
-            update_chats();
+            QtConcurrent::run([this, msg, client](){
+                auto new_chat_msg = msg.new_chat_msg();
+                ChatInfo info{
+                    .interlocutor = new_chat_msg.sender(),
+                    .chat_id = new_chat_msg.chat_id(),
+                    .ab_key = new_chat_msg.ab_for_key(),
+                    .g_key = new_chat_msg.g_for_key(),
+                    .p_key = new_chat_msg.p_for_key(),
+                    .ab_iv = new_chat_msg.ab_for_iv(),
+                    .g_iv = new_chat_msg.g_for_iv(),
+                    .p_iv = new_chat_msg.p_for_iv(),
+                    .alg_index = int(new_chat_msg.alg()),
+                    .enc_mode_index = int(new_chat_msg.enc_mode()),
+                    .padd_mode_index = int(new_chat_msg.padd_mode()),
+                };
+                auto new_chat_info = database->update_chat_status(info);
+                if(new_chat_info.first) {
+                    std::mutex mutex;
+                    std::lock_guard<std::mutex> locker(mutex);
+                    client->add_chat(writer, new_chat_info.second);
+                }
+                emit updateChatsSignal();
+            });
         } else if(msg.has_default_msg()) {
-            auto default_msg = msg.default_msg();
-            MsgData msg_data{
-                .chat_id=default_msg.chat_id(),
-                .is_file=false,
-                .sender=default_msg.sender(),
-                .recipient=default_msg.recipient(),
-                .timestamp=int(default_msg.timestamp())
-            };
-            if(database->add_msg(msg_data)) {
-                // TODO
-            }
+            QtConcurrent::run([this, msg](){
+                auto default_msg = msg.default_msg();
+                MsgData msg_data{
+                    .chat_id=default_msg.chat_id(),
+                    .is_file=false,
+                    .sender=default_msg.sender(),
+                    .recipient=default_msg.recipient(),
+                    .data=default_msg.data(),
+                    .timestamp=int(default_msg.timestamp())
+                };
+                if(database->add_msg(msg_data)) {
+                    if(msg_data.chat_id == current_chat_id) {
+                        emit updateChatSignal();
+                    }
+                }
+            });
         }
     });
 
@@ -77,7 +87,7 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
             std::string chat_id = item->data(Qt::UserRole).toString().toStdString();
             ui->ChatWidgets->clear();
             current_chat_id = chat_id;
-            // TODO
+            emit updateChatSignal();
         }
     });
 }
@@ -140,6 +150,7 @@ void MainWindow::on_AddContactButton_clicked() {
 }
 
 void MainWindow::update_chats() {
+    chats_model->clear();
     auto chats = database->get_chats();
     QStringList list;
     for(auto & chat : chats) {
@@ -154,19 +165,52 @@ void MainWindow::update_chats() {
 
 
 void MainWindow::show_chat() {
-    if(current_chat_id == "") {
+    if(current_chat_id.empty()) {
         return;
     }
+    ui->ChatWidgets->clear();
     auto msgs = database->get_msgs(current_chat_id);
+
     for(const auto & msg : msgs) {
-        QListWidgetItem *item = new QListWidgetItem();
+
+        QListWidgetItem *item = new QListWidgetItem(ui->ChatWidgets);
         item->setData(Qt::UserRole, QString::fromStdString(msg.sender));
         item->setData(Qt::UserRole + 1, QString::fromStdString(msg.data));
-        item->setData(Qt::UserRole + 2, QString::fromStdString(msg.data));
-        item->setData(Qt::UserRole + 3, msg.timestamp);
-        ChatWidget * chat_widget = new ChatWidget(msg.sender, msg.data, msg.data, msg.timestamp);
+        item->setData(Qt::UserRole + 2, msg.timestamp);
+
+        ChatWidget * chat_widget = new ChatWidget(msg.sender, msg.data, msg.data, msg.timestamp, ui->ChatWidgets);
+
+        item->setSizeHint(chat_widget->sizeHint());
+
         ui->ChatWidgets->addItem(item);
         ui->ChatWidgets->setItemWidget(item, chat_widget);
     }
 }
 
+void MainWindow::on_SendMsgButton_clicked() {
+    QtConcurrent::run([&](){
+        QString qtext = ui->LineText->text();
+        std::string text = qtext.toStdString();
+        if(text.size() == 0) {
+            return;
+        }
+        MsgData msg{
+            .chat_id=current_chat_id,
+            .is_file=false,
+            .sender=client->get_login(),
+            .recipient="",
+            .data=text,
+            .timestamp=int(std::time(nullptr)),
+        };
+        auto new_msg = database->send_msg(msg);
+        if(!new_msg.first) {
+            return;
+        }
+        auto t = client->send_msg(writer, new_msg.second);
+        if(!t.first) {
+            return;
+        }
+        emit updateChatSignal();
+        ui->LineText->clear();
+    });
+}

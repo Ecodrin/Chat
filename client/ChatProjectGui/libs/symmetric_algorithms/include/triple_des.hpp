@@ -18,13 +18,14 @@ namespace symmetric_algorithms {
             EDE
         };
 
-        TripleDES(const std::vector<std::byte> & key, TripleDESType triple_des_type = TripleDESType::EDE);
+        TripleDES(const std::vector<std::byte> & key, TripleDESType triple_des_type = TripleDESType::EEE);
         TripleDES() = default;
         size_t get_block_size() override;
-        static size_t get_standart_block_size();
         void set_key(const std::vector<std::byte> & key) override;
         std::vector<std::byte> encryption(const std::vector<std::byte> & encrypted_block) override;
         std::vector<std::byte> decryption(const std::vector<std::byte> & encrypted_block) override;
+
+        static inline size_t standart_key_size = 21;
     
     private:
         TripleDESType triple_des_type;

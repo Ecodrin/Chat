@@ -31,10 +31,6 @@ namespace symmetric_algorithms {
     TripleDES::TripleDES(const std::vector<std::byte> & key, TripleDESType triple_des_type) : triple_des_type{triple_des_type} {
         set_key(key);
     }
-
-    size_t TripleDES::get_standart_block_size() {
-        return block_size;
-    }
     
     void TripleDES::set_key(const std::vector<std::byte> & key) {
         if (key.size() != (block_size - 1) * 3 && key.size() != block_size * 3 ) {

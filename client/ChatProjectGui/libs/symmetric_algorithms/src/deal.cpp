@@ -90,10 +90,6 @@ namespace symmetric_algorithms {
 
     }
 
-    size_t DEAL::get_standart_block_size() {
-        return block_size;
-    }
-
     size_t DEAL::get_number_rounds(size_t key_size) {
         size_t number_rounds;
         switch (key_size)
@@ -112,10 +108,16 @@ namespace symmetric_algorithms {
     }
 
     std::vector<std::byte> DEAL::encryption(const std::vector<std::byte> & encrypted_block) {
+        if(encrypted_block.size() != block_size) {
+            throw std::invalid_argument("incorrect block size");
+        }
         return feistel_network.encryption(encrypted_block);
     }
     
     std::vector<std::byte> DEAL::decryption(const std::vector<std::byte> & encrypted_block) {
+        if(encrypted_block.size() != block_size) {
+            throw std::invalid_argument("incorrect block size");
+        }
         return feistel_network.decryption(encrypted_block);
     }
 

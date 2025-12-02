@@ -8,6 +8,8 @@
 #include <QListWidgetItem>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QtConcurrent/qtconcurrentrun.h>
+#include <QThreadPool>
 #include <QVBoxLayout>
 #include <QMainWindow>
 #include <QScreen>
@@ -18,6 +20,7 @@
 #include <QListView>
 
 #include <memory>
+#include <ctime>
 #include <thread>
 
 #include "grpc_client.hpp"
@@ -48,11 +51,15 @@ private slots:
     void on_DisconnectButton_clicked();
     void on_UpdateContactsButton_clicked();
     void on_AddContactButton_clicked();
+    void on_SendMsgButton_clicked();
 
 signals:
     void requestBack();
+    void updateChatSignal();
+    void updateChatsSignal();
 
 private:
+    std::mutex mutex;
     grpc::ClientContext clientcontext_chat_session;
     std::string current_chat_id = "";
 

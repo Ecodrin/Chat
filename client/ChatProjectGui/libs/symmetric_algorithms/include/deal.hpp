@@ -38,9 +38,11 @@ namespace symmetric_algorithms {
         DEAL(const std::vector<std::byte> & key, std::shared_ptr<symmetric_interface_library::InterfaceEncryption> deal_feistel_function, std::shared_ptr<symmetric_interface_library::InterfaceGenerationRoundKeys> deal_generation_round_keys);
         DEAL(const std::vector<std::byte> & key);
         size_t get_block_size() override;
-        static size_t get_standart_block_size();
         void set_key(const std::vector<std::byte> & key) override;
         std::vector<std::byte> encryption(const std::vector<std::byte> & encrypted_block) override;
         std::vector<std::byte> decryption(const std::vector<std::byte> & encrypted_block) override;
+
+
+        static inline size_t standart_key_size = 32;
     };
 }

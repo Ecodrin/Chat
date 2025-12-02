@@ -36,5 +36,7 @@ namespace bytes_utility {
 
     std::byte adding_mod2(const std::vector<std::byte> & data, std::vector<size_t> indices);
 
-    std::vector<std::byte> get_bytes_from_string(const std::string & s, size_t block_size);
+    std::vector<std::byte> get_bytes_from_string_numbers(const std::string & s);
+    std::vector<std::byte> get_bytes_from_string(const std::string & s);
+    std::string get_string_from_bytes(const std::vector<std::byte> & bytes);
 }

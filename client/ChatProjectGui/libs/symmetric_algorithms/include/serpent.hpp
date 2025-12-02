@@ -158,11 +158,13 @@ namespace symmetric_algorithms {
         static std::vector<std::byte> inverse_p_layer(const std::vector<std::byte> & block);
     public:
         size_t get_block_size() override;
-        static size_t get_standart_block_size();
         void set_key(const std::vector<std::byte> & key) override;
         Serpent(const std::vector<std::byte> & key);
 
         std::vector<std::byte> encryption(const std::vector<std::byte> & encrypted_block) override;
         std::vector<std::byte> decryption(const std::vector<std::byte> & encrypted_block) override;
+
+
+        static inline size_t standart_key_size = 32;
     };
 }

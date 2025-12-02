@@ -17,16 +17,16 @@ namespace symmetric_algorithms {
         }
     }
 
-    size_t get_alg_block_size(const SymmetricAlgorithmsEnum &alg_enum) {
+    size_t get_alg_key_size(const SymmetricAlgorithmsEnum &alg_enum) {
         switch (alg_enum) {
         case SymmetricAlgorithmsEnum::DES:
-            return DES::get_standart_block_size();
+            return DES::standart_key_size;
         case SymmetricAlgorithmsEnum::TripleDES:
-            return TripleDES::get_standart_block_size();
+            return TripleDES::standart_key_size;
         case SymmetricAlgorithmsEnum::DEAL:
-            return DEAL::get_standart_block_size();
+            return DEAL::standart_key_size;
         case SymmetricAlgorithmsEnum::Serpent:
-            return Serpent::get_standart_block_size();
+            return Serpent::standart_key_size;
         default:
             throw std::invalid_argument("incorrect alg");
         }
