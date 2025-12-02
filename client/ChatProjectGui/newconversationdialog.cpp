@@ -29,10 +29,8 @@ void NewConversationDialog::on_CreateChatButton_clicked() {
         this->close();
         return;
     }
-    std::cout << "create chat button clicked\n";
     ChatInfo chat_info = database->add_chat(alg_index, enc_mode_index, enc_padding_index, contact);
     auto [error, error_string] = client->add_chat(writer, chat_info);
-    std::cout << "after " << error << error_string << std::endl;
     if (!error) {
         QMessageBox::information(this, "error", QString::fromStdString(error_string));
         this->close();

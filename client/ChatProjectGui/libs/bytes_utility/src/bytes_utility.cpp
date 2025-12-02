@@ -196,9 +196,13 @@ namespace bytes_utility {
 
     std::vector<std::byte> get_bytes_from_string(const std::string & s, size_t block_size) {
         std::vector<std::byte> res;
-        for(size_t i = 0; i < block_size; ++i) {
-            res.emplace_back(std::byte{s[i]});
+        boost::multiprecision::cpp_int block(s);
+        while(block > 0) {
+            res.push_back(std::byte{(block & 0xFF).convert_to<std::byte>()});
+            block >>= 8;
         }
+        std::reverse(res.begin(), res.end());
+        res.resize(block_size);
         return res;
     }
 }

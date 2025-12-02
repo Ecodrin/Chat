@@ -1,3 +1,6 @@
+find_package(Boost REQUIRED COMPONENTS filesystem random system)
+
+
 add_library(bytes_utility SHARED
     include/bytes_utility.hpp
     src/bytes_utility.cpp

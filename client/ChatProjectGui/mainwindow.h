@@ -37,6 +37,8 @@ public:
     ~MainWindow();
     void Disconnect();
 
+    void update_chats();
+
 private slots:
     void on_DisconnectButton_clicked();
     void on_UpdateContactsButton_clicked();
@@ -52,6 +54,7 @@ private:
     QWidget * parent = nullptr;
     Ui::MainWindow *ui;
     std::unique_ptr<QStringListModel> contacts_model;
+    std::unique_ptr<QStringListModel> chats_model;
 
     std::shared_ptr<ChatStreamgRPCWorker> writer;
     std::shared_ptr<WorkWithData> database;

@@ -95,8 +95,8 @@ std::pair<bool, ChatInfo> WorkWithData::update_chat_status(const ChatInfo & info
         chat_info.iv_info.g, chat_info.iv_info.p
     });
     chat_info.iv_info.key = bytes_utility::get_bytes_from_string(string_key, block_size);
-    std::cout << "Key: " << string_key << std::endl;
-    std::cout << "IV: " << string_iv << std::endl;
+    // std::cout << "Key: " << string_key << std::endl;
+    // std::cout << "IV: " << string_iv << std::endl;
     chat_info.symmetric_context = std::make_shared<symmetric_interface_library::SymmetricContext>(
         symmetric_algorithms::get_alg(static_cast<symmetric_algorithms::SymmetricAlgorithmsEnum>(info.alg_index), chat_info.iv_info.key),
         chat_info.iv_info.key,

@@ -237,6 +237,7 @@ ChatSessionCallResult GreeterClient::chat_session(grpc::ClientContext *context) 
 std::pair<bool, std::string> GreeterClient::add_chat(std::shared_ptr<ChatStreamgRPCWorker> writer, ChatInfo chat_info) const {
     grpc::ClientContext context;
     context.AddMetadata("authorization", token);
+
     chat::ChatMsg chat_msg;
     chat::NewChatMsg *new_chat_msg = chat_msg.mutable_new_chat_msg();
     new_chat_msg->set_chat_id(chat_info.chat_id);

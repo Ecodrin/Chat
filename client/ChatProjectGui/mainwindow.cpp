@@ -15,8 +15,9 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
 
 
     database = std::make_shared<WorkWithData>();
+    chats_model = std::make_unique<QStringListModel>();
 
-    writer = std::make_shared<ChatStreamgRPCWorker>(std::move(res.writer), [&](const chat::ChatMsg & msg){
+    writer = std::make_shared<ChatStreamgRPCWorker>(std::move(res.writer), [=](const chat::ChatMsg & msg){
         if(msg.has_new_chat_msg()) {
             auto new_chat_msg = msg.new_chat_msg();
             ChatInfo info{
@@ -38,6 +39,7 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
                 std::lock_guard<std::mutex> locker(mutex);
                 client->add_chat(writer, new_chat_info.second);
             }
+            update_chats();
         }
     });
 
@@ -53,6 +55,7 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
         on_UpdateContactsButton_clicked();
     });
     on_UpdateContactsButton_clicked();
+    update_chats();
 }
 
 void MainWindow::Disconnect() {
@@ -110,5 +113,16 @@ void MainWindow::on_AddContactButton_clicked() {
     }
     on_UpdateContactsButton_clicked();
     ui->LineContactEdit->clear();
+}
+
+void MainWindow::update_chats() {
+    auto chats = database->get_chats();
+    QStringList list;
+    for(auto & chat : chats) {
+        QString chat_str = QString::fromStdString(chat);
+        list << chat_str;
+    }
+    chats_model->setStringList(list);
+    ui->ChatSListView->setModel(chats_model.get());
 }
 

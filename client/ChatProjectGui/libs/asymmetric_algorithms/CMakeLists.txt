@@ -14,7 +14,7 @@ add_library(asymmetric_algorithms SHARED
 
 
 target_link_libraries(asymmetric_algorithms 
-    Boost::random 
+    Boost::random
     Boost::system
     bytes_utility
 )

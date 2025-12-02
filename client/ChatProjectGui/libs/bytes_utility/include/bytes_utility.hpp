@@ -6,6 +6,8 @@
 #include <random>
 #include <algorithm>
 
+#include <boost/multiprecision/cpp_int.hpp>
+
 namespace bytes_utility {
     enum class PermutationsOrderRule {
         ForwardOrderZeroIndex,
