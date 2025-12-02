@@ -15,7 +15,7 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
 
 
     database = std::make_shared<WorkWithData>();
-    chats_model = std::make_unique<QStringListModel>();
+    chats_model = std::make_unique<QStandardItemModel>();
 
     writer = std::make_shared<ChatStreamgRPCWorker>(std::move(res.writer), [=](const chat::ChatMsg & msg){
         if(msg.has_new_chat_msg()) {
@@ -40,6 +40,18 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
                 client->add_chat(writer, new_chat_info.second);
             }
             update_chats();
+        } else if(msg.has_default_msg()) {
+            auto default_msg = msg.default_msg();
+            MsgData msg_data{
+                .chat_id=default_msg.chat_id(),
+                .is_file=false,
+                .sender=default_msg.sender(),
+                .recipient=default_msg.recipient(),
+                .timestamp=int(default_msg.timestamp())
+            };
+            if(database->add_msg(msg_data)) {
+                // TODO
+            }
         }
     });
 
@@ -56,6 +68,18 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
     });
     on_UpdateContactsButton_clicked();
     update_chats();
+
+
+    QObject::connect(ui->ChatsListView, &QListView::doubleClicked, [=](const QModelIndex & index){
+        QStandardItem *item = chats_model->itemFromIndex(index);
+        if(item) {
+            std::string interlocutor = item->text().toStdString();
+            std::string chat_id = item->data(Qt::UserRole).toString().toStdString();
+            ui->ChatWidgets->clear();
+            current_chat_id = chat_id;
+            // TODO
+        }
+    });
 }
 
 void MainWindow::Disconnect() {
@@ -119,10 +143,30 @@ void MainWindow::update_chats() {
     auto chats = database->get_chats();
     QStringList list;
     for(auto & chat : chats) {
-        QString chat_str = QString::fromStdString(chat);
-        list << chat_str;
+        QString chat_str = QString::fromStdString(chat.interlocutor);
+        QString chat_id_str = QString::fromStdString(chat.chat_id);
+        QStandardItem * item = new QStandardItem(chat_str);
+        item->setData(chat_id_str, Qt::UserRole);
+        chats_model->appendRow(item);
     }
-    chats_model->setStringList(list);
-    ui->ChatSListView->setModel(chats_model.get());
+    ui->ChatsListView->setModel(chats_model.get());
+}
+
+
+void MainWindow::show_chat() {
+    if(current_chat_id == "") {
+        return;
+    }
+    auto msgs = database->get_msgs(current_chat_id);
+    for(const auto & msg : msgs) {
+        QListWidgetItem *item = new QListWidgetItem();
+        item->setData(Qt::UserRole, QString::fromStdString(msg.sender));
+        item->setData(Qt::UserRole + 1, QString::fromStdString(msg.data));
+        item->setData(Qt::UserRole + 2, QString::fromStdString(msg.data));
+        item->setData(Qt::UserRole + 3, msg.timestamp);
+        ChatWidget * chat_widget = new ChatWidget(msg.sender, msg.data, msg.data, msg.timestamp);
+        ui->ChatWidgets->addItem(item);
+        ui->ChatWidgets->setItemWidget(item, chat_widget);
+    }
 }
 

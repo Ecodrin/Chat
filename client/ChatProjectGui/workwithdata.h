@@ -34,6 +34,15 @@ struct  ChatData {
     int status;
 };
 
+struct MsgData {
+    std::string chat_id;
+    bool is_file;
+    std::string sender;
+    std::string recipient;
+    std::string data;
+    int timestamp;
+};
+
 struct ChatInfo {
     std::string interlocutor;
     std::string chat_id;
@@ -54,12 +63,15 @@ public:
 
     ChatInfo add_chat(int alg, int enc_mode, int padd_mode, const std::string & interlocutor, const std::string & chat_id = "-1");
     std::pair<bool, ChatInfo> update_chat_status(const ChatInfo & info);
-    std::vector<std::string> get_chats();
+    std::vector<ChatInfo> get_chats();
+    bool add_msg(const MsgData & msg_data);
+    std::vector<MsgData> get_msgs(const std::string & chat_id);
+
 
 private:
     // потом переписать на бд
     std::mutex mutex;
-    std::unordered_map<std::string, std::pair<ChatData, std::vector<std::string>>> data;
+    std::unordered_map<std::string, std::pair<ChatData, std::vector<MsgData>>> data;
 
 };
 

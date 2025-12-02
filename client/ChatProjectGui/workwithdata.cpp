@@ -123,13 +123,38 @@ std::pair<bool, ChatInfo> WorkWithData::update_chat_status(const ChatInfo & info
     return {true, return_info};
 }
 
-std::vector<std::string> WorkWithData::get_chats() {
+std::vector<ChatInfo> WorkWithData::get_chats() {
     std::lock_guard<std::mutex> locker(mutex);
-    std::vector<std::string> chats;
+    std::vector<ChatInfo> chats;
     for(const auto & chat : data) {
-        chats.push_back(chat.second.first.interlocutor);
+        auto chat_info = chat.second.first;
+        ChatInfo info {
+            .interlocutor=chat_info.interlocutor,
+            .chat_id=chat_info.chat_id,
+            // остальная информация там не нужна
+        };
+        chats.push_back(info);
     }
     return chats;
+}
+
+bool WorkWithData::add_msg(const MsgData & msg_data) {
+    std::lock_guard<std::mutex> locker(mutex);
+    if(data.find(msg_data.chat_id) == data.end()) {
+        return false;
+    }
+    data[msg_data.chat_id].second.push_back(msg_data);
+    return true;
+}
+
+
+std::vector<MsgData> WorkWithData::get_msgs(const std::string & chat_id) {
+    std::lock_guard<std::mutex> locker(mutex);
+    if(data.find(chat_id) == data.end()) {
+        return {};
+    }
+    std::vector<MsgData> res(data[chat_id].second);
+    return res;
 }
 
 

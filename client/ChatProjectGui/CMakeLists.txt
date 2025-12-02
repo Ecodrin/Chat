@@ -35,6 +35,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         workwithdata.h workwithdata.cpp
         utility.h
         utility.cpp
+        chatwidget.h chatwidget.cpp
 
 
 

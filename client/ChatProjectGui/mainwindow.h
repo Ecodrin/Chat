@@ -14,6 +14,8 @@
 #include <QLineEdit>
 #include <QRect>
 #include <QStringListModel>
+#include <QStandardItemModel>
+#include <QListView>
 
 #include <memory>
 #include <thread>
@@ -23,6 +25,8 @@
 
 #include "workwithdata.h"
 #include "streamgrpcworker.h"
+
+#include "chatwidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -38,6 +42,7 @@ public:
     void Disconnect();
 
     void update_chats();
+    void show_chat();
 
 private slots:
     void on_DisconnectButton_clicked();
@@ -49,12 +54,14 @@ signals:
 
 private:
     grpc::ClientContext clientcontext_chat_session;
+    std::string current_chat_id = "";
 
     GreeterClient * client;
     QWidget * parent = nullptr;
     Ui::MainWindow *ui;
     std::unique_ptr<QStringListModel> contacts_model;
-    std::unique_ptr<QStringListModel> chats_model;
+    std::unique_ptr<QStandardItemModel> chats_model;
+
 
     std::shared_ptr<ChatStreamgRPCWorker> writer;
     std::shared_ptr<WorkWithData> database;
