@@ -134,7 +134,6 @@ namespace symmetric_algorithms {
 
     class DES : public symmetric_interface_library::InterfaceSymmetricAlgorithm {
     private:
-        static inline size_t block_size = 8;
         FeistelNetwork feistel_network;
         static inline std::vector<size_t> IP_BLOCK = {
             58, 50, 42, 34, 26, 18, 10, 2,
@@ -168,6 +167,7 @@ namespace symmetric_algorithms {
 
         
         static inline size_t standart_key_size = 7;
+        static inline size_t block_size = 8;
     };
 
 

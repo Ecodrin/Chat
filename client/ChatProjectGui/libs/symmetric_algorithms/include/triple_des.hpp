@@ -8,7 +8,6 @@
 namespace symmetric_algorithms {
     class TripleDES : public symmetric_interface_library::InterfaceSymmetricAlgorithm {
     private:
-        static inline size_t block_size = 8;
         DES alg1;
         DES alg2;
         DES alg3;
@@ -26,6 +25,7 @@ namespace symmetric_algorithms {
         std::vector<std::byte> decryption(const std::vector<std::byte> & encrypted_block) override;
 
         static inline size_t standart_key_size = 21;
+        static inline size_t block_size = 8;
     
     private:
         TripleDESType triple_des_type;

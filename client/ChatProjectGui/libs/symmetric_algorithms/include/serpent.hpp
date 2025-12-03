@@ -32,7 +32,6 @@ namespace symmetric_algorithms {
 
     class Serpent : public symmetric_interface_library::InterfaceSymmetricAlgorithm {
     private:
-        static inline size_t block_size = 16;
         SPNetwork sp_network;
         
 
@@ -166,5 +165,6 @@ namespace symmetric_algorithms {
 
 
         static inline size_t standart_key_size = 32;
+        static inline size_t block_size = 16;
     };
 }

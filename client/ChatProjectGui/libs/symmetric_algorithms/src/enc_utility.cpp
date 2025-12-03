@@ -31,4 +31,19 @@ namespace symmetric_algorithms {
             throw std::invalid_argument("incorrect alg");
         }
     }
+
+    size_t get_alg_block_size(const SymmetricAlgorithmsEnum &alg_enum) {
+        switch (alg_enum) {
+        case SymmetricAlgorithmsEnum::DES:
+            return DES::block_size;
+        case SymmetricAlgorithmsEnum::TripleDES:
+            return TripleDES::block_size;
+        case SymmetricAlgorithmsEnum::DEAL:
+            return DEAL::block_size;
+        case SymmetricAlgorithmsEnum::Serpent:
+            return Serpent::block_size;
+        default:
+            throw std::invalid_argument("incorrect alg");
+        }
+    }
 }

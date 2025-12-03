@@ -30,7 +30,6 @@ namespace symmetric_algorithms {
 
     class DEAL : public symmetric_interface_library::InterfaceSymmetricAlgorithm {
     private:
-        static inline size_t block_size = 16;
         FeistelNetwork feistel_network;
         static size_t get_number_rounds(size_t keys_size_t);
 
@@ -44,5 +43,6 @@ namespace symmetric_algorithms {
 
 
         static inline size_t standart_key_size = 32;
+        static inline size_t block_size = 16;
     };
 }

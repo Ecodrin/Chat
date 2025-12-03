@@ -51,7 +51,6 @@ ChatInfo WorkWithData::add_chat(int alg, int enc_mode, int padd_mode, const std:
 }
 
 std::pair<bool, ChatInfo> WorkWithData::update_chat_status(const ChatInfo & info) {
-    std::cout << "update_chat_status: " << info.alg_index << " " << info.enc_mode_index << " " << info.padd_mode_index << std::endl;
     std::unique_lock<std::mutex> locker(mutex);
     if (data.find(info.chat_id) == data.end()) {
         ChatData chat_data{
@@ -86,6 +85,7 @@ std::pair<bool, ChatInfo> WorkWithData::update_chat_status(const ChatInfo & info
     }
 
     size_t key_size = symmetric_algorithms::get_alg_key_size(static_cast<symmetric_algorithms::SymmetricAlgorithmsEnum>(info.alg_index));
+    size_t block_size = symmetric_algorithms::get_alg_block_size(static_cast<symmetric_algorithms::SymmetricAlgorithmsEnum>(info.alg_index));
     std::string string_key = Diffie_Hellman_key_exchange::get_key_string({
         info.ab_key, chat_info.key_info.ab,
         chat_info.key_info.g, chat_info.key_info.p
@@ -100,12 +100,11 @@ std::pair<bool, ChatInfo> WorkWithData::update_chat_status(const ChatInfo & info
     });
 
     t = bytes_utility::get_bytes_from_string_numbers(string_iv);
-    t.resize(key_size);
+    t.resize(block_size);
     chat_info.iv_info.key = t;
-    std::cout << chat_info.enc_mode_index <<  " " << chat_info.padd_mode_index << std::endl;
     chat_info.symmetric_context = std::make_shared<symmetric_interface_library::SymmetricContext>(
-        symmetric_algorithms::get_alg(static_cast<symmetric_algorithms::SymmetricAlgorithmsEnum>(info.alg_index), chat_info.iv_info.key),
-        chat_info.iv_info.key,
+        symmetric_algorithms::get_alg(static_cast<symmetric_algorithms::SymmetricAlgorithmsEnum>(info.alg_index), chat_info.key_info.key),
+        chat_info.key_info.key,
         static_cast<symmetric_interface_library::EncryptionModeEnum>(chat_info.enc_mode_index),
         static_cast<symmetric_interface_library::PaddingModeEnum>(chat_info.padd_mode_index),
         chat_info.iv_info.key
@@ -154,11 +153,7 @@ bool WorkWithData::add_msg(const MsgData & msg_data) {
     }
     auto & chat = data[msg_data.chat_id].first;
     std::vector<std::byte> decr;
-    std::cout << "before decr: " << msg_data.data << std::endl;
     chat.symmetric_context->decryption(bytes_utility::get_bytes_from_string(msg_data.data), decr).get();
-    std::cout << "from decr: " << bytes_utility::get_string_from_bytes(decr) << std::endl;
-    bytes_utility::print_bytes_vector(std::cout, decr);
-    std::cout << std::endl;
     MsgData new_msg_data{
         .chat_id=msg_data.chat_id,
         .is_file=msg_data.is_file,
@@ -180,7 +175,6 @@ std::pair<bool, MsgData> WorkWithData::send_msg(const MsgData & msg_data) {
     auto & chat = data[msg_data.chat_id].first;
     std::vector<std::byte> encr;
     chat.symmetric_context->encryption(bytes_utility::get_bytes_from_string(msg_data.data), encr).get();
-    std::cout << "to enc: " << bytes_utility::get_string_from_bytes(encr) << std::endl;
     MsgData new_msg_data{
         .chat_id=msg_data.chat_id,
         .is_file=msg_data.is_file,

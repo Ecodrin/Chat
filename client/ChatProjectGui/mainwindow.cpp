@@ -188,7 +188,7 @@ void MainWindow::show_chat() {
 }
 
 void MainWindow::on_SendMsgButton_clicked() {
-    QtConcurrent::run([&](){
+    QtConcurrent::run([this](){
         QString qtext = ui->LineText->text();
         std::string text = qtext.toStdString();
         if(text.size() == 0) {
