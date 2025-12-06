@@ -270,6 +270,24 @@ std::pair<bool, std::string> GreeterClient::send_msg(std::shared_ptr<ChatStreamg
     return {true, ""};
 }
 
+
+std::pair<bool, std::string> GreeterClient::send_file(std::shared_ptr<ChatStreamgRPCWorker> writer, FileData msg_data) const {
+    chat::ChatMsg chat_msg;
+    chat::FileMsg *msg = chat_msg.mutable_file_msg();
+    msg->set_chat_id(msg_data.chat_id);
+    msg->set_data(msg_data.data);
+    msg->set_sender(msg_data.sender);
+    msg->set_recipient(msg_data.recipient);
+    msg->set_timestamp(msg_data.timestamp);
+    msg->set_file_name(msg_data.file_name);
+    msg->set_index_file_chunk(msg_data.index_file_chunk);
+    msg->set_total_file_chunk(msg_data.total_file_chunk);
+    if(writer->write(chat_msg)) {
+        return {false, "error in send msg"};
+    }
+    return {true, ""};
+}
+
 std::string GreeterClient::get_login() const {
     return login;
 }

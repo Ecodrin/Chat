@@ -32,10 +32,8 @@ int main(int argc, char *argv[])
     RegistrationWindow window(&greeter);
     window.show();
     QObject::connect(qApp, &QCoreApplication::destroyed, [&window, &greeter]() {
-        // добавить сохранение состояния в бд
-        // if(window.main_window != nullptr) {
-        //     window.main_window->Disconnect();
-        // }
+        qDebug("11111");
+        // сохранение бд
     });
     return a.exec();
 }

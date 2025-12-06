@@ -188,6 +188,7 @@ PROTOBUF_CONSTEXPR FileMsg::FileMsg(
     /*decltype(_impl_.chat_id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.sender_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.recipient_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.file_name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.data_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.index_file_chunk_)*/int64_t{0}
   , /*decltype(_impl_.total_file_chunk_)*/int64_t{0}
@@ -327,6 +328,7 @@ const uint32_t TableStruct_client_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::chat::FileMsg, _impl_.chat_id_),
   PROTOBUF_FIELD_OFFSET(::chat::FileMsg, _impl_.sender_),
   PROTOBUF_FIELD_OFFSET(::chat::FileMsg, _impl_.recipient_),
+  PROTOBUF_FIELD_OFFSET(::chat::FileMsg, _impl_.file_name_),
   PROTOBUF_FIELD_OFFSET(::chat::FileMsg, _impl_.index_file_chunk_),
   PROTOBUF_FIELD_OFFSET(::chat::FileMsg, _impl_.total_file_chunk_),
   PROTOBUF_FIELD_OFFSET(::chat::FileMsg, _impl_.data_),
@@ -355,7 +357,7 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 66, -1, -1, sizeof(::chat::NewChatMsg)},
   { 85, -1, -1, sizeof(::chat::DefaultChatMsg)},
   { 96, -1, -1, sizeof(::chat::FileMsg)},
-  { 109, -1, -1, sizeof(::chat::ChatMsg)},
+  { 110, -1, -1, sizeof(::chat::ChatMsg)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -394,33 +396,34 @@ const char descriptor_table_protodef_client_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "\001(\t\022\016\n\006status\030\r \001(\003\"e\n\016DefaultChatMsg\022\017\n"
   "\007chat_id\030\001 \001(\t\022\016\n\006sender\030\002 \001(\t\022\021\n\trecipi"
   "ent\030\003 \001(\t\022\014\n\004data\030\004 \001(\014\022\021\n\ttimestamp\030\005 \001"
-  "(\003\"\222\001\n\007FileMsg\022\017\n\007chat_id\030\001 \001(\t\022\016\n\006sende"
-  "r\030\002 \001(\t\022\021\n\trecipient\030\003 \001(\t\022\030\n\020index_file"
-  "_chunk\030\004 \001(\003\022\030\n\020total_file_chunk\030\005 \001(\003\022\014"
-  "\n\004data\030\006 \001(\014\022\021\n\ttimestamp\030\007 \001(\003\"\216\001\n\007Chat"
-  "Msg\022(\n\014new_chat_msg\030\001 \001(\0132\020.chat.NewChat"
-  "MsgH\000\022!\n\010file_msg\030\002 \001(\0132\r.chat.FileMsgH\000"
-  "\022+\n\013default_msg\030\003 \001(\0132\024.chat.DefaultChat"
-  "MsgH\000B\t\n\007payload2\311\004\n\007Greeter\022O\n\014Registra"
-  "tion\022\031.chat.RegistrationRequest\032$.chat.S"
-  "tatusRegistrationAuthResponse\022\?\n\004Auth\022\021."
-  "chat.AuthRequest\032$.chat.StatusRegistrati"
-  "onAuthResponse\022;\n\nAddContact\022\027.chat.NewC"
-  "ontactRequest\032\024.chat.StatusResponse\0228\n\013G"
-  "etContacts\022\016.chat.EmptyMsg\032\031.chat.GetCon"
-  "tactsResponse\022A\n\rDeleteContact\022\032.chat.De"
-  "leteContactRequest\032\024.chat.StatusResponse"
-  "\0222\n\nDisconnect\022\016.chat.EmptyMsg\032\024.chat.St"
-  "atusResponse\022E\n\024AcceptRequestContact\022\027.c"
-  "hat.NewContactRequest\032\024.chat.StatusRespo"
-  "nse\022F\n\025DeclineRequestContact\022\027.chat.NewC"
-  "ontactRequest\032\024.chat.StatusResponse\022/\n\013C"
-  "hatSession\022\r.chat.ChatMsg\032\r.chat.ChatMsg"
-  "(\0010\001B\026Z\024./internal/grps_chatb\006proto3"
+  "(\003\"\245\001\n\007FileMsg\022\017\n\007chat_id\030\001 \001(\t\022\016\n\006sende"
+  "r\030\002 \001(\t\022\021\n\trecipient\030\003 \001(\t\022\021\n\tfile_name\030"
+  "\004 \001(\t\022\030\n\020index_file_chunk\030\005 \001(\003\022\030\n\020total"
+  "_file_chunk\030\006 \001(\003\022\014\n\004data\030\007 \001(\014\022\021\n\ttimes"
+  "tamp\030\010 \001(\003\"\216\001\n\007ChatMsg\022(\n\014new_chat_msg\030\001"
+  " \001(\0132\020.chat.NewChatMsgH\000\022!\n\010file_msg\030\002 \001"
+  "(\0132\r.chat.FileMsgH\000\022+\n\013default_msg\030\003 \001(\013"
+  "2\024.chat.DefaultChatMsgH\000B\t\n\007payload2\311\004\n\007"
+  "Greeter\022O\n\014Registration\022\031.chat.Registrat"
+  "ionRequest\032$.chat.StatusRegistrationAuth"
+  "Response\022\?\n\004Auth\022\021.chat.AuthRequest\032$.ch"
+  "at.StatusRegistrationAuthResponse\022;\n\nAdd"
+  "Contact\022\027.chat.NewContactRequest\032\024.chat."
+  "StatusResponse\0228\n\013GetContacts\022\016.chat.Emp"
+  "tyMsg\032\031.chat.GetContactsResponse\022A\n\rDele"
+  "teContact\022\032.chat.DeleteContactRequest\032\024."
+  "chat.StatusResponse\0222\n\nDisconnect\022\016.chat"
+  ".EmptyMsg\032\024.chat.StatusResponse\022E\n\024Accep"
+  "tRequestContact\022\027.chat.NewContactRequest"
+  "\032\024.chat.StatusResponse\022F\n\025DeclineRequest"
+  "Contact\022\027.chat.NewContactRequest\032\024.chat."
+  "StatusResponse\022/\n\013ChatSession\022\r.chat.Cha"
+  "tMsg\032\r.chat.ChatMsg(\0010\001B\026Z\024./internal/gr"
+  "ps_chatb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_client_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_client_2eproto = {
-    false, false, 1676, descriptor_table_protodef_client_2eproto,
+    false, false, 1695, descriptor_table_protodef_client_2eproto,
     "client.proto",
     &descriptor_table_client_2eproto_once, nullptr, 0, 13,
     schemas, file_default_instances, TableStruct_client_2eproto::offsets,
@@ -3335,6 +3338,7 @@ FileMsg::FileMsg(const FileMsg& from)
       decltype(_impl_.chat_id_){}
     , decltype(_impl_.sender_){}
     , decltype(_impl_.recipient_){}
+    , decltype(_impl_.file_name_){}
     , decltype(_impl_.data_){}
     , decltype(_impl_.index_file_chunk_){}
     , decltype(_impl_.total_file_chunk_){}
@@ -3366,6 +3370,14 @@ FileMsg::FileMsg(const FileMsg& from)
     _this->_impl_.recipient_.Set(from._internal_recipient(), 
       _this->GetArenaForAllocation());
   }
+  _impl_.file_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.file_name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_file_name().empty()) {
+    _this->_impl_.file_name_.Set(from._internal_file_name(), 
+      _this->GetArenaForAllocation());
+  }
   _impl_.data_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.data_.Set("", GetArenaForAllocation());
@@ -3388,6 +3400,7 @@ inline void FileMsg::SharedCtor(
       decltype(_impl_.chat_id_){}
     , decltype(_impl_.sender_){}
     , decltype(_impl_.recipient_){}
+    , decltype(_impl_.file_name_){}
     , decltype(_impl_.data_){}
     , decltype(_impl_.index_file_chunk_){int64_t{0}}
     , decltype(_impl_.total_file_chunk_){int64_t{0}}
@@ -3405,6 +3418,10 @@ inline void FileMsg::SharedCtor(
   _impl_.recipient_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.recipient_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.file_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.file_name_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   _impl_.data_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -3426,6 +3443,7 @@ inline void FileMsg::SharedDtor() {
   _impl_.chat_id_.Destroy();
   _impl_.sender_.Destroy();
   _impl_.recipient_.Destroy();
+  _impl_.file_name_.Destroy();
   _impl_.data_.Destroy();
 }
 
@@ -3442,6 +3460,7 @@ void FileMsg::Clear() {
   _impl_.chat_id_.ClearToEmpty();
   _impl_.sender_.ClearToEmpty();
   _impl_.recipient_.ClearToEmpty();
+  _impl_.file_name_.ClearToEmpty();
   _impl_.data_.ClearToEmpty();
   ::memset(&_impl_.index_file_chunk_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&_impl_.timestamp_) -
@@ -3485,34 +3504,44 @@ const char* FileMsg::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) 
         } else
           goto handle_unusual;
         continue;
-      // int64 index_file_chunk = 4;
+      // string file_name = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+          auto str = _internal_mutable_file_name();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "chat.FileMsg.file_name"));
+        } else
+          goto handle_unusual;
+        continue;
+      // int64 index_file_chunk = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
           _impl_.index_file_chunk_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int64 total_file_chunk = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+      // int64 total_file_chunk = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
           _impl_.total_file_chunk_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // bytes data = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+      // bytes data = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 58)) {
           auto str = _internal_mutable_data();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int64 timestamp = 7;
-      case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
+      // int64 timestamp = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 64)) {
           _impl_.timestamp_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
@@ -3577,28 +3606,38 @@ uint8_t* FileMsg::_InternalSerialize(
         3, this->_internal_recipient(), target);
   }
 
-  // int64 index_file_chunk = 4;
+  // string file_name = 4;
+  if (!this->_internal_file_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_file_name().data(), static_cast<int>(this->_internal_file_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "chat.FileMsg.file_name");
+    target = stream->WriteStringMaybeAliased(
+        4, this->_internal_file_name(), target);
+  }
+
+  // int64 index_file_chunk = 5;
   if (this->_internal_index_file_chunk() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt64ToArray(4, this->_internal_index_file_chunk(), target);
+    target = ::_pbi::WireFormatLite::WriteInt64ToArray(5, this->_internal_index_file_chunk(), target);
   }
 
-  // int64 total_file_chunk = 5;
+  // int64 total_file_chunk = 6;
   if (this->_internal_total_file_chunk() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt64ToArray(5, this->_internal_total_file_chunk(), target);
+    target = ::_pbi::WireFormatLite::WriteInt64ToArray(6, this->_internal_total_file_chunk(), target);
   }
 
-  // bytes data = 6;
+  // bytes data = 7;
   if (!this->_internal_data().empty()) {
     target = stream->WriteBytesMaybeAliased(
-        6, this->_internal_data(), target);
+        7, this->_internal_data(), target);
   }
 
-  // int64 timestamp = 7;
+  // int64 timestamp = 8;
   if (this->_internal_timestamp() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt64ToArray(7, this->_internal_timestamp(), target);
+    target = ::_pbi::WireFormatLite::WriteInt64ToArray(8, this->_internal_timestamp(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -3638,24 +3677,31 @@ size_t FileMsg::ByteSizeLong() const {
         this->_internal_recipient());
   }
 
-  // bytes data = 6;
+  // string file_name = 4;
+  if (!this->_internal_file_name().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_file_name());
+  }
+
+  // bytes data = 7;
   if (!this->_internal_data().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
         this->_internal_data());
   }
 
-  // int64 index_file_chunk = 4;
+  // int64 index_file_chunk = 5;
   if (this->_internal_index_file_chunk() != 0) {
     total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(this->_internal_index_file_chunk());
   }
 
-  // int64 total_file_chunk = 5;
+  // int64 total_file_chunk = 6;
   if (this->_internal_total_file_chunk() != 0) {
     total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(this->_internal_total_file_chunk());
   }
 
-  // int64 timestamp = 7;
+  // int64 timestamp = 8;
   if (this->_internal_timestamp() != 0) {
     total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(this->_internal_timestamp());
   }
@@ -3686,6 +3732,9 @@ void FileMsg::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOB
   }
   if (!from._internal_recipient().empty()) {
     _this->_internal_set_recipient(from._internal_recipient());
+  }
+  if (!from._internal_file_name().empty()) {
+    _this->_internal_set_file_name(from._internal_file_name());
   }
   if (!from._internal_data().empty()) {
     _this->_internal_set_data(from._internal_data());
@@ -3729,6 +3778,10 @@ void FileMsg::InternalSwap(FileMsg* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.recipient_, lhs_arena,
       &other->_impl_.recipient_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.file_name_, lhs_arena,
+      &other->_impl_.file_name_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.data_, lhs_arena,

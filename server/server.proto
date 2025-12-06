@@ -86,10 +86,11 @@ message FileMsg {
     string chat_id = 1;
     string sender = 2;
     string recipient = 3;
-    int64 index_file_chunk = 4;
-    int64 total_file_chunk = 5;
-    bytes data = 6;
-    int64 timestamp = 7;
+    string file_name = 4;
+    int64 index_file_chunk = 5;
+    int64 total_file_chunk = 6;
+    bytes data = 7;
+    int64 timestamp = 8;
 
 }
 

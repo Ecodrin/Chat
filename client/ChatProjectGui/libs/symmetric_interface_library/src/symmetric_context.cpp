@@ -162,4 +162,8 @@ namespace symmetric_interface_library {
             throw std::runtime_error("incorrect mode encryption");
         }
     }
+
+    size_t SymmetricContext::get_read_file_scale_block() {
+        return read_file_scale_block;
+    }
 }

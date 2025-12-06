@@ -1,6 +1,6 @@
 #include "workwithdata.h"
 
-WorkWithData::WorkWithData() {
+WorkWithData::WorkWithData(const std::string & files_path) : files_path{files_path} {
 
 }
 
@@ -197,6 +197,70 @@ std::vector<MsgData> WorkWithData::get_msgs(const std::string & chat_id) {
 
     return res;
 }
+
+bool WorkWithData::add_file(const FileData & msg_data) {
+    std::ofstream out(files_path + "/" + msg_data.file_name, std::ios::app);
+    if(!out.is_open()) {
+        return false;
+    }
+    out << msg_data.data;
+    out.close();
+
+    if (msg_data.index_file_chunk == msg_data.total_file_chunk) {
+        std::unique_lock<std::mutex> locker(mutex);
+        auto & chat = data[msg_data.chat_id].first;
+        locker.unlock();
+
+        std::string output= msg_data.file_name;
+        output = output.replace(0, 4, "");
+
+        std::filesystem::path output_file_name = files_path + "/" + output;
+        chat.symmetric_context->decryption(files_path + "/" + msg_data.file_name, output_file_name.string()).get();
+
+        locker.lock();
+        data[msg_data.chat_id].second.emplace_back(MsgData{
+            .chat_id = msg_data.chat_id,
+            .is_file = true,
+            .sender = msg_data.sender,
+            .recipient = msg_data.recipient,
+            .data = output_file_name.string(),
+            .timestamp = msg_data.timestamp,
+        });
+        std::filesystem::remove(files_path + "/" + msg_data.file_name);
+    }
+    return true;
+}
+
+
+std::string WorkWithData::send_file(const FileData & msg_data) {
+    std::unique_lock<std::mutex> locker(mutex);
+    auto & chat = data[msg_data.chat_id].first;
+    locker.unlock();
+    std::filesystem::path output = std::filesystem::path{msg_data.file_name}.filename();
+
+    std::filesystem::path output_file_name = files_path + "/enc_" + output.string();
+
+    std::cout << msg_data.file_name << " " << output_file_name.string() << std::endl;
+    chat.symmetric_context->encryption(msg_data.file_name, output_file_name.string()).get();
+
+    locker.lock();
+    data[msg_data.chat_id].second.emplace_back(MsgData{
+        .chat_id = msg_data.chat_id,
+        .is_file = true,
+        .sender = msg_data.sender,
+        .recipient = chat.interlocutor,
+        .data = msg_data.file_name,
+        .timestamp = msg_data.timestamp,
+    });
+    return output_file_name.string();
+}
+
+std::string WorkWithData::get_recipient(const std::string & chat_id) {
+    std::lock_guard<std::mutex> locker(mutex);
+    auto & chat = data[chat_id].first;
+    return chat.interlocutor;
+}
+
 
 
 

@@ -1,29 +1,27 @@
 #include "chatwidget.h"
 
-ChatWidget::ChatWidget(const std::string & who, const std::string & text, const std::string & img_filename, int timestamp, QWidget *parent )
-    : QWidget(parent), timestamp(timestamp)
+ChatWidget::ChatWidget(const MsgData & msg_data, QWidget *parent )
+    : QWidget(parent)
 {
     QHBoxLayout * layout = new QHBoxLayout(this);
+    QLabel * timew = new QLabel(QDateTime::fromSecsSinceEpoch(msg_data.timestamp).toString("dd.MM.yyyy hh:mm:ss"));
+    layout->addWidget(timew);
 
-    QLabel * imgw = new QLabel();
-    QPixmap pixmap(QString::fromStdString(img_filename));
-    if(!pixmap.isNull()) {
-        imgw->setPixmap(pixmap.scaled(50, 50, Qt::KeepAspectRatio));
-    }
+    QLabel * whow = new QLabel(QString::fromStdString(msg_data.sender));
+    layout->addWidget(whow);
 
-    QLabel * timew = new QLabel(QDateTime::fromSecsSinceEpoch(timestamp).toString("dd.MM.yyyy hh:mm:ss"));
-    QLabel * whow = new QLabel(QString::fromStdString(who));
-    QLabel * textw = new QLabel(QString::fromStdString(text));
-
-    if(!pixmap.isNull()) {
+    if(msg_data.is_file && (has_suffix(msg_data.data, ".png") || has_suffix(msg_data.data, ".jpg"))) {
+        QLabel * imgw = new QLabel();
+        QPixmap pixmap(QString::fromStdString(msg_data.data));
+        if(!pixmap.isNull()) {
+            imgw->setPixmap(pixmap.scaled(200, 200, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        }
         layout->addWidget(imgw);
     } else {
-        delete imgw;
+        // TODO дописать если это файл -- сохранить как
+        QLabel * textw = new QLabel(QString::fromStdString(msg_data.data));
+        layout->addWidget(textw);
     }
-    layout->addWidget(timew);
-    layout->addWidget(whow);
-    layout->addWidget(textw);
-    layout->addStretch();
 
     setLayout(layout);
 }

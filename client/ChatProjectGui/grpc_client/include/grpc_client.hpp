@@ -53,7 +53,9 @@ public:
 
     std::pair<bool, std::string> add_chat(std::shared_ptr<ChatStreamgRPCWorker> writer, ChatInfo chat_info) const;
     std::pair<bool, std::string> send_msg(std::shared_ptr<ChatStreamgRPCWorker> writer, MsgData msg_data) const;
+    std::pair<bool, std::string> send_file(std::shared_ptr<ChatStreamgRPCWorker> writer, FileData msg_data) const;
     std::string get_login() const;
+
 private:
     std::string token;
     std::string login;

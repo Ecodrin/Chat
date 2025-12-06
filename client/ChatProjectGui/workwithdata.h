@@ -6,6 +6,7 @@
 #include <vector>
 #include <cstddef>
 #include <unordered_map>
+#include <filesystem>
 
 #include "encryption_modes.hpp"
 #include "encryption_padding.hpp"
@@ -15,12 +16,15 @@
 #include "enc_utility.hpp"
 #include "bytes_utility.hpp"
 
+
 struct KeyInfo{
     std::string ab;
     std::string g;
     std::string p;
     std::vector<std::byte> key;
 };
+
+
 
 struct  ChatData {
     std::string interlocutor;
@@ -57,9 +61,21 @@ struct ChatInfo {
     int padd_mode_index;
 };
 
+struct FileData {
+    std::string chat_id;
+    bool is_file;
+    std::string sender;
+    std::string recipient;
+    std::string data;
+    int timestamp;
+    std::string file_name;
+    size_t index_file_chunk;
+    size_t total_file_chunk;
+};
+
 class WorkWithData {
 public:
-    WorkWithData();
+    WorkWithData(const std::string & files_path);
 
     ChatInfo add_chat(int alg, int enc_mode, int padd_mode, const std::string & interlocutor, const std::string & chat_id = "-1");
     std::pair<bool, ChatInfo> update_chat_status(const ChatInfo & info);
@@ -67,9 +83,12 @@ public:
     bool add_msg(const MsgData & msg_data);
     std::pair<bool, MsgData> send_msg(const MsgData & msg_data);
     std::vector<MsgData> get_msgs(const std::string & chat_id);
+    bool add_file(const FileData & msg_data);
+    std::string send_file(const FileData & msg_data);
 
-
+    std::string get_recipient(const std::string & chat_id);
 private:
+    std::string files_path;;
     // потом переписать на бд
     std::mutex mutex;
     std::unordered_map<std::string, std::pair<ChatData, std::vector<MsgData>>> data;

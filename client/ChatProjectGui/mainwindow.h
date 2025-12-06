@@ -15,13 +15,16 @@
 #include <QScreen>
 #include <QLineEdit>
 #include <QRect>
+#include <QFile>
 #include <QStringListModel>
 #include <QStandardItemModel>
 #include <QListView>
+#include <QStandardPaths>
+#include <QFileDialog>
 
 #include <memory>
 #include <ctime>
-#include <thread>
+#include <filesystem>
 
 #include "grpc_client.hpp"
 #include "contactdialog.h"
@@ -52,6 +55,7 @@ private slots:
     void on_UpdateContactsButton_clicked();
     void on_AddContactButton_clicked();
     void on_SendMsgButton_clicked();
+    void on_FileButton_clicked();
 
 signals:
     void requestBack();
@@ -62,6 +66,7 @@ private:
     std::mutex mutex;
     grpc::ClientContext clientcontext_chat_session;
     std::string current_chat_id = "";
+    std::string files_path = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation).toStdString() + "/chat";
 
     GreeterClient * client;
     QWidget * parent = nullptr;

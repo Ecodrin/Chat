@@ -21,10 +21,10 @@ namespace symmetric_interface_library {
         std::future<void> decryption(const std::vector<std::byte> & encrypted_block, std::vector<std::byte> & res);
         std::future<void> encryption(const std::string& input_file_path, const std::string& output_file_path);
         std::future<void> decryption(const std::string& input_file_path, const std::string& output_file_path);
-
+        static size_t get_read_file_scale_block();
     private:
 
-        const size_t read_file_scale_block = 10000;
+        static inline size_t read_file_scale_block = 10000;
         std::vector<std::byte> processes(const std::vector<std::byte> & block, bool encrypt, bool make_padding = true);
 
         std::shared_ptr<InterfaceSymmetricAlgorithm> symmetric_alg;

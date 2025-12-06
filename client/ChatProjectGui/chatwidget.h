@@ -6,11 +6,14 @@
 #include <QHBoxLayout>
 #include <QDateTime>
 
+#include "workwithdata.h"
+#include "utility"
+
 class ChatWidget : public QWidget
 {
     Q_OBJECT
 public:
-    ChatWidget(const std::string & who, const std::string & text, const std::string & img_filename, int timestamp, QWidget *parent = nullptr);
+    ChatWidget(const MsgData & msg_data, QWidget *parent = nullptr);
 
 private:
     QLabel * imgw;

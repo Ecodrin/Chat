@@ -2181,10 +2181,11 @@ class FileMsg final :
     kChatIdFieldNumber = 1,
     kSenderFieldNumber = 2,
     kRecipientFieldNumber = 3,
-    kDataFieldNumber = 6,
-    kIndexFileChunkFieldNumber = 4,
-    kTotalFileChunkFieldNumber = 5,
-    kTimestampFieldNumber = 7,
+    kFileNameFieldNumber = 4,
+    kDataFieldNumber = 7,
+    kIndexFileChunkFieldNumber = 5,
+    kTotalFileChunkFieldNumber = 6,
+    kTimestampFieldNumber = 8,
   };
   // string chat_id = 1;
   void clear_chat_id();
@@ -2228,7 +2229,21 @@ class FileMsg final :
   std::string* _internal_mutable_recipient();
   public:
 
-  // bytes data = 6;
+  // string file_name = 4;
+  void clear_file_name();
+  const std::string& file_name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_file_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_file_name();
+  PROTOBUF_NODISCARD std::string* release_file_name();
+  void set_allocated_file_name(std::string* file_name);
+  private:
+  const std::string& _internal_file_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_file_name(const std::string& value);
+  std::string* _internal_mutable_file_name();
+  public:
+
+  // bytes data = 7;
   void clear_data();
   const std::string& data() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -2242,7 +2257,7 @@ class FileMsg final :
   std::string* _internal_mutable_data();
   public:
 
-  // int64 index_file_chunk = 4;
+  // int64 index_file_chunk = 5;
   void clear_index_file_chunk();
   int64_t index_file_chunk() const;
   void set_index_file_chunk(int64_t value);
@@ -2251,7 +2266,7 @@ class FileMsg final :
   void _internal_set_index_file_chunk(int64_t value);
   public:
 
-  // int64 total_file_chunk = 5;
+  // int64 total_file_chunk = 6;
   void clear_total_file_chunk();
   int64_t total_file_chunk() const;
   void set_total_file_chunk(int64_t value);
@@ -2260,7 +2275,7 @@ class FileMsg final :
   void _internal_set_total_file_chunk(int64_t value);
   public:
 
-  // int64 timestamp = 7;
+  // int64 timestamp = 8;
   void clear_timestamp();
   int64_t timestamp() const;
   void set_timestamp(int64_t value);
@@ -2280,6 +2295,7 @@ class FileMsg final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr chat_id_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr sender_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr recipient_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr file_name_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr data_;
     int64_t index_file_chunk_;
     int64_t total_file_chunk_;
@@ -4024,7 +4040,57 @@ inline void FileMsg::set_allocated_recipient(std::string* recipient) {
   // @@protoc_insertion_point(field_set_allocated:chat.FileMsg.recipient)
 }
 
-// int64 index_file_chunk = 4;
+// string file_name = 4;
+inline void FileMsg::clear_file_name() {
+  _impl_.file_name_.ClearToEmpty();
+}
+inline const std::string& FileMsg::file_name() const {
+  // @@protoc_insertion_point(field_get:chat.FileMsg.file_name)
+  return _internal_file_name();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void FileMsg::set_file_name(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.file_name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.FileMsg.file_name)
+}
+inline std::string* FileMsg::mutable_file_name() {
+  std::string* _s = _internal_mutable_file_name();
+  // @@protoc_insertion_point(field_mutable:chat.FileMsg.file_name)
+  return _s;
+}
+inline const std::string& FileMsg::_internal_file_name() const {
+  return _impl_.file_name_.Get();
+}
+inline void FileMsg::_internal_set_file_name(const std::string& value) {
+  
+  _impl_.file_name_.Set(value, GetArenaForAllocation());
+}
+inline std::string* FileMsg::_internal_mutable_file_name() {
+  
+  return _impl_.file_name_.Mutable(GetArenaForAllocation());
+}
+inline std::string* FileMsg::release_file_name() {
+  // @@protoc_insertion_point(field_release:chat.FileMsg.file_name)
+  return _impl_.file_name_.Release();
+}
+inline void FileMsg::set_allocated_file_name(std::string* file_name) {
+  if (file_name != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.file_name_.SetAllocated(file_name, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.file_name_.IsDefault()) {
+    _impl_.file_name_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.FileMsg.file_name)
+}
+
+// int64 index_file_chunk = 5;
 inline void FileMsg::clear_index_file_chunk() {
   _impl_.index_file_chunk_ = int64_t{0};
 }
@@ -4044,7 +4110,7 @@ inline void FileMsg::set_index_file_chunk(int64_t value) {
   // @@protoc_insertion_point(field_set:chat.FileMsg.index_file_chunk)
 }
 
-// int64 total_file_chunk = 5;
+// int64 total_file_chunk = 6;
 inline void FileMsg::clear_total_file_chunk() {
   _impl_.total_file_chunk_ = int64_t{0};
 }
@@ -4064,7 +4130,7 @@ inline void FileMsg::set_total_file_chunk(int64_t value) {
   // @@protoc_insertion_point(field_set:chat.FileMsg.total_file_chunk)
 }
 
-// bytes data = 6;
+// bytes data = 7;
 inline void FileMsg::clear_data() {
   _impl_.data_.ClearToEmpty();
 }
@@ -4114,7 +4180,7 @@ inline void FileMsg::set_allocated_data(std::string* data) {
   // @@protoc_insertion_point(field_set_allocated:chat.FileMsg.data)
 }
 
-// int64 timestamp = 7;
+// int64 timestamp = 8;
 inline void FileMsg::clear_timestamp() {
   _impl_.timestamp_ = int64_t{0};
 }
