@@ -6,6 +6,8 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->ChatWidgets->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+
 
     std::filesystem::create_directory(files_path);
     if(!std::filesystem::create_directory(files_path + "/" + client->get_login())) {
@@ -70,21 +72,31 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
                 }
             });
         } else if(msg.has_file_msg()) {
-            auto file_msg = msg.file_msg();
+            QtConcurrent::run([this, msg](){
+                auto file_msg = msg.file_msg();
 
-            FileData data{
-                .chat_id=file_msg.chat_id(),
-                .is_file=true,
-                .sender=file_msg.sender(),
-                .recipient=file_msg.recipient(),
-                .data=file_msg.data(),
-                .timestamp=int(file_msg.timestamp()),
-                .file_name=file_msg.file_name(),
-                .index_file_chunk=size_t(file_msg.index_file_chunk()),
-                .total_file_chunk=size_t(file_msg.total_file_chunk()),
-            };
+                FileData data{
+                    .chat_id=file_msg.chat_id(),
+                    .is_file=true,
+                    .sender=file_msg.sender(),
+                    .recipient=file_msg.recipient(),
+                    .data=file_msg.data(),
+                    .timestamp=int(file_msg.timestamp()),
+                    .file_name=file_msg.file_name(),
+                    .index_file_chunk=size_t(file_msg.index_file_chunk()),
+                    .total_file_chunk=size_t(file_msg.total_file_chunk()),
+                };
 
-            database->add_file(data);
+                database->add_file(data);
+                emit updateChatSignal();
+            });
+        } else if(msg.has_delete_chat_msg()) {
+            QtConcurrent::run([this, msg](){
+                auto delete_msg = msg.delete_chat_msg();
+                database->delete_chat(delete_msg.chat_id());
+                emit updateChatSignal();
+                emit updateChatsSignal();
+            });
         }
     });
 
@@ -113,6 +125,18 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
             emit updateChatSignal();
         }
     });
+
+    QObject::connect(ui->ChatsListView, &QListView::pressed, [=](const QModelIndex & index){
+        if(QApplication::mouseButtons() & Qt::RightButton) {
+            QStandardItem *item = chats_model->itemFromIndex(index);
+            std::string chat_id = item->data(Qt::UserRole).toString().toStdString();
+            DeleteChatDialog * dialog = new DeleteChatDialog(chat_id, client, database, writer, this);
+            dialog->setAttribute(Qt::WA_DeleteOnClose);
+            dialog->exec();
+            emit updateChatsSignal();
+            emit updateChatSignal();
+        }
+    });
 }
 
 void MainWindow::Disconnect() {
@@ -137,6 +161,9 @@ void MainWindow::on_DisconnectButton_clicked() {
 
     ui->LineContactEdit->clear();
     ui->LineContactEdit->clear();
+    ui->ChatWidgets->clear();
+
+    chats_model->clear();
     requestBack();
 }
 
@@ -206,12 +233,13 @@ void MainWindow::show_chat() {
         item->setData(Qt::UserRole + 2, QString::fromStdString(msg.data));
 
         ChatWidget * chat_widget = new ChatWidget(msg, ui->ChatWidgets);
-
+        chat_widget->adjustSize();
         item->setSizeHint(chat_widget->sizeHint());
 
         ui->ChatWidgets->addItem(item);
         ui->ChatWidgets->setItemWidget(item, chat_widget);
     }
+    ui->ChatWidgets->scrollToBottom();
 }
 
 void MainWindow::on_SendMsgButton_clicked() {
@@ -255,57 +283,59 @@ void MainWindow::on_FileButton_clicked() {
     if(current_chat_id == "") {
         return;
     }
-    FileData file_data{
-        .chat_id=current_chat_id,
-        .is_file=true,
-        .sender=client->get_login(),
-        .recipient="",
-        .timestamp=int(std::time(nullptr)),
-        .file_name=filename.toStdString(),
-        .index_file_chunk=0,
-        .total_file_chunk=0,
-    };
-    std::string enc_filename = database->send_file(file_data);
-    std::ifstream file(enc_filename);
-    if (!file.is_open()) {
-        return;
-    }
-    size_t chunk_size = symmetric_interface_library::SymmetricContext::get_read_file_scale_block();
-    size_t i = 1;
-    size_t total_i = std::filesystem::file_size(enc_filename) / chunk_size;
-    if (std::filesystem::file_size(enc_filename) && chunk_size != 0) {
-        total_i += 1;
-    }
-    std::string buffer;
-
-    while(true) {
-        buffer.resize(chunk_size);
-        file.read(reinterpret_cast<char*>(buffer.data()), chunk_size);
-        if(file.gcount() == 0) {
-            break;
-        }
-        buffer.resize(file.gcount());
+    QtConcurrent::run([this, filename](){
         FileData file_data{
             .chat_id=current_chat_id,
             .is_file=true,
             .sender=client->get_login(),
-            .recipient=database->get_recipient(current_chat_id),
-            .data=buffer,
+            .recipient="",
             .timestamp=int(std::time(nullptr)),
-            .file_name=std::filesystem::path{enc_filename}.filename(),
-            .index_file_chunk=i,
-            .total_file_chunk=total_i,
+            .file_name=filename.toStdString(),
+            .index_file_chunk=0,
+            .total_file_chunk=0,
         };
-        i++;
-        auto s = client->send_file(writer, file_data);
-        if(!s.first) {
-            std::cout << s.second << std::endl;
+        std::string enc_filename = database->send_file(file_data);
+        std::ifstream file(enc_filename);
+        if (!file.is_open()) {
             return;
         }
-    }
-    file.close();
-    std::filesystem::remove(enc_filename);
+        size_t chunk_size = symmetric_interface_library::SymmetricContext::get_read_file_scale_block();
+        size_t i = 1;
+        size_t total_i = std::filesystem::file_size(enc_filename) / chunk_size;
+        if (std::filesystem::file_size(enc_filename) && chunk_size != 0) {
+            total_i += 1;
+        }
+        std::string buffer;
 
-    emit updateChatSignal();
+        while(true) {
+            buffer.resize(chunk_size);
+            file.read(reinterpret_cast<char*>(buffer.data()), chunk_size);
+            if(file.gcount() == 0) {
+                break;
+            }
+            buffer.resize(file.gcount());
+            FileData file_data{
+                               .chat_id=current_chat_id,
+                               .is_file=true,
+                               .sender=client->get_login(),
+                               .recipient=database->get_recipient(current_chat_id),
+                               .data=buffer,
+                               .timestamp=int(std::time(nullptr)),
+                               .file_name=std::filesystem::path{enc_filename}.filename(),
+                               .index_file_chunk=i,
+                               .total_file_chunk=total_i,
+                               };
+            i++;
+            auto s = client->send_file(writer, file_data);
+            if(!s.first) {
+                std::cout << s.second << std::endl;
+                return;
+            }
+        }
+        file.close();
+        std::filesystem::remove(enc_filename);
+
+        emit updateChatSignal();
+    });
 
 }

@@ -13,7 +13,7 @@
 int main(int argc, char *argv[])
 {
 
-    std::string server_address("host.docker.internal:50051");
+    std::string server_address("0.0.0.0:50051");
     GreeterClient greeter(grpc::CreateChannel(
         server_address, grpc::InsecureChannelCredentials()));
 

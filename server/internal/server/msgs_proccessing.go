@@ -44,6 +44,9 @@ func (s *Server) MsgsProccessing() error {
 		case *pb.ChatMsg_DefaultMsg:
 			sender = msgH.GetDefaultMsg().GetSender()
 			recipient = msgH.GetDefaultMsg().GetRecipient()
+		case *pb.ChatMsg_DeleteChatMsg:
+			sender = msgH.GetDeleteChatMsg().GetSender()
+			recipient = msgH.GetDeleteChatMsg().GetRecipient()
 		default:
 			s.logger.Println("unrecognized type of msg")
 			continue

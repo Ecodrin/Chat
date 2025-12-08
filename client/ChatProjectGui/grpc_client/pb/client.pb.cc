@@ -203,6 +203,21 @@ struct FileMsgDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 FileMsgDefaultTypeInternal _FileMsg_default_instance_;
+PROTOBUF_CONSTEXPR DeleteChatMsg::DeleteChatMsg(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.chat_id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.sender_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.recipient_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct DeleteChatMsgDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR DeleteChatMsgDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~DeleteChatMsgDefaultTypeInternal() {}
+  union {
+    DeleteChatMsg _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DeleteChatMsgDefaultTypeInternal _DeleteChatMsg_default_instance_;
 PROTOBUF_CONSTEXPR ChatMsg::ChatMsg(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.payload_)*/{}
@@ -218,7 +233,7 @@ struct ChatMsgDefaultTypeInternal {
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ChatMsgDefaultTypeInternal _ChatMsg_default_instance_;
 }  // namespace chat
-static ::_pb::Metadata file_level_metadata_client_2eproto[13];
+static ::_pb::Metadata file_level_metadata_client_2eproto[14];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_client_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_client_2eproto = nullptr;
 
@@ -334,11 +349,21 @@ const uint32_t TableStruct_client_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::chat::FileMsg, _impl_.data_),
   PROTOBUF_FIELD_OFFSET(::chat::FileMsg, _impl_.timestamp_),
   ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::chat::DeleteChatMsg, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::chat::DeleteChatMsg, _impl_.chat_id_),
+  PROTOBUF_FIELD_OFFSET(::chat::DeleteChatMsg, _impl_.sender_),
+  PROTOBUF_FIELD_OFFSET(::chat::DeleteChatMsg, _impl_.recipient_),
+  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::chat::ChatMsg, _internal_metadata_),
   ~0u,  // no _extensions_
   PROTOBUF_FIELD_OFFSET(::chat::ChatMsg, _impl_._oneof_case_[0]),
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
@@ -357,7 +382,8 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 66, -1, -1, sizeof(::chat::NewChatMsg)},
   { 85, -1, -1, sizeof(::chat::DefaultChatMsg)},
   { 96, -1, -1, sizeof(::chat::FileMsg)},
-  { 110, -1, -1, sizeof(::chat::ChatMsg)},
+  { 110, -1, -1, sizeof(::chat::DeleteChatMsg)},
+  { 119, -1, -1, sizeof(::chat::ChatMsg)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -373,6 +399,7 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::chat::_NewChatMsg_default_instance_._instance,
   &::chat::_DefaultChatMsg_default_instance_._instance,
   &::chat::_FileMsg_default_instance_._instance,
+  &::chat::_DeleteChatMsg_default_instance_._instance,
   &::chat::_ChatMsg_default_instance_._instance,
 };
 
@@ -400,32 +427,35 @@ const char descriptor_table_protodef_client_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "r\030\002 \001(\t\022\021\n\trecipient\030\003 \001(\t\022\021\n\tfile_name\030"
   "\004 \001(\t\022\030\n\020index_file_chunk\030\005 \001(\003\022\030\n\020total"
   "_file_chunk\030\006 \001(\003\022\014\n\004data\030\007 \001(\014\022\021\n\ttimes"
-  "tamp\030\010 \001(\003\"\216\001\n\007ChatMsg\022(\n\014new_chat_msg\030\001"
-  " \001(\0132\020.chat.NewChatMsgH\000\022!\n\010file_msg\030\002 \001"
-  "(\0132\r.chat.FileMsgH\000\022+\n\013default_msg\030\003 \001(\013"
-  "2\024.chat.DefaultChatMsgH\000B\t\n\007payload2\311\004\n\007"
-  "Greeter\022O\n\014Registration\022\031.chat.Registrat"
-  "ionRequest\032$.chat.StatusRegistrationAuth"
-  "Response\022\?\n\004Auth\022\021.chat.AuthRequest\032$.ch"
-  "at.StatusRegistrationAuthResponse\022;\n\nAdd"
-  "Contact\022\027.chat.NewContactRequest\032\024.chat."
-  "StatusResponse\0228\n\013GetContacts\022\016.chat.Emp"
-  "tyMsg\032\031.chat.GetContactsResponse\022A\n\rDele"
-  "teContact\022\032.chat.DeleteContactRequest\032\024."
-  "chat.StatusResponse\0222\n\nDisconnect\022\016.chat"
-  ".EmptyMsg\032\024.chat.StatusResponse\022E\n\024Accep"
-  "tRequestContact\022\027.chat.NewContactRequest"
-  "\032\024.chat.StatusResponse\022F\n\025DeclineRequest"
-  "Contact\022\027.chat.NewContactRequest\032\024.chat."
-  "StatusResponse\022/\n\013ChatSession\022\r.chat.Cha"
-  "tMsg\032\r.chat.ChatMsg(\0010\001B\026Z\024./internal/gr"
-  "ps_chatb\006proto3"
+  "tamp\030\010 \001(\003\"C\n\rDeleteChatMsg\022\017\n\007chat_id\030\001"
+  " \001(\t\022\016\n\006sender\030\002 \001(\t\022\021\n\trecipient\030\003 \001(\t\""
+  "\276\001\n\007ChatMsg\022(\n\014new_chat_msg\030\001 \001(\0132\020.chat"
+  ".NewChatMsgH\000\022!\n\010file_msg\030\002 \001(\0132\r.chat.F"
+  "ileMsgH\000\022+\n\013default_msg\030\003 \001(\0132\024.chat.Def"
+  "aultChatMsgH\000\022.\n\017delete_chat_msg\030\004 \001(\0132\023"
+  ".chat.DeleteChatMsgH\000B\t\n\007payload2\311\004\n\007Gre"
+  "eter\022O\n\014Registration\022\031.chat.Registration"
+  "Request\032$.chat.StatusRegistrationAuthRes"
+  "ponse\022\?\n\004Auth\022\021.chat.AuthRequest\032$.chat."
+  "StatusRegistrationAuthResponse\022;\n\nAddCon"
+  "tact\022\027.chat.NewContactRequest\032\024.chat.Sta"
+  "tusResponse\0228\n\013GetContacts\022\016.chat.EmptyM"
+  "sg\032\031.chat.GetContactsResponse\022A\n\rDeleteC"
+  "ontact\022\032.chat.DeleteContactRequest\032\024.cha"
+  "t.StatusResponse\0222\n\nDisconnect\022\016.chat.Em"
+  "ptyMsg\032\024.chat.StatusResponse\022E\n\024AcceptRe"
+  "questContact\022\027.chat.NewContactRequest\032\024."
+  "chat.StatusResponse\022F\n\025DeclineRequestCon"
+  "tact\022\027.chat.NewContactRequest\032\024.chat.Sta"
+  "tusResponse\022/\n\013ChatSession\022\r.chat.ChatMs"
+  "g\032\r.chat.ChatMsg(\0010\001B\026Z\024./internal/grps_"
+  "chatb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_client_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_client_2eproto = {
-    false, false, 1695, descriptor_table_protodef_client_2eproto,
+    false, false, 1812, descriptor_table_protodef_client_2eproto,
     "client.proto",
-    &descriptor_table_client_2eproto_once, nullptr, 0, 13,
+    &descriptor_table_client_2eproto_once, nullptr, 0, 14,
     schemas, file_default_instances, TableStruct_client_2eproto::offsets,
     file_level_metadata_client_2eproto, file_level_enum_descriptors_client_2eproto,
     file_level_service_descriptors_client_2eproto,
@@ -3803,11 +3833,315 @@ void FileMsg::InternalSwap(FileMsg* other) {
 
 // ===================================================================
 
+class DeleteChatMsg::_Internal {
+ public:
+};
+
+DeleteChatMsg::DeleteChatMsg(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:chat.DeleteChatMsg)
+}
+DeleteChatMsg::DeleteChatMsg(const DeleteChatMsg& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  DeleteChatMsg* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.chat_id_){}
+    , decltype(_impl_.sender_){}
+    , decltype(_impl_.recipient_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.chat_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.chat_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_chat_id().empty()) {
+    _this->_impl_.chat_id_.Set(from._internal_chat_id(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.sender_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.sender_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_sender().empty()) {
+    _this->_impl_.sender_.Set(from._internal_sender(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.recipient_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.recipient_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_recipient().empty()) {
+    _this->_impl_.recipient_.Set(from._internal_recipient(), 
+      _this->GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:chat.DeleteChatMsg)
+}
+
+inline void DeleteChatMsg::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.chat_id_){}
+    , decltype(_impl_.sender_){}
+    , decltype(_impl_.recipient_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.chat_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.chat_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.sender_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.sender_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.recipient_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.recipient_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+DeleteChatMsg::~DeleteChatMsg() {
+  // @@protoc_insertion_point(destructor:chat.DeleteChatMsg)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void DeleteChatMsg::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.chat_id_.Destroy();
+  _impl_.sender_.Destroy();
+  _impl_.recipient_.Destroy();
+}
+
+void DeleteChatMsg::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void DeleteChatMsg::Clear() {
+// @@protoc_insertion_point(message_clear_start:chat.DeleteChatMsg)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.chat_id_.ClearToEmpty();
+  _impl_.sender_.ClearToEmpty();
+  _impl_.recipient_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* DeleteChatMsg::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string chat_id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_chat_id();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "chat.DeleteChatMsg.chat_id"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string sender = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_sender();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "chat.DeleteChatMsg.sender"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string recipient = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          auto str = _internal_mutable_recipient();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "chat.DeleteChatMsg.recipient"));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* DeleteChatMsg::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:chat.DeleteChatMsg)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string chat_id = 1;
+  if (!this->_internal_chat_id().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_chat_id().data(), static_cast<int>(this->_internal_chat_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "chat.DeleteChatMsg.chat_id");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_chat_id(), target);
+  }
+
+  // string sender = 2;
+  if (!this->_internal_sender().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_sender().data(), static_cast<int>(this->_internal_sender().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "chat.DeleteChatMsg.sender");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_sender(), target);
+  }
+
+  // string recipient = 3;
+  if (!this->_internal_recipient().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_recipient().data(), static_cast<int>(this->_internal_recipient().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "chat.DeleteChatMsg.recipient");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_recipient(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:chat.DeleteChatMsg)
+  return target;
+}
+
+size_t DeleteChatMsg::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:chat.DeleteChatMsg)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string chat_id = 1;
+  if (!this->_internal_chat_id().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_chat_id());
+  }
+
+  // string sender = 2;
+  if (!this->_internal_sender().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_sender());
+  }
+
+  // string recipient = 3;
+  if (!this->_internal_recipient().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_recipient());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DeleteChatMsg::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    DeleteChatMsg::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DeleteChatMsg::GetClassData() const { return &_class_data_; }
+
+
+void DeleteChatMsg::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<DeleteChatMsg*>(&to_msg);
+  auto& from = static_cast<const DeleteChatMsg&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:chat.DeleteChatMsg)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_chat_id().empty()) {
+    _this->_internal_set_chat_id(from._internal_chat_id());
+  }
+  if (!from._internal_sender().empty()) {
+    _this->_internal_set_sender(from._internal_sender());
+  }
+  if (!from._internal_recipient().empty()) {
+    _this->_internal_set_recipient(from._internal_recipient());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void DeleteChatMsg::CopyFrom(const DeleteChatMsg& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:chat.DeleteChatMsg)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool DeleteChatMsg::IsInitialized() const {
+  return true;
+}
+
+void DeleteChatMsg::InternalSwap(DeleteChatMsg* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.chat_id_, lhs_arena,
+      &other->_impl_.chat_id_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.sender_, lhs_arena,
+      &other->_impl_.sender_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.recipient_, lhs_arena,
+      &other->_impl_.recipient_, rhs_arena
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata DeleteChatMsg::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_client_2eproto_getter, &descriptor_table_client_2eproto_once,
+      file_level_metadata_client_2eproto[12]);
+}
+
+// ===================================================================
+
 class ChatMsg::_Internal {
  public:
   static const ::chat::NewChatMsg& new_chat_msg(const ChatMsg* msg);
   static const ::chat::FileMsg& file_msg(const ChatMsg* msg);
   static const ::chat::DefaultChatMsg& default_msg(const ChatMsg* msg);
+  static const ::chat::DeleteChatMsg& delete_chat_msg(const ChatMsg* msg);
 };
 
 const ::chat::NewChatMsg&
@@ -3821,6 +4155,10 @@ ChatMsg::_Internal::file_msg(const ChatMsg* msg) {
 const ::chat::DefaultChatMsg&
 ChatMsg::_Internal::default_msg(const ChatMsg* msg) {
   return *msg->_impl_.payload_.default_msg_;
+}
+const ::chat::DeleteChatMsg&
+ChatMsg::_Internal::delete_chat_msg(const ChatMsg* msg) {
+  return *msg->_impl_.payload_.delete_chat_msg_;
 }
 void ChatMsg::set_allocated_new_chat_msg(::chat::NewChatMsg* new_chat_msg) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
@@ -3867,6 +4205,21 @@ void ChatMsg::set_allocated_default_msg(::chat::DefaultChatMsg* default_msg) {
   }
   // @@protoc_insertion_point(field_set_allocated:chat.ChatMsg.default_msg)
 }
+void ChatMsg::set_allocated_delete_chat_msg(::chat::DeleteChatMsg* delete_chat_msg) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_payload();
+  if (delete_chat_msg) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(delete_chat_msg);
+    if (message_arena != submessage_arena) {
+      delete_chat_msg = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, delete_chat_msg, submessage_arena);
+    }
+    set_has_delete_chat_msg();
+    _impl_.payload_.delete_chat_msg_ = delete_chat_msg;
+  }
+  // @@protoc_insertion_point(field_set_allocated:chat.ChatMsg.delete_chat_msg)
+}
 ChatMsg::ChatMsg(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -3897,6 +4250,11 @@ ChatMsg::ChatMsg(const ChatMsg& from)
     case kDefaultMsg: {
       _this->_internal_mutable_default_msg()->::chat::DefaultChatMsg::MergeFrom(
           from._internal_default_msg());
+      break;
+    }
+    case kDeleteChatMsg: {
+      _this->_internal_mutable_delete_chat_msg()->::chat::DeleteChatMsg::MergeFrom(
+          from._internal_delete_chat_msg());
       break;
     }
     case PAYLOAD_NOT_SET: {
@@ -3959,6 +4317,12 @@ void ChatMsg::clear_payload() {
       }
       break;
     }
+    case kDeleteChatMsg: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete _impl_.payload_.delete_chat_msg_;
+      }
+      break;
+    }
     case PAYLOAD_NOT_SET: {
       break;
     }
@@ -4003,6 +4367,14 @@ const char* ChatMsg::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) 
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           ptr = ctx->ParseMessage(_internal_mutable_default_msg(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .chat.DeleteChatMsg delete_chat_msg = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+          ptr = ctx->ParseMessage(_internal_mutable_delete_chat_msg(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -4057,6 +4429,13 @@ uint8_t* ChatMsg::_InternalSerialize(
         _Internal::default_msg(this).GetCachedSize(), target, stream);
   }
 
+  // .chat.DeleteChatMsg delete_chat_msg = 4;
+  if (_internal_has_delete_chat_msg()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(4, _Internal::delete_chat_msg(this),
+        _Internal::delete_chat_msg(this).GetCachedSize(), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -4093,6 +4472,13 @@ size_t ChatMsg::ByteSizeLong() const {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *_impl_.payload_.default_msg_);
+      break;
+    }
+    // .chat.DeleteChatMsg delete_chat_msg = 4;
+    case kDeleteChatMsg: {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.payload_.delete_chat_msg_);
       break;
     }
     case PAYLOAD_NOT_SET: {
@@ -4133,6 +4519,11 @@ void ChatMsg::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOB
           from._internal_default_msg());
       break;
     }
+    case kDeleteChatMsg: {
+      _this->_internal_mutable_delete_chat_msg()->::chat::DeleteChatMsg::MergeFrom(
+          from._internal_delete_chat_msg());
+      break;
+    }
     case PAYLOAD_NOT_SET: {
       break;
     }
@@ -4161,7 +4552,7 @@ void ChatMsg::InternalSwap(ChatMsg* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ChatMsg::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_client_2eproto_getter, &descriptor_table_client_2eproto_once,
-      file_level_metadata_client_2eproto[12]);
+      file_level_metadata_client_2eproto[13]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -4214,6 +4605,10 @@ Arena::CreateMaybeMessage< ::chat::DefaultChatMsg >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::chat::FileMsg*
 Arena::CreateMaybeMessage< ::chat::FileMsg >(Arena* arena) {
   return Arena::CreateMessageInternal< ::chat::FileMsg >(arena);
+}
+template<> PROTOBUF_NOINLINE ::chat::DeleteChatMsg*
+Arena::CreateMaybeMessage< ::chat::DeleteChatMsg >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::chat::DeleteChatMsg >(arena);
 }
 template<> PROTOBUF_NOINLINE ::chat::ChatMsg*
 Arena::CreateMaybeMessage< ::chat::ChatMsg >(Arena* arena) {

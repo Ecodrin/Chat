@@ -87,6 +87,7 @@ public:
     std::string send_file(const FileData & msg_data);
 
     std::string get_recipient(const std::string & chat_id);
+    std::string delete_chat(const std::string & chat_id);
 private:
     std::string files_path;;
     // потом переписать на бд

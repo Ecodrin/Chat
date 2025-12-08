@@ -239,8 +239,6 @@ std::string WorkWithData::send_file(const FileData & msg_data) {
     std::filesystem::path output = std::filesystem::path{msg_data.file_name}.filename();
 
     std::filesystem::path output_file_name = files_path + "/enc_" + output.string();
-
-    std::cout << msg_data.file_name << " " << output_file_name.string() << std::endl;
     chat.symmetric_context->encryption(msg_data.file_name, output_file_name.string()).get();
 
     locker.lock();
@@ -259,6 +257,13 @@ std::string WorkWithData::get_recipient(const std::string & chat_id) {
     std::lock_guard<std::mutex> locker(mutex);
     auto & chat = data[chat_id].first;
     return chat.interlocutor;
+}
+
+std::string WorkWithData::delete_chat(const std::string & chat_id) {
+    std::lock_guard<std::mutex> locker(mutex);
+    std::string interlocutor = data[chat_id].first.interlocutor;
+    data.erase(chat_id);
+    return interlocutor;
 }
 
 

@@ -21,6 +21,7 @@
 #include <QListView>
 #include <QStandardPaths>
 #include <QFileDialog>
+#include <QAbstractItemView>
 
 #include <memory>
 #include <ctime>
@@ -33,6 +34,7 @@
 #include "streamgrpcworker.h"
 
 #include "chatwidget.h"
+#include "deletechatdialog.h"
 
 namespace Ui {
 class MainWindow;

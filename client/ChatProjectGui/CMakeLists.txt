@@ -36,6 +36,12 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         utility.h
         utility.cpp
         chatwidget.h chatwidget.cpp
+        clickablewidget.h clickablewidget.cpp
+        deletechatdialog.h deletechatdialog.cpp deletechatdialog.ui
+
+
+
+
 
 
 

@@ -55,6 +55,9 @@ extern ChatMsgDefaultTypeInternal _ChatMsg_default_instance_;
 class DefaultChatMsg;
 struct DefaultChatMsgDefaultTypeInternal;
 extern DefaultChatMsgDefaultTypeInternal _DefaultChatMsg_default_instance_;
+class DeleteChatMsg;
+struct DeleteChatMsgDefaultTypeInternal;
+extern DeleteChatMsgDefaultTypeInternal _DeleteChatMsg_default_instance_;
 class DeleteContactRequest;
 struct DeleteContactRequestDefaultTypeInternal;
 extern DeleteContactRequestDefaultTypeInternal _DeleteContactRequest_default_instance_;
@@ -90,6 +93,7 @@ PROTOBUF_NAMESPACE_OPEN
 template<> ::chat::AuthRequest* Arena::CreateMaybeMessage<::chat::AuthRequest>(Arena*);
 template<> ::chat::ChatMsg* Arena::CreateMaybeMessage<::chat::ChatMsg>(Arena*);
 template<> ::chat::DefaultChatMsg* Arena::CreateMaybeMessage<::chat::DefaultChatMsg>(Arena*);
+template<> ::chat::DeleteChatMsg* Arena::CreateMaybeMessage<::chat::DeleteChatMsg>(Arena*);
 template<> ::chat::DeleteContactRequest* Arena::CreateMaybeMessage<::chat::DeleteContactRequest>(Arena*);
 template<> ::chat::EmptyMsg* Arena::CreateMaybeMessage<::chat::EmptyMsg>(Arena*);
 template<> ::chat::FileMsg* Arena::CreateMaybeMessage<::chat::FileMsg>(Arena*);
@@ -2307,6 +2311,191 @@ class FileMsg final :
 };
 // -------------------------------------------------------------------
 
+class DeleteChatMsg final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.DeleteChatMsg) */ {
+ public:
+  inline DeleteChatMsg() : DeleteChatMsg(nullptr) {}
+  ~DeleteChatMsg() override;
+  explicit PROTOBUF_CONSTEXPR DeleteChatMsg(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  DeleteChatMsg(const DeleteChatMsg& from);
+  DeleteChatMsg(DeleteChatMsg&& from) noexcept
+    : DeleteChatMsg() {
+    *this = ::std::move(from);
+  }
+
+  inline DeleteChatMsg& operator=(const DeleteChatMsg& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline DeleteChatMsg& operator=(DeleteChatMsg&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const DeleteChatMsg& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const DeleteChatMsg* internal_default_instance() {
+    return reinterpret_cast<const DeleteChatMsg*>(
+               &_DeleteChatMsg_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    12;
+
+  friend void swap(DeleteChatMsg& a, DeleteChatMsg& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(DeleteChatMsg* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(DeleteChatMsg* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  DeleteChatMsg* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<DeleteChatMsg>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const DeleteChatMsg& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const DeleteChatMsg& from) {
+    DeleteChatMsg::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(DeleteChatMsg* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.DeleteChatMsg";
+  }
+  protected:
+  explicit DeleteChatMsg(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kChatIdFieldNumber = 1,
+    kSenderFieldNumber = 2,
+    kRecipientFieldNumber = 3,
+  };
+  // string chat_id = 1;
+  void clear_chat_id();
+  const std::string& chat_id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_chat_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_chat_id();
+  PROTOBUF_NODISCARD std::string* release_chat_id();
+  void set_allocated_chat_id(std::string* chat_id);
+  private:
+  const std::string& _internal_chat_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_chat_id(const std::string& value);
+  std::string* _internal_mutable_chat_id();
+  public:
+
+  // string sender = 2;
+  void clear_sender();
+  const std::string& sender() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_sender(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_sender();
+  PROTOBUF_NODISCARD std::string* release_sender();
+  void set_allocated_sender(std::string* sender);
+  private:
+  const std::string& _internal_sender() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_sender(const std::string& value);
+  std::string* _internal_mutable_sender();
+  public:
+
+  // string recipient = 3;
+  void clear_recipient();
+  const std::string& recipient() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_recipient(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_recipient();
+  PROTOBUF_NODISCARD std::string* release_recipient();
+  void set_allocated_recipient(std::string* recipient);
+  private:
+  const std::string& _internal_recipient() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_recipient(const std::string& value);
+  std::string* _internal_mutable_recipient();
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.DeleteChatMsg)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr chat_id_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr sender_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr recipient_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_client_2eproto;
+};
+// -------------------------------------------------------------------
+
 class ChatMsg final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.ChatMsg) */ {
  public:
@@ -2354,6 +2543,7 @@ class ChatMsg final :
     kNewChatMsg = 1,
     kFileMsg = 2,
     kDefaultMsg = 3,
+    kDeleteChatMsg = 4,
     PAYLOAD_NOT_SET = 0,
   };
 
@@ -2362,7 +2552,7 @@ class ChatMsg final :
                &_ChatMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    13;
 
   friend void swap(ChatMsg& a, ChatMsg& b) {
     a.Swap(&b);
@@ -2438,6 +2628,7 @@ class ChatMsg final :
     kNewChatMsgFieldNumber = 1,
     kFileMsgFieldNumber = 2,
     kDefaultMsgFieldNumber = 3,
+    kDeleteChatMsgFieldNumber = 4,
   };
   // .chat.NewChatMsg new_chat_msg = 1;
   bool has_new_chat_msg() const;
@@ -2493,6 +2684,24 @@ class ChatMsg final :
       ::chat::DefaultChatMsg* default_msg);
   ::chat::DefaultChatMsg* unsafe_arena_release_default_msg();
 
+  // .chat.DeleteChatMsg delete_chat_msg = 4;
+  bool has_delete_chat_msg() const;
+  private:
+  bool _internal_has_delete_chat_msg() const;
+  public:
+  void clear_delete_chat_msg();
+  const ::chat::DeleteChatMsg& delete_chat_msg() const;
+  PROTOBUF_NODISCARD ::chat::DeleteChatMsg* release_delete_chat_msg();
+  ::chat::DeleteChatMsg* mutable_delete_chat_msg();
+  void set_allocated_delete_chat_msg(::chat::DeleteChatMsg* delete_chat_msg);
+  private:
+  const ::chat::DeleteChatMsg& _internal_delete_chat_msg() const;
+  ::chat::DeleteChatMsg* _internal_mutable_delete_chat_msg();
+  public:
+  void unsafe_arena_set_allocated_delete_chat_msg(
+      ::chat::DeleteChatMsg* delete_chat_msg);
+  ::chat::DeleteChatMsg* unsafe_arena_release_delete_chat_msg();
+
   void clear_payload();
   PayloadCase payload_case() const;
   // @@protoc_insertion_point(class_scope:chat.ChatMsg)
@@ -2501,6 +2710,7 @@ class ChatMsg final :
   void set_has_new_chat_msg();
   void set_has_file_msg();
   void set_has_default_msg();
+  void set_has_delete_chat_msg();
 
   inline bool has_payload() const;
   inline void clear_has_payload();
@@ -2515,6 +2725,7 @@ class ChatMsg final :
       ::chat::NewChatMsg* new_chat_msg_;
       ::chat::FileMsg* file_msg_;
       ::chat::DefaultChatMsg* default_msg_;
+      ::chat::DeleteChatMsg* delete_chat_msg_;
     } payload_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     uint32_t _oneof_case_[1];
@@ -4202,6 +4413,160 @@ inline void FileMsg::set_timestamp(int64_t value) {
 
 // -------------------------------------------------------------------
 
+// DeleteChatMsg
+
+// string chat_id = 1;
+inline void DeleteChatMsg::clear_chat_id() {
+  _impl_.chat_id_.ClearToEmpty();
+}
+inline const std::string& DeleteChatMsg::chat_id() const {
+  // @@protoc_insertion_point(field_get:chat.DeleteChatMsg.chat_id)
+  return _internal_chat_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void DeleteChatMsg::set_chat_id(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.chat_id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.DeleteChatMsg.chat_id)
+}
+inline std::string* DeleteChatMsg::mutable_chat_id() {
+  std::string* _s = _internal_mutable_chat_id();
+  // @@protoc_insertion_point(field_mutable:chat.DeleteChatMsg.chat_id)
+  return _s;
+}
+inline const std::string& DeleteChatMsg::_internal_chat_id() const {
+  return _impl_.chat_id_.Get();
+}
+inline void DeleteChatMsg::_internal_set_chat_id(const std::string& value) {
+  
+  _impl_.chat_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* DeleteChatMsg::_internal_mutable_chat_id() {
+  
+  return _impl_.chat_id_.Mutable(GetArenaForAllocation());
+}
+inline std::string* DeleteChatMsg::release_chat_id() {
+  // @@protoc_insertion_point(field_release:chat.DeleteChatMsg.chat_id)
+  return _impl_.chat_id_.Release();
+}
+inline void DeleteChatMsg::set_allocated_chat_id(std::string* chat_id) {
+  if (chat_id != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.chat_id_.SetAllocated(chat_id, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.chat_id_.IsDefault()) {
+    _impl_.chat_id_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.DeleteChatMsg.chat_id)
+}
+
+// string sender = 2;
+inline void DeleteChatMsg::clear_sender() {
+  _impl_.sender_.ClearToEmpty();
+}
+inline const std::string& DeleteChatMsg::sender() const {
+  // @@protoc_insertion_point(field_get:chat.DeleteChatMsg.sender)
+  return _internal_sender();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void DeleteChatMsg::set_sender(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.sender_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.DeleteChatMsg.sender)
+}
+inline std::string* DeleteChatMsg::mutable_sender() {
+  std::string* _s = _internal_mutable_sender();
+  // @@protoc_insertion_point(field_mutable:chat.DeleteChatMsg.sender)
+  return _s;
+}
+inline const std::string& DeleteChatMsg::_internal_sender() const {
+  return _impl_.sender_.Get();
+}
+inline void DeleteChatMsg::_internal_set_sender(const std::string& value) {
+  
+  _impl_.sender_.Set(value, GetArenaForAllocation());
+}
+inline std::string* DeleteChatMsg::_internal_mutable_sender() {
+  
+  return _impl_.sender_.Mutable(GetArenaForAllocation());
+}
+inline std::string* DeleteChatMsg::release_sender() {
+  // @@protoc_insertion_point(field_release:chat.DeleteChatMsg.sender)
+  return _impl_.sender_.Release();
+}
+inline void DeleteChatMsg::set_allocated_sender(std::string* sender) {
+  if (sender != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.sender_.SetAllocated(sender, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.sender_.IsDefault()) {
+    _impl_.sender_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.DeleteChatMsg.sender)
+}
+
+// string recipient = 3;
+inline void DeleteChatMsg::clear_recipient() {
+  _impl_.recipient_.ClearToEmpty();
+}
+inline const std::string& DeleteChatMsg::recipient() const {
+  // @@protoc_insertion_point(field_get:chat.DeleteChatMsg.recipient)
+  return _internal_recipient();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void DeleteChatMsg::set_recipient(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.recipient_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.DeleteChatMsg.recipient)
+}
+inline std::string* DeleteChatMsg::mutable_recipient() {
+  std::string* _s = _internal_mutable_recipient();
+  // @@protoc_insertion_point(field_mutable:chat.DeleteChatMsg.recipient)
+  return _s;
+}
+inline const std::string& DeleteChatMsg::_internal_recipient() const {
+  return _impl_.recipient_.Get();
+}
+inline void DeleteChatMsg::_internal_set_recipient(const std::string& value) {
+  
+  _impl_.recipient_.Set(value, GetArenaForAllocation());
+}
+inline std::string* DeleteChatMsg::_internal_mutable_recipient() {
+  
+  return _impl_.recipient_.Mutable(GetArenaForAllocation());
+}
+inline std::string* DeleteChatMsg::release_recipient() {
+  // @@protoc_insertion_point(field_release:chat.DeleteChatMsg.recipient)
+  return _impl_.recipient_.Release();
+}
+inline void DeleteChatMsg::set_allocated_recipient(std::string* recipient) {
+  if (recipient != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.recipient_.SetAllocated(recipient, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.recipient_.IsDefault()) {
+    _impl_.recipient_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.DeleteChatMsg.recipient)
+}
+
+// -------------------------------------------------------------------
+
 // ChatMsg
 
 // .chat.NewChatMsg new_chat_msg = 1;
@@ -4426,6 +4791,80 @@ inline ::chat::DefaultChatMsg* ChatMsg::mutable_default_msg() {
   return _msg;
 }
 
+// .chat.DeleteChatMsg delete_chat_msg = 4;
+inline bool ChatMsg::_internal_has_delete_chat_msg() const {
+  return payload_case() == kDeleteChatMsg;
+}
+inline bool ChatMsg::has_delete_chat_msg() const {
+  return _internal_has_delete_chat_msg();
+}
+inline void ChatMsg::set_has_delete_chat_msg() {
+  _impl_._oneof_case_[0] = kDeleteChatMsg;
+}
+inline void ChatMsg::clear_delete_chat_msg() {
+  if (_internal_has_delete_chat_msg()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete _impl_.payload_.delete_chat_msg_;
+    }
+    clear_has_payload();
+  }
+}
+inline ::chat::DeleteChatMsg* ChatMsg::release_delete_chat_msg() {
+  // @@protoc_insertion_point(field_release:chat.ChatMsg.delete_chat_msg)
+  if (_internal_has_delete_chat_msg()) {
+    clear_has_payload();
+    ::chat::DeleteChatMsg* temp = _impl_.payload_.delete_chat_msg_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.payload_.delete_chat_msg_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::chat::DeleteChatMsg& ChatMsg::_internal_delete_chat_msg() const {
+  return _internal_has_delete_chat_msg()
+      ? *_impl_.payload_.delete_chat_msg_
+      : reinterpret_cast< ::chat::DeleteChatMsg&>(::chat::_DeleteChatMsg_default_instance_);
+}
+inline const ::chat::DeleteChatMsg& ChatMsg::delete_chat_msg() const {
+  // @@protoc_insertion_point(field_get:chat.ChatMsg.delete_chat_msg)
+  return _internal_delete_chat_msg();
+}
+inline ::chat::DeleteChatMsg* ChatMsg::unsafe_arena_release_delete_chat_msg() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:chat.ChatMsg.delete_chat_msg)
+  if (_internal_has_delete_chat_msg()) {
+    clear_has_payload();
+    ::chat::DeleteChatMsg* temp = _impl_.payload_.delete_chat_msg_;
+    _impl_.payload_.delete_chat_msg_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void ChatMsg::unsafe_arena_set_allocated_delete_chat_msg(::chat::DeleteChatMsg* delete_chat_msg) {
+  clear_payload();
+  if (delete_chat_msg) {
+    set_has_delete_chat_msg();
+    _impl_.payload_.delete_chat_msg_ = delete_chat_msg;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:chat.ChatMsg.delete_chat_msg)
+}
+inline ::chat::DeleteChatMsg* ChatMsg::_internal_mutable_delete_chat_msg() {
+  if (!_internal_has_delete_chat_msg()) {
+    clear_payload();
+    set_has_delete_chat_msg();
+    _impl_.payload_.delete_chat_msg_ = CreateMaybeMessage< ::chat::DeleteChatMsg >(GetArenaForAllocation());
+  }
+  return _impl_.payload_.delete_chat_msg_;
+}
+inline ::chat::DeleteChatMsg* ChatMsg::mutable_delete_chat_msg() {
+  ::chat::DeleteChatMsg* _msg = _internal_mutable_delete_chat_msg();
+  // @@protoc_insertion_point(field_mutable:chat.ChatMsg.delete_chat_msg)
+  return _msg;
+}
+
 inline bool ChatMsg::has_payload() const {
   return payload_case() != PAYLOAD_NOT_SET;
 }
@@ -4438,6 +4877,8 @@ inline ChatMsg::PayloadCase ChatMsg::payload_case() const {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

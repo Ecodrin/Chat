@@ -293,3 +293,19 @@ std::string GreeterClient::get_login() const {
 }
 
 
+std::pair<bool, std::string> GreeterClient::delete_chat(
+            std::shared_ptr<ChatStreamgRPCWorker> writer,
+            const std::string & chat_id,
+    const std::string & recipient) const {
+    chat::ChatMsg chat_msg;
+    chat::DeleteChatMsg* msg = chat_msg.mutable_delete_chat_msg();
+    msg->set_chat_id(chat_id);
+    msg->set_sender(login);
+    msg->set_recipient(recipient);
+    if(writer->write(chat_msg)) {
+        return {false, "error in send msg"};
+    }
+    return {true, ""};
+}
+
+

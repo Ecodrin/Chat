@@ -5,9 +5,14 @@
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QDateTime>
+#include <QTextOption>
+#include <Qt>
+#include <QTextEdit>
+#include <QtCore>
 
 #include "workwithdata.h"
 #include "utility"
+#include "clickablewidget.h"
 
 class ChatWidget : public QWidget
 {
