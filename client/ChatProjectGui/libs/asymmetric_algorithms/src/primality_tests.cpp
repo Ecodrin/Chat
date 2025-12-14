@@ -16,8 +16,15 @@ namespace asymmetric_algorithms {
             throw std::invalid_argument("incorrect arg: number iterations > x");
         }
 
-        for(size_t i = 0; i < k - 1; ++i) {
-            PrimalityTest::ProccessIterationStatus status = proccess_iteration(x);
+        boost::random::uniform_int_distribution<boost::multiprecision::cpp_int> dist(2, x - 1);
+
+        for(size_t i = 0; i < k; ++i) {
+            boost::multiprecision::cpp_int a = dist(rng);
+            while(std::find(primality_witnesses.begin(), primality_witnesses.end(), a) != primality_witnesses.end()) {
+                a = dist(rng);
+            }
+            primality_witnesses.push_back(a);
+            PrimalityTest::ProccessIterationStatus status = proccess_iteration(x, a);
             switch (status) {
             case PrimalityTest::ProccessIterationStatus::NOTPRIME:
                 return 0;
@@ -27,9 +34,7 @@ namespace asymmetric_algorithms {
                 break;
             }
         }
-        if(proccess_iteration(x, true) == PrimalityTest::ProccessIterationStatus::NOTPRIME) {
-            return 0;
-        }
+        primality_witnesses.clear();
         return calculate_res_probability(k);
     }
 
@@ -41,33 +46,14 @@ namespace asymmetric_algorithms {
         return static_cast<size_t>(std::ceil(std::log2(1 / (1 - probability))));
     }
 
-    PrimalityTest::ProccessIterationStatus FermatPrimalityTest::proccess_iteration(const boost::multiprecision::cpp_int& n, bool last_iteration) {
-        boost::random::uniform_int_distribution<boost::multiprecision::cpp_int> dist(2, n - 1);
-        boost::multiprecision::cpp_int a = dist(rng);
-        while(std::find(primality_witnesses.begin(), primality_witnesses.end(), a) != primality_witnesses.end()) {
-            a = dist(rng);
-        }
-        primality_witnesses.push_back(a);
-        if(last_iteration) {
-            primality_witnesses.clear();
-        }
-
+    PrimalityTest::ProccessIterationStatus FermatPrimalityTest::proccess_iteration(const boost::multiprecision::cpp_int& n, const boost::multiprecision::cpp_int& a) {
         if(SymbolService::gcd(a, n) != 1) {
             return PrimalityTest::ProccessIterationStatus::NOTPRIME;
         }
         return (PrimalityTest::ProccessIterationStatus)(SymbolService::mod_pow(a, n - 1, n) == 1);
     }
 
-    PrimalityTest::ProccessIterationStatus SolovayStrassenPrimalityTest::proccess_iteration(const boost::multiprecision::cpp_int& n, bool last_iteration) {
-        boost::random::uniform_int_distribution<boost::multiprecision::cpp_int>  dist(2, n - 2);
-        boost::multiprecision::cpp_int a = dist(rng);
-        while(std::find(primality_witnesses.begin(), primality_witnesses.end(), a) != primality_witnesses.end()) {
-            a = dist(rng);
-        }
-        primality_witnesses.push_back(a);
-        if(last_iteration) {
-            primality_witnesses.clear();
-        }
+    PrimalityTest::ProccessIterationStatus SolovayStrassenPrimalityTest::proccess_iteration(const boost::multiprecision::cpp_int& n, const boost::multiprecision::cpp_int& a) {
 
         if(gcd(n, a) != 1) {
             return PrimalityTest::ProccessIterationStatus::NOTPRIME;
@@ -83,16 +69,7 @@ namespace asymmetric_algorithms {
         return 1 - 1/(std::pow(4, k));
     }
 
-    PrimalityTest::ProccessIterationStatus MillerRabinPrimalityTest::proccess_iteration(const boost::multiprecision::cpp_int & n, bool last_iteration) {
-        boost::random::uniform_int_distribution<boost::multiprecision::cpp_int>  dist(2, n - 2);
-        boost::multiprecision::cpp_int a = dist(rng);
-        while(std::find(primality_witnesses.begin(), primality_witnesses.end(), a) != primality_witnesses.end()) {
-            a = dist(rng);
-        }
-        primality_witnesses.push_back(a);
-        if(last_iteration) {
-            primality_witnesses.clear();
-        }
+    PrimalityTest::ProccessIterationStatus MillerRabinPrimalityTest::proccess_iteration(const boost::multiprecision::cpp_int& n, const boost::multiprecision::cpp_int& a) {
         if(t == 0) {
             t = n - 1;
             s = 0;
@@ -104,9 +81,6 @@ namespace asymmetric_algorithms {
 
         auto x = SymbolService::mod_pow(a, t, n);
         if(x == 1 || x == n - 1) {
-            if(last_iteration) {
-                clear_values();
-            }
             return PrimalityTest::ProccessIterationStatus::CONTINIEFOR;
         }
 
@@ -116,9 +90,6 @@ namespace asymmetric_algorithms {
                 clear_values();
                 return PrimalityTest::ProccessIterationStatus::NOTPRIME;
             } else if(x == n - 1) {
-                if(last_iteration) {
-                    clear_values();
-                }
                 return PrimalityTest::ProccessIterationStatus::CONTINIEFOR;
             }
         }

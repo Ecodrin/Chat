@@ -24,40 +24,35 @@ namespace asymmetric_algorithms {
         double check_primality(const boost::multiprecision::cpp_int& x, double probability) final;
 
     protected:
+        std::vector<boost::multiprecision::cpp_int> primality_witnesses;
         enum class ProccessIterationStatus {
             NOTPRIME,
             MAYBEPRIME,
             CONTINIEFOR,
         };
-        virtual ProccessIterationStatus proccess_iteration(const boost::multiprecision::cpp_int& n, bool last_iteration=false) = 0;
+        virtual ProccessIterationStatus proccess_iteration(const boost::multiprecision::cpp_int& n, const boost::multiprecision::cpp_int& a) = 0;
         virtual size_t calculate_k(double probability);
         virtual double calculate_res_probability(size_t k);
+    private:
+        boost::random::random_device rng;
     };
 
     class FermatPrimalityTest : public PrimalityTest {
-    private:
-        std::vector<boost::multiprecision::cpp_int> primality_witnesses;
-        boost::random::random_device rng;
     protected:
-        ProccessIterationStatus proccess_iteration(const boost::multiprecision::cpp_int& n, bool last_iteration) override;
+        ProccessIterationStatus proccess_iteration(const boost::multiprecision::cpp_int& n, const boost::multiprecision::cpp_int& a) override;
     };
 
     class SolovayStrassenPrimalityTest : public PrimalityTest {
-    private:
-        std::vector<boost::multiprecision::cpp_int> primality_witnesses;
-        boost::random::random_device rng;
     protected:
-        ProccessIterationStatus proccess_iteration(const boost::multiprecision::cpp_int& n, bool last_iteration) override;
+        ProccessIterationStatus proccess_iteration(const boost::multiprecision::cpp_int& n, const boost::multiprecision::cpp_int& a) override;
     };
 
     class MillerRabinPrimalityTest : public PrimalityTest {
     private:
-        std::vector<boost::multiprecision::cpp_int> primality_witnesses;
-        boost::random::random_device rng;
         void clear_values();
         boost::multiprecision::cpp_int s, t;
     protected:
-        ProccessIterationStatus proccess_iteration(const boost::multiprecision::cpp_int& n, bool last_iteration) override;
+        ProccessIterationStatus proccess_iteration(const boost::multiprecision::cpp_int& n, const boost::multiprecision::cpp_int& a) override;
         size_t calculate_k(double probability) override;
         double calculate_res_probability(size_t k) override;
     };

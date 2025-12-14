@@ -15,63 +15,8 @@
 #include "utility.h"
 #include "enc_utility.hpp"
 #include "bytes_utility.hpp"
+#include "db.h"
 
-
-struct KeyInfo{
-    std::string ab;
-    std::string g;
-    std::string p;
-    std::vector<std::byte> key;
-};
-
-
-
-struct  ChatData {
-    std::string interlocutor;
-    std::string chat_id;
-    KeyInfo key_info;
-    KeyInfo iv_info;
-    int alg_index;
-    int enc_mode_index;
-    int padd_mode_index;
-    std::shared_ptr<symmetric_interface_library::SymmetricContext> symmetric_context;
-    int status;
-};
-
-struct MsgData {
-    std::string chat_id;
-    bool is_file;
-    std::string sender;
-    std::string recipient;
-    std::string data;
-    int timestamp;
-};
-
-struct ChatInfo {
-    std::string interlocutor;
-    std::string chat_id;
-    std::string ab_key;
-    std::string g_key;
-    std::string p_key;
-    std::string ab_iv;
-    std::string g_iv;
-    std::string p_iv;
-    int alg_index;
-    int enc_mode_index;
-    int padd_mode_index;
-};
-
-struct FileData {
-    std::string chat_id;
-    bool is_file;
-    std::string sender;
-    std::string recipient;
-    std::string data;
-    int timestamp;
-    std::string file_name;
-    size_t index_file_chunk;
-    size_t total_file_chunk;
-};
 
 class WorkWithData {
 public:
@@ -89,7 +34,7 @@ public:
     std::string get_recipient(const std::string & chat_id);
     std::string delete_chat(const std::string & chat_id);
 private:
-    std::string files_path;;
+    std::string files_path;
     // потом переписать на бд
     std::mutex mutex;
     std::unordered_map<std::string, std::pair<ChatData, std::vector<MsgData>>> data;

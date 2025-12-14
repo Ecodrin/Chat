@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16)
 
 project(ChatProject VERSION 0.1 LANGUAGES CXX)
 
@@ -9,16 +9,14 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Core)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools Core Sql)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Core Sql)
+
 
 set(TS_FILES ChatProject_ru_RU.ts)
 
 set(PROJECT_SOURCES
         main.cpp
-
-
-
         ${TS_FILES}
 )
 
@@ -38,6 +36,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         chatwidget.h chatwidget.cpp
         clickablewidget.h clickablewidget.cpp
         deletechatdialog.h deletechatdialog.cpp deletechatdialog.ui
+        db.h db.cpp
 
 
 
@@ -82,6 +81,7 @@ target_link_libraries(ChatProject PRIVATE
     symmetric_algorithms
     Diffie_Hellman_key_exchange
     bytes_utility
+    Qt6::Sql
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

@@ -20,6 +20,7 @@ target_link_libraries(grpc_client
     symmetric_interface_library
     Diffie_Hellman_key_exchange
     symmetric_algorithms
+    Qt6::Sql
 )
 
 target_include_directories(grpc_client PUBLIC include)

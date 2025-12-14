@@ -22,6 +22,7 @@
 #include <QStandardPaths>
 #include <QFileDialog>
 #include <QAbstractItemView>
+#include <QFuture>
 
 #include <memory>
 #include <ctime>
@@ -65,6 +66,7 @@ signals:
     void updateChatsSignal();
 
 private:
+    std::vector<QFuture<void>> futures;
     std::mutex mutex;
     grpc::ClientContext clientcontext_chat_session;
     std::string current_chat_id = "";

@@ -31,7 +31,7 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
 
     writer = std::make_shared<ChatStreamgRPCWorker>(std::move(res.writer), [=](const chat::ChatMsg & msg){
         if(msg.has_new_chat_msg()) {
-            QtConcurrent::run([this, msg, client](){
+            auto future = QtConcurrent::run([this, msg, client](){
                 auto new_chat_msg = msg.new_chat_msg();
                 ChatInfo info{
                     .interlocutor = new_chat_msg.sender(),
@@ -54,8 +54,9 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
                 }
                 emit updateChatsSignal();
             });
+            futures.push_back(future);
         } else if(msg.has_default_msg()) {
-            QtConcurrent::run([this, msg](){
+            auto future = QtConcurrent::run([this, msg](){
                 auto default_msg = msg.default_msg();
                 MsgData msg_data{
                     .chat_id=default_msg.chat_id(),
@@ -71,8 +72,10 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
                     }
                 }
             });
+
+            futures.push_back(future);
         } else if(msg.has_file_msg()) {
-            QtConcurrent::run([this, msg](){
+            auto future = QtConcurrent::run([this, msg](){
                 auto file_msg = msg.file_msg();
 
                 FileData data{
@@ -90,13 +93,18 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
                 database->add_file(data);
                 emit updateChatSignal();
             });
+
+            futures.push_back(future);
         } else if(msg.has_delete_chat_msg()) {
-            QtConcurrent::run([this, msg](){
+
+            auto future = QtConcurrent::run([this, msg](){
                 auto delete_msg = msg.delete_chat_msg();
                 database->delete_chat(delete_msg.chat_id());
                 emit updateChatSignal();
                 emit updateChatsSignal();
             });
+
+            futures.push_back(future);
         }
     });
 
@@ -164,6 +172,9 @@ void MainWindow::on_DisconnectButton_clicked() {
     ui->ChatWidgets->clear();
 
     chats_model->clear();
+    for (auto &future: futures) {
+        future.waitForFinished();
+    }
     requestBack();
 }
 
