@@ -27,6 +27,7 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
 
     connect(this, &MainWindow::updateChatSignal, this, &MainWindow::show_chat, Qt::QueuedConnection);
     connect(this, &MainWindow::updateChatsSignal, this, &MainWindow::update_chats, Qt::QueuedConnection);
+    connect(this, &MainWindow::updateContactsSignal, this, &MainWindow::update_contacts, Qt::QueuedConnection);
 
 
     writer = std::make_shared<ChatStreamgRPCWorker>(std::move(res.writer), [=](const chat::ChatMsg & msg){
@@ -105,21 +106,26 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
             });
 
             futures.push_back(future);
+        } else if(msg.has_contact_notification()) {
+            auto future = QtConcurrent::run([this](){
+                emit updateContactsSignal();
+            });
+            futures.push_back(future);
         }
     });
 
 
     contacts_model = std::make_unique<QStringListModel>();
-    on_UpdateContactsButton_clicked();
+    emit updateContactsSignal();
     QObject::connect(ui->ContactsListView, &QListView::doubleClicked, [=](const QModelIndex & index){
         QString text = contacts_model->data(index, Qt::DisplayRole).toString();
         ContactDialog *contact_dialog = new ContactDialog(text.toStdString(), client, writer, database, this);
         contact_dialog->setAttribute(Qt::WA_DeleteOnClose);
         contact_dialog->exec();
 
-        on_UpdateContactsButton_clicked();
+        emit updateContactsSignal();
     });
-    on_UpdateContactsButton_clicked();
+    emit updateContactsSignal();
     update_chats();
 
 
@@ -145,6 +151,7 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
             emit updateChatSignal();
         }
     });
+
 }
 
 void MainWindow::Disconnect() {
@@ -184,7 +191,7 @@ void requestBack() {
 }
 
 
-void MainWindow::on_UpdateContactsButton_clicked() {
+void MainWindow::update_contacts() {
     auto [contacts, error_msg] = client->get_all_contacts();
     if (error_msg != "") {
         QMessageBox::information(this, "error", QString::fromStdString(error_msg));
@@ -211,7 +218,7 @@ void MainWindow::on_AddContactButton_clicked() {
         QMessageBox::information(this, "error", QString::fromStdString(t.second));
         return;
     }
-    on_UpdateContactsButton_clicked();
+    emit updateContactsSignal();
     ui->LineContactEdit->clear();
 }
 

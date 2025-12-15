@@ -253,6 +253,14 @@ func (s *Server) AddContact(ctx context.Context, req *pb.NewContactRequest) (*pb
 	response := &pb.StatusResponse{
 		Status: 0,
 	}
+	s.SendToMQRabbit(&pb.ChatMsg{
+		Payload: &pb.ChatMsg_ContactNotification{
+			ContactNotification: &pb.ContactMsgNotification{
+				Contact: req.Contact,
+				Sender:  user.Login,
+			},
+		},
+	})
 	return response, nil
 }
 
@@ -290,6 +298,15 @@ func (s *Server) AcceptRequestContact(ctx context.Context, req *pb.NewContactReq
 	response := &pb.StatusResponse{
 		Status: 0,
 	}
+	s.SendToMQRabbit(&pb.ChatMsg{
+		Payload: &pb.ChatMsg_ContactNotification{
+			ContactNotification: &pb.ContactMsgNotification{
+				Contact: req.Contact,
+				Sender:  user.Login,
+			},
+		},
+	})
+
 	return response, nil
 }
 
@@ -328,6 +345,14 @@ func (s *Server) DeclineRequestContact(ctx context.Context, req *pb.NewContactRe
 	response := &pb.StatusResponse{
 		Status: 0,
 	}
+	s.SendToMQRabbit(&pb.ChatMsg{
+		Payload: &pb.ChatMsg_ContactNotification{
+			ContactNotification: &pb.ContactMsgNotification{
+				Contact: req.Contact,
+				Sender:  user.Login,
+			},
+		},
+	})
 	return response, nil
 }
 
@@ -357,6 +382,7 @@ func (s *Server) GetContacts(ctx context.Context, req *pb.EmptyMsg) (*pb.GetCont
 		Contats:  contacts,
 		Statuses: statuses,
 	}
+
 	return response, nil
 }
 
@@ -400,6 +426,14 @@ func (s *Server) DeleteContact(ctx context.Context, req *pb.DeleteContactRequest
 	response := &pb.StatusResponse{
 		Status: 0,
 	}
+	s.SendToMQRabbit(&pb.ChatMsg{
+		Payload: &pb.ChatMsg_ContactNotification{
+			ContactNotification: &pb.ContactMsgNotification{
+				Contact: req.Contact,
+				Sender:  user.Login,
+			},
+		},
+	})
 	return response, nil
 }
 

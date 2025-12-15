@@ -52,6 +52,9 @@ extern AuthRequestDefaultTypeInternal _AuthRequest_default_instance_;
 class ChatMsg;
 struct ChatMsgDefaultTypeInternal;
 extern ChatMsgDefaultTypeInternal _ChatMsg_default_instance_;
+class ContactMsgNotification;
+struct ContactMsgNotificationDefaultTypeInternal;
+extern ContactMsgNotificationDefaultTypeInternal _ContactMsgNotification_default_instance_;
 class DefaultChatMsg;
 struct DefaultChatMsgDefaultTypeInternal;
 extern DefaultChatMsgDefaultTypeInternal _DefaultChatMsg_default_instance_;
@@ -92,6 +95,7 @@ extern StatusResponseDefaultTypeInternal _StatusResponse_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::chat::AuthRequest* Arena::CreateMaybeMessage<::chat::AuthRequest>(Arena*);
 template<> ::chat::ChatMsg* Arena::CreateMaybeMessage<::chat::ChatMsg>(Arena*);
+template<> ::chat::ContactMsgNotification* Arena::CreateMaybeMessage<::chat::ContactMsgNotification>(Arena*);
 template<> ::chat::DefaultChatMsg* Arena::CreateMaybeMessage<::chat::DefaultChatMsg>(Arena*);
 template<> ::chat::DeleteChatMsg* Arena::CreateMaybeMessage<::chat::DeleteChatMsg>(Arena*);
 template<> ::chat::DeleteContactRequest* Arena::CreateMaybeMessage<::chat::DeleteContactRequest>(Arena*);
@@ -2496,6 +2500,175 @@ class DeleteChatMsg final :
 };
 // -------------------------------------------------------------------
 
+class ContactMsgNotification final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.ContactMsgNotification) */ {
+ public:
+  inline ContactMsgNotification() : ContactMsgNotification(nullptr) {}
+  ~ContactMsgNotification() override;
+  explicit PROTOBUF_CONSTEXPR ContactMsgNotification(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ContactMsgNotification(const ContactMsgNotification& from);
+  ContactMsgNotification(ContactMsgNotification&& from) noexcept
+    : ContactMsgNotification() {
+    *this = ::std::move(from);
+  }
+
+  inline ContactMsgNotification& operator=(const ContactMsgNotification& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ContactMsgNotification& operator=(ContactMsgNotification&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ContactMsgNotification& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ContactMsgNotification* internal_default_instance() {
+    return reinterpret_cast<const ContactMsgNotification*>(
+               &_ContactMsgNotification_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    13;
+
+  friend void swap(ContactMsgNotification& a, ContactMsgNotification& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ContactMsgNotification* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ContactMsgNotification* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ContactMsgNotification* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ContactMsgNotification>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const ContactMsgNotification& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const ContactMsgNotification& from) {
+    ContactMsgNotification::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ContactMsgNotification* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.ContactMsgNotification";
+  }
+  protected:
+  explicit ContactMsgNotification(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kContactFieldNumber = 1,
+    kSenderFieldNumber = 2,
+  };
+  // string contact = 1;
+  void clear_contact();
+  const std::string& contact() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_contact(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_contact();
+  PROTOBUF_NODISCARD std::string* release_contact();
+  void set_allocated_contact(std::string* contact);
+  private:
+  const std::string& _internal_contact() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_contact(const std::string& value);
+  std::string* _internal_mutable_contact();
+  public:
+
+  // string sender = 2;
+  void clear_sender();
+  const std::string& sender() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_sender(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_sender();
+  PROTOBUF_NODISCARD std::string* release_sender();
+  void set_allocated_sender(std::string* sender);
+  private:
+  const std::string& _internal_sender() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_sender(const std::string& value);
+  std::string* _internal_mutable_sender();
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.ContactMsgNotification)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr contact_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr sender_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_client_2eproto;
+};
+// -------------------------------------------------------------------
+
 class ChatMsg final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.ChatMsg) */ {
  public:
@@ -2544,6 +2717,7 @@ class ChatMsg final :
     kFileMsg = 2,
     kDefaultMsg = 3,
     kDeleteChatMsg = 4,
+    kContactNotification = 5,
     PAYLOAD_NOT_SET = 0,
   };
 
@@ -2552,7 +2726,7 @@ class ChatMsg final :
                &_ChatMsg_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    14;
 
   friend void swap(ChatMsg& a, ChatMsg& b) {
     a.Swap(&b);
@@ -2629,6 +2803,7 @@ class ChatMsg final :
     kFileMsgFieldNumber = 2,
     kDefaultMsgFieldNumber = 3,
     kDeleteChatMsgFieldNumber = 4,
+    kContactNotificationFieldNumber = 5,
   };
   // .chat.NewChatMsg new_chat_msg = 1;
   bool has_new_chat_msg() const;
@@ -2702,6 +2877,24 @@ class ChatMsg final :
       ::chat::DeleteChatMsg* delete_chat_msg);
   ::chat::DeleteChatMsg* unsafe_arena_release_delete_chat_msg();
 
+  // .chat.ContactMsgNotification contact_notification = 5;
+  bool has_contact_notification() const;
+  private:
+  bool _internal_has_contact_notification() const;
+  public:
+  void clear_contact_notification();
+  const ::chat::ContactMsgNotification& contact_notification() const;
+  PROTOBUF_NODISCARD ::chat::ContactMsgNotification* release_contact_notification();
+  ::chat::ContactMsgNotification* mutable_contact_notification();
+  void set_allocated_contact_notification(::chat::ContactMsgNotification* contact_notification);
+  private:
+  const ::chat::ContactMsgNotification& _internal_contact_notification() const;
+  ::chat::ContactMsgNotification* _internal_mutable_contact_notification();
+  public:
+  void unsafe_arena_set_allocated_contact_notification(
+      ::chat::ContactMsgNotification* contact_notification);
+  ::chat::ContactMsgNotification* unsafe_arena_release_contact_notification();
+
   void clear_payload();
   PayloadCase payload_case() const;
   // @@protoc_insertion_point(class_scope:chat.ChatMsg)
@@ -2711,6 +2904,7 @@ class ChatMsg final :
   void set_has_file_msg();
   void set_has_default_msg();
   void set_has_delete_chat_msg();
+  void set_has_contact_notification();
 
   inline bool has_payload() const;
   inline void clear_has_payload();
@@ -2726,6 +2920,7 @@ class ChatMsg final :
       ::chat::FileMsg* file_msg_;
       ::chat::DefaultChatMsg* default_msg_;
       ::chat::DeleteChatMsg* delete_chat_msg_;
+      ::chat::ContactMsgNotification* contact_notification_;
     } payload_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     uint32_t _oneof_case_[1];
@@ -4567,6 +4762,110 @@ inline void DeleteChatMsg::set_allocated_recipient(std::string* recipient) {
 
 // -------------------------------------------------------------------
 
+// ContactMsgNotification
+
+// string contact = 1;
+inline void ContactMsgNotification::clear_contact() {
+  _impl_.contact_.ClearToEmpty();
+}
+inline const std::string& ContactMsgNotification::contact() const {
+  // @@protoc_insertion_point(field_get:chat.ContactMsgNotification.contact)
+  return _internal_contact();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void ContactMsgNotification::set_contact(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.contact_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.ContactMsgNotification.contact)
+}
+inline std::string* ContactMsgNotification::mutable_contact() {
+  std::string* _s = _internal_mutable_contact();
+  // @@protoc_insertion_point(field_mutable:chat.ContactMsgNotification.contact)
+  return _s;
+}
+inline const std::string& ContactMsgNotification::_internal_contact() const {
+  return _impl_.contact_.Get();
+}
+inline void ContactMsgNotification::_internal_set_contact(const std::string& value) {
+  
+  _impl_.contact_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ContactMsgNotification::_internal_mutable_contact() {
+  
+  return _impl_.contact_.Mutable(GetArenaForAllocation());
+}
+inline std::string* ContactMsgNotification::release_contact() {
+  // @@protoc_insertion_point(field_release:chat.ContactMsgNotification.contact)
+  return _impl_.contact_.Release();
+}
+inline void ContactMsgNotification::set_allocated_contact(std::string* contact) {
+  if (contact != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.contact_.SetAllocated(contact, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.contact_.IsDefault()) {
+    _impl_.contact_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.ContactMsgNotification.contact)
+}
+
+// string sender = 2;
+inline void ContactMsgNotification::clear_sender() {
+  _impl_.sender_.ClearToEmpty();
+}
+inline const std::string& ContactMsgNotification::sender() const {
+  // @@protoc_insertion_point(field_get:chat.ContactMsgNotification.sender)
+  return _internal_sender();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void ContactMsgNotification::set_sender(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.sender_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.ContactMsgNotification.sender)
+}
+inline std::string* ContactMsgNotification::mutable_sender() {
+  std::string* _s = _internal_mutable_sender();
+  // @@protoc_insertion_point(field_mutable:chat.ContactMsgNotification.sender)
+  return _s;
+}
+inline const std::string& ContactMsgNotification::_internal_sender() const {
+  return _impl_.sender_.Get();
+}
+inline void ContactMsgNotification::_internal_set_sender(const std::string& value) {
+  
+  _impl_.sender_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ContactMsgNotification::_internal_mutable_sender() {
+  
+  return _impl_.sender_.Mutable(GetArenaForAllocation());
+}
+inline std::string* ContactMsgNotification::release_sender() {
+  // @@protoc_insertion_point(field_release:chat.ContactMsgNotification.sender)
+  return _impl_.sender_.Release();
+}
+inline void ContactMsgNotification::set_allocated_sender(std::string* sender) {
+  if (sender != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.sender_.SetAllocated(sender, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.sender_.IsDefault()) {
+    _impl_.sender_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.ContactMsgNotification.sender)
+}
+
+// -------------------------------------------------------------------
+
 // ChatMsg
 
 // .chat.NewChatMsg new_chat_msg = 1;
@@ -4865,6 +5164,80 @@ inline ::chat::DeleteChatMsg* ChatMsg::mutable_delete_chat_msg() {
   return _msg;
 }
 
+// .chat.ContactMsgNotification contact_notification = 5;
+inline bool ChatMsg::_internal_has_contact_notification() const {
+  return payload_case() == kContactNotification;
+}
+inline bool ChatMsg::has_contact_notification() const {
+  return _internal_has_contact_notification();
+}
+inline void ChatMsg::set_has_contact_notification() {
+  _impl_._oneof_case_[0] = kContactNotification;
+}
+inline void ChatMsg::clear_contact_notification() {
+  if (_internal_has_contact_notification()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete _impl_.payload_.contact_notification_;
+    }
+    clear_has_payload();
+  }
+}
+inline ::chat::ContactMsgNotification* ChatMsg::release_contact_notification() {
+  // @@protoc_insertion_point(field_release:chat.ChatMsg.contact_notification)
+  if (_internal_has_contact_notification()) {
+    clear_has_payload();
+    ::chat::ContactMsgNotification* temp = _impl_.payload_.contact_notification_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.payload_.contact_notification_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::chat::ContactMsgNotification& ChatMsg::_internal_contact_notification() const {
+  return _internal_has_contact_notification()
+      ? *_impl_.payload_.contact_notification_
+      : reinterpret_cast< ::chat::ContactMsgNotification&>(::chat::_ContactMsgNotification_default_instance_);
+}
+inline const ::chat::ContactMsgNotification& ChatMsg::contact_notification() const {
+  // @@protoc_insertion_point(field_get:chat.ChatMsg.contact_notification)
+  return _internal_contact_notification();
+}
+inline ::chat::ContactMsgNotification* ChatMsg::unsafe_arena_release_contact_notification() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:chat.ChatMsg.contact_notification)
+  if (_internal_has_contact_notification()) {
+    clear_has_payload();
+    ::chat::ContactMsgNotification* temp = _impl_.payload_.contact_notification_;
+    _impl_.payload_.contact_notification_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void ChatMsg::unsafe_arena_set_allocated_contact_notification(::chat::ContactMsgNotification* contact_notification) {
+  clear_payload();
+  if (contact_notification) {
+    set_has_contact_notification();
+    _impl_.payload_.contact_notification_ = contact_notification;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:chat.ChatMsg.contact_notification)
+}
+inline ::chat::ContactMsgNotification* ChatMsg::_internal_mutable_contact_notification() {
+  if (!_internal_has_contact_notification()) {
+    clear_payload();
+    set_has_contact_notification();
+    _impl_.payload_.contact_notification_ = CreateMaybeMessage< ::chat::ContactMsgNotification >(GetArenaForAllocation());
+  }
+  return _impl_.payload_.contact_notification_;
+}
+inline ::chat::ContactMsgNotification* ChatMsg::mutable_contact_notification() {
+  ::chat::ContactMsgNotification* _msg = _internal_mutable_contact_notification();
+  // @@protoc_insertion_point(field_mutable:chat.ChatMsg.contact_notification)
+  return _msg;
+}
+
 inline bool ChatMsg::has_payload() const {
   return payload_case() != PAYLOAD_NOT_SET;
 }
@@ -4877,6 +5250,8 @@ inline ChatMsg::PayloadCase ChatMsg::payload_case() const {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

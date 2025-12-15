@@ -52,10 +52,10 @@ public:
 
     void update_chats();
     void show_chat();
+    void update_contacts();
 
 private slots:
     void on_DisconnectButton_clicked();
-    void on_UpdateContactsButton_clicked();
     void on_AddContactButton_clicked();
     void on_SendMsgButton_clicked();
     void on_FileButton_clicked();
@@ -64,6 +64,7 @@ signals:
     void requestBack();
     void updateChatSignal();
     void updateChatsSignal();
+    void updateContactsSignal();
 
 private:
     std::vector<QFuture<void>> futures;

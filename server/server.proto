@@ -99,11 +99,17 @@ message DeleteChatMsg {
     string recipient = 3;
 }
 
+message ContactMsgNotification {
+    string contact = 1;
+    string sender = 2;
+}
+
 message ChatMsg {
     oneof payload {
         NewChatMsg new_chat_msg = 1;
         FileMsg file_msg = 2;
         DefaultChatMsg default_msg = 3;
         DeleteChatMsg delete_chat_msg = 4;
+        ContactMsgNotification contact_notification = 5;
     }
 }

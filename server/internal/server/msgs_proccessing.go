@@ -5,8 +5,33 @@ import (
 	pb "server/internal/grps_chat"
 	"time"
 
+	amqp "github.com/rabbitmq/amqp091-go"
 	"google.golang.org/protobuf/encoding/protojson"
 )
+
+func (s *Server) SendToMQRabbit(msg *pb.ChatMsg) {
+	marshaler := protojson.MarshalOptions{
+		EmitUnpopulated: true,
+		UseProtoNames:   true,
+	}
+
+	JSONmsg, err := marshaler.Marshal(msg)
+	if err != nil {
+		s.logger.Println("json marshal error: ", err)
+		return
+	}
+
+	err = s.channelMQRabbit.Publish(
+		"",
+		s.queueMQRabbit.Name,
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: "application/json",
+			Body:        JSONmsg,
+		},
+	)
+}
 
 func (s *Server) MsgsProccessing() error {
 	msgs, err := s.channelMQRabbit.Consume(
@@ -47,6 +72,9 @@ func (s *Server) MsgsProccessing() error {
 		case *pb.ChatMsg_DeleteChatMsg:
 			sender = msgH.GetDeleteChatMsg().GetSender()
 			recipient = msgH.GetDeleteChatMsg().GetRecipient()
+		case *pb.ChatMsg_ContactNotification:
+			recipient = msgH.GetContactNotification().GetContact()
+			sender = msgH.GetContactNotification().GetSender()
 		default:
 			s.logger.Println("unrecognized type of msg")
 			continue
