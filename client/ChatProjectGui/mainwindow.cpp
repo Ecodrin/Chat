@@ -22,7 +22,7 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
     }
 
 
-    database = std::make_shared<WorkWithData>(files_path + "/" + client->get_login());
+    database = std::make_shared<WorkWithData>(files_path + "/" + client->get_login(), client->get_login());
     chats_model = std::make_unique<QStandardItemModel>();
 
     connect(this, &MainWindow::updateChatSignal, this, &MainWindow::show_chat, Qt::QueuedConnection);

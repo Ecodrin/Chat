@@ -1,44 +1,54 @@
 #include "db.h"
 
 DB::DB(const std::string & db_name): db_name{db_name} {
+    bool exist = std::filesystem::exists(db_name);
+    if(!exist) {
+        std::ofstream stream(db_name);
+        if(!stream.is_open()) {
+            stream.close();
+        }
+    }
+
     db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(QString::fromStdString(db_name));
+    db.setDatabaseName(QDir::fromNativeSeparators(QString::fromStdString(db_name)));
+    db.open();
     if(!db.isOpen()) {
+        qDebug() << "error in setDatabaseName";
         return;
     }
 
     QSqlQuery query(db);
-    if (!query.exec("CREATE TABLE IF NOT EXIST chats_info("
+    if (!query.exec("CREATE TABLE IF NOT EXISTS chats_info ( "
                 "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                "interlocutor TEXT,"
-                "chat_id TEXT,"
-                "alg_index INTEGER,"
-                "enc_mode_index INTEGER,"
-                "padd_mode_index INTEGER,"
-                "status INTEGER,"
-                "key_ab TEXT,"
-                "key_g TEXT,"
-                "key_p TEXT,"
-                "key_key TEXT,"
-                "iv_ab TEXT,"
-                "iv_g TEXT,"
-                "iv_p TEXT,"
-                "iv_key TEXT)"
+                "interlocutor TEXT, "
+                "chat_id TEXT, "
+                "alg_index INTEGER, "
+                "enc_mode_index INTEGER, "
+                "padd_mode_index INTEGER, "
+                "status INTEGER, "
+                "key_ab TEXT, "
+                "key_g TEXT, "
+                "key_p TEXT, "
+                "key_key TEXT, "
+                "iv_ab TEXT, "
+                "iv_g TEXT, "
+                "iv_p TEXT, "
+                "iv_key TEXT )"
                     )) {
         qDebug("error in create chats_info table sql");
         throw std::runtime_error("error in create chats_info table sql");
     }
 
-    if(!query.exec("CREATE TABLE IF NOT EXIST chats_data("
+    if(!query.exec("CREATE TABLE IF NOT EXISTS chats_data("
                     "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                     "chat_id TEXT,"
-                    "is_file INTEGER"
+                    "is_file INTEGER,"
                     "sender TEXT,"
                     "recipient TEXT,"
                     "data TEXT,"
                     "timestamp INTEGER)"
                     )) {
-        qDebug("error in create chats_data table sql");
+        qDebug() << "error in create chats_data table sql " << query.lastError().text();
         throw std::runtime_error("error in create chats_data table sql");
     }
 }
@@ -47,8 +57,8 @@ DB::DB(const std::string & db_name): db_name{db_name} {
 bool DB::add_chat(ChatData chat_data) {
     QSqlQuery query(db);
     query.prepare("INSERT INTO chats_info (interlocutor, chat_id, alg_index, "
-                  "enc_mode_index, padd_mode_index, status, key_ab, key_g, key_p, key_key, iv_ab, iv_g, iv_p, iv_key), "
-                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+                  "enc_mode_index, padd_mode_index, status, key_ab, key_g, key_p, key_key, iv_ab, iv_g, iv_p, iv_key) "
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     query.addBindValue(QString::fromStdString(chat_data.interlocutor));
     query.addBindValue(QString::fromStdString(chat_data.chat_id));
     query.addBindValue(chat_data.alg_index);
@@ -65,15 +75,10 @@ bool DB::add_chat(ChatData chat_data) {
     query.addBindValue(QString::fromStdString(bytes_utility::get_string_from_bytes(chat_data.iv_info.key)));
 
     if(!query.exec()) {
-        qDebug("error in add chat");
+        qDebug() << "error in add chat " << query.lastError().text();
         return false;
     }
     return true;
-}
-
-
-ChatData get_chat(const std::string & chat_id) {
-
 }
 
 
@@ -81,9 +86,8 @@ bool DB::update_chat(ChatData chat_data) {
     QSqlQuery query(db);
     query.prepare("UPDATE chats_info SET "
                   "interlocutor = ?, chat_id = ?, alg_index = ?, "
-                  "enc_mode_index = ?, padd_mode_index = ?, status = ?,"
-                  "key_ab = ?, key_g = ?, key_p = ?, key_key = ?, "
-                  "iv_ab = ?, iv_g = ?, iv_p = ?, iv_key = ? WHERE chat_id = ?");
+                  "enc_mode_index = ?, padd_mode_index = ?, status = ?, key_ab = ?, key_g = ?, key_p = ?, "
+                  "key_key = ?, iv_ab = ?, iv_g = ?, iv_p = ?, iv_key = ? WHERE chat_id = ?");
     query.addBindValue(QString::fromStdString(chat_data.interlocutor));
     query.addBindValue(QString::fromStdString(chat_data.chat_id));
     query.addBindValue(chat_data.alg_index);
@@ -101,12 +105,25 @@ bool DB::update_chat(ChatData chat_data) {
     query.addBindValue(QString::fromStdString(chat_data.chat_id));
 
     if(!query.exec()) {
-        qDebug("error in add chat");
+        qDebug() << "error in update chat " << query.lastError().text();
         return false;
     }
     return true;
 }
 
+
+bool DB::check_exist_chat(const std::string & chat_id) {
+    QSqlQuery query(db);
+    query.prepare("SELECT interlocutor, chat_id, alg_index, "
+                  "enc_mode_index, padd_mode_index, status, key_ab, key_g, key_p, "
+                  "key_key, iv_ab, iv_g, iv_p, iv_key from chats_info WHERE chat_id = ?");
+    query.addBindValue(QString::fromStdString(chat_id));
+    if(!query.exec()){
+        qDebug() << "error in check_exist_chat " << query.lastError().text();
+        return false;
+    }
+    return query.next();
+}
 
 ChatData DB::get_chat(const std::string & chat_id) {
     QSqlQuery query(db);
@@ -115,8 +132,8 @@ ChatData DB::get_chat(const std::string & chat_id) {
                   "key_key, iv_ab, iv_g, iv_p, iv_key from chats_info WHERE chat_id = ?");
     query.addBindValue(QString::fromStdString(chat_id));
     if(!query.exec()){
-        qDebug("error in get_chat");
-        return {{}};
+        qDebug() << "error in get_chat " << query.lastError().text();
+        return {};
     }
     query.next();
     ChatData data {
@@ -147,7 +164,7 @@ std::pair<bool, std::vector<ChatData>> DB::get_chats() {
     QSqlQuery query(db);
     if (!query.exec("SELECT interlocutor, chat_id, alg_index, "
                     "enc_mode_index, padd_mode_index, status, key_ab, key_g, key_p, key_key, iv_ab, iv_g, iv_p, iv_key from chats_info")) {
-        qDebug("error in get_chats");
+        qDebug() << "error in get_chats " << query.lastError().text();
         return {false, {}};
     }
     while(query.next()) {
@@ -187,7 +204,7 @@ bool DB::add_msg_or_file(const MsgData & msg_data) {
     query.addBindValue(QString::fromStdString(msg_data.data));
     query.addBindValue(msg_data.timestamp);
     if(!query.exec()) {
-        qDebug("error in add_msg");
+        qDebug() << "error in add_msg_or_file " << query.lastError().text();
         return false;
     }
     return true;
@@ -196,10 +213,10 @@ bool DB::add_msg_or_file(const MsgData & msg_data) {
 
 std::vector<MsgData> DB::get_msgs(const std::string & chat_id) {
     QSqlQuery query(db);
-    query.prepare("SELECT chat_id, is_file, sender, recipient, data, timestamp FROM chats_data WHERE chat_id = ? ORDER BY timestaps ASC");
+    query.prepare("SELECT chat_id, is_file, sender, recipient, data, timestamp FROM chats_data WHERE chat_id = ? ORDER BY timestamp ASC");
     query.addBindValue(QString::fromStdString(chat_id));
     if (!query.exec()) {
-        qDebug("error in get_msgs");
+        qDebug() << "error in get_msgs " << query.lastError().text();
         return {};
     }
     std::vector<MsgData> result;

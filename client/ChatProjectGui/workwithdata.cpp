@@ -1,13 +1,15 @@
 #include "workwithdata.h"
 
-WorkWithData::WorkWithData(const std::string & files_path) : files_path{files_path} {
+WorkWithData::WorkWithData(const std::string & files_path, const std::string & login) :
+    files_path{files_path}, login{login}, db{files_path + "/" + login + ".db"} {
+
 
 }
 
 ChatInfo WorkWithData::add_chat(int alg, int enc_mode, int padd_mode, const std::string & interlocutor, const std::string & chat_id) {
     std::lock_guard<std::mutex> locker(mutex);
     std::string id = chat_id;
-    if (chat_id == "-1" or data.find(chat_id) == data.end()) {
+    if (chat_id == "-1" or !db.check_exist_chat(chat_id)) {
         id = generate_random_string();
     }
     ChatData chat_data{
@@ -46,13 +48,15 @@ ChatInfo WorkWithData::add_chat(int alg, int enc_mode, int padd_mode, const std:
         .enc_mode_index=chat_data.enc_mode_index,
         .padd_mode_index=chat_data.padd_mode_index
     };
-    data[chat_data.chat_id] = {chat_data, {}};
+    if (!db.add_chat(chat_data)) {
+        return {};
+    }
     return info;
 }
 
 std::pair<bool, ChatInfo> WorkWithData::update_chat_status(const ChatInfo & info) {
     std::unique_lock<std::mutex> locker(mutex);
-    if (data.find(info.chat_id) == data.end()) {
+    if (!db.check_exist_chat(info.chat_id)) {
         ChatData chat_data{
             .interlocutor=info.interlocutor,
             .chat_id=info.chat_id,
@@ -75,10 +79,13 @@ std::pair<bool, ChatInfo> WorkWithData::update_chat_status(const ChatInfo & info
             .g=info.g_iv,
             .p=info.p_iv,
         };
-        data[chat_data.chat_id] = {chat_data, {}};
+
+        if (!db.add_chat(chat_data)) {
+            return {false, {}};
+        }
     }
 
-    auto &chat_info = data[info.chat_id].first;
+    auto chat_info = db.get_chat(info.chat_id);
     if(chat_info.status != 0 and chat_info.status != 1) {
         std::cout << "!!!!!!!!!!!!!2" << std::endl;
         return {false, {}};
@@ -102,18 +109,15 @@ std::pair<bool, ChatInfo> WorkWithData::update_chat_status(const ChatInfo & info
     t = bytes_utility::get_bytes_from_string_numbers(string_iv);
     t.resize(block_size);
     chat_info.iv_info.key = t;
-    chat_info.symmetric_context = std::make_shared<symmetric_interface_library::SymmetricContext>(
-        symmetric_algorithms::get_alg(static_cast<symmetric_algorithms::SymmetricAlgorithmsEnum>(info.alg_index), chat_info.key_info.key),
-        chat_info.key_info.key,
-        static_cast<symmetric_interface_library::EncryptionModeEnum>(chat_info.enc_mode_index),
-        static_cast<symmetric_interface_library::PaddingModeEnum>(chat_info.padd_mode_index),
-        chat_info.iv_info.key
-    );
-    if(chat_info.status == 1) {
-        chat_info.status = 2;
+
+    int prev = chat_info.status;
+    chat_info.status = 2;
+
+    db.update_chat(chat_info);
+
+    if(prev == 1) {
         return {false, {}};
     }
-    chat_info.status = 2;
 
     ChatInfo return_info {
         .interlocutor=info.interlocutor,
@@ -133,9 +137,13 @@ std::pair<bool, ChatInfo> WorkWithData::update_chat_status(const ChatInfo & info
 
 std::vector<ChatInfo> WorkWithData::get_chats() {
     std::lock_guard<std::mutex> locker(mutex);
+    auto [exist, data] = db.get_chats();
+    if(!exist) {
+        qDebug("get from db.get_chats exist = false");
+        return {};
+    }
     std::vector<ChatInfo> chats;
-    for(const auto & chat : data) {
-        auto chat_info = chat.second.first;
+    for(const auto & chat_info : data) {
         ChatInfo info {
             .interlocutor=chat_info.interlocutor,
             .chat_id=chat_info.chat_id,
@@ -148,10 +156,18 @@ std::vector<ChatInfo> WorkWithData::get_chats() {
 
 bool WorkWithData::add_msg(const MsgData & msg_data) {
     std::lock_guard<std::mutex> locker(mutex);
-    if(data.find(msg_data.chat_id) == data.end()) {
+    if(!db.check_exist_chat(msg_data.chat_id)) {
         return false;
     }
-    auto & chat = data[msg_data.chat_id].first;
+    auto chat = db.get_chat(msg_data.chat_id);
+    chat.symmetric_context = std::make_shared<symmetric_interface_library::SymmetricContext>(
+        symmetric_algorithms::get_alg(static_cast<symmetric_algorithms::SymmetricAlgorithmsEnum>(chat.alg_index), chat.key_info.key),
+        chat.key_info.key,
+        static_cast<symmetric_interface_library::EncryptionModeEnum>(chat.enc_mode_index),
+        static_cast<symmetric_interface_library::PaddingModeEnum>(chat.padd_mode_index),
+        chat.iv_info.key
+    );
+
     std::vector<std::byte> decr;
     chat.symmetric_context->decryption(bytes_utility::get_bytes_from_string(msg_data.data), decr).get();
     MsgData new_msg_data{
@@ -162,17 +178,25 @@ bool WorkWithData::add_msg(const MsgData & msg_data) {
         .data = bytes_utility::get_string_from_bytes(decr),
         .timestamp=msg_data.timestamp,
     };
-    data[msg_data.chat_id].second.push_back(new_msg_data);
+    db.add_msg_or_file(new_msg_data);
     return true;
 }
 
 
 std::pair<bool, MsgData> WorkWithData::send_msg(const MsgData & msg_data) {
     std::lock_guard<std::mutex> locker(mutex);
-    if(data.find(msg_data.chat_id) == data.end()) {
+
+    if(!db.check_exist_chat(msg_data.chat_id)) {
         return {false, {}};
     }
-    auto & chat = data[msg_data.chat_id].first;
+    auto chat = db.get_chat(msg_data.chat_id);
+    chat.symmetric_context = std::make_shared<symmetric_interface_library::SymmetricContext>(
+        symmetric_algorithms::get_alg(static_cast<symmetric_algorithms::SymmetricAlgorithmsEnum>(chat.alg_index), chat.key_info.key),
+        chat.key_info.key,
+        static_cast<symmetric_interface_library::EncryptionModeEnum>(chat.enc_mode_index),
+        static_cast<symmetric_interface_library::PaddingModeEnum>(chat.padd_mode_index),
+        chat.iv_info.key
+    );
     std::vector<std::byte> encr;
     chat.symmetric_context->encryption(bytes_utility::get_bytes_from_string(msg_data.data), encr).get();
     MsgData new_msg_data{
@@ -183,18 +207,18 @@ std::pair<bool, MsgData> WorkWithData::send_msg(const MsgData & msg_data) {
         .data = bytes_utility::get_string_from_bytes(encr),
         .timestamp=msg_data.timestamp,
     };
-    data[msg_data.chat_id].second.push_back(msg_data);
+    db.add_msg_or_file(new_msg_data);
     return {true, new_msg_data};
 }
 
 
 std::vector<MsgData> WorkWithData::get_msgs(const std::string & chat_id) {
     std::lock_guard<std::mutex> locker(mutex);
-    if(data.find(chat_id) == data.end()) {
+    if(!db.check_exist_chat(chat_id)) {
         return {};
     }
-    std::vector<MsgData> res(data[chat_id].second);
 
+    auto res = db.get_msgs(chat_id);
     return res;
 }
 
@@ -208,8 +232,16 @@ bool WorkWithData::add_file(const FileData & msg_data) {
 
     if (msg_data.index_file_chunk == msg_data.total_file_chunk) {
         std::unique_lock<std::mutex> locker(mutex);
-        auto & chat = data[msg_data.chat_id].first;
+        auto chat = db.get_chat(msg_data.chat_id);
         locker.unlock();
+
+        chat.symmetric_context = std::make_shared<symmetric_interface_library::SymmetricContext>(
+            symmetric_algorithms::get_alg(static_cast<symmetric_algorithms::SymmetricAlgorithmsEnum>(chat.alg_index), chat.key_info.key),
+            chat.key_info.key,
+            static_cast<symmetric_interface_library::EncryptionModeEnum>(chat.enc_mode_index),
+            static_cast<symmetric_interface_library::PaddingModeEnum>(chat.padd_mode_index),
+            chat.iv_info.key
+        );
 
         std::string output= msg_data.file_name;
         output = output.replace(0, 4, "");
@@ -218,14 +250,15 @@ bool WorkWithData::add_file(const FileData & msg_data) {
         chat.symmetric_context->decryption(files_path + "/" + msg_data.file_name, output_file_name.string()).get();
 
         locker.lock();
-        data[msg_data.chat_id].second.emplace_back(MsgData{
+        MsgData output_msg{
             .chat_id = msg_data.chat_id,
             .is_file = true,
             .sender = msg_data.sender,
             .recipient = msg_data.recipient,
             .data = output_file_name.string(),
             .timestamp = msg_data.timestamp,
-        });
+        };
+        db.add_msg_or_file(output_msg);
         std::filesystem::remove(files_path + "/" + msg_data.file_name);
     }
     return true;
@@ -234,35 +267,47 @@ bool WorkWithData::add_file(const FileData & msg_data) {
 
 std::string WorkWithData::send_file(const FileData & msg_data) {
     std::unique_lock<std::mutex> locker(mutex);
-    auto & chat = data[msg_data.chat_id].first;
+
+    auto chat = db.get_chat(msg_data.chat_id);
     locker.unlock();
     std::filesystem::path output = std::filesystem::path{msg_data.file_name}.filename();
 
     std::filesystem::path output_file_name = files_path + "/enc_" + output.string();
+
+    chat.symmetric_context = std::make_shared<symmetric_interface_library::SymmetricContext>(
+        symmetric_algorithms::get_alg(static_cast<symmetric_algorithms::SymmetricAlgorithmsEnum>(chat.alg_index), chat.key_info.key),
+        chat.key_info.key,
+        static_cast<symmetric_interface_library::EncryptionModeEnum>(chat.enc_mode_index),
+        static_cast<symmetric_interface_library::PaddingModeEnum>(chat.padd_mode_index),
+        chat.iv_info.key
+    );
+
     chat.symmetric_context->encryption(msg_data.file_name, output_file_name.string()).get();
 
     locker.lock();
-    data[msg_data.chat_id].second.emplace_back(MsgData{
+    MsgData output_msg{
         .chat_id = msg_data.chat_id,
         .is_file = true,
         .sender = msg_data.sender,
         .recipient = chat.interlocutor,
         .data = msg_data.file_name,
         .timestamp = msg_data.timestamp,
-    });
+    };
+    db.add_msg_or_file(output_msg);
     return output_file_name.string();
 }
 
 std::string WorkWithData::get_recipient(const std::string & chat_id) {
     std::lock_guard<std::mutex> locker(mutex);
-    auto & chat = data[chat_id].first;
+    auto chat = db.get_chat(chat_id);
     return chat.interlocutor;
 }
 
 std::string WorkWithData::delete_chat(const std::string & chat_id) {
     std::lock_guard<std::mutex> locker(mutex);
-    std::string interlocutor = data[chat_id].first.interlocutor;
-    data.erase(chat_id);
+    auto chat = db.get_chat(chat_id);
+    auto interlocutor =chat.interlocutor;
+    db.delete_chat(chat_id);
     return interlocutor;
 }
 

@@ -6,6 +6,9 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
+#include <filesystem>
+#include <fstream>
+#include <QDir>
 
 #include "bytes_utility.hpp"
 #include "symmetric_context.hpp"
@@ -73,6 +76,7 @@ private:
 public:
     DB(const std::string & db_name);
     bool add_chat(ChatData chat_data);
+    bool check_exist_chat(const std::string & chat_id);
     ChatData get_chat(const std::string & chat_id);
     bool update_chat(ChatData chat_data);
     std::pair<bool, std::vector<ChatData>> get_chats();

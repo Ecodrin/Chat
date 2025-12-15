@@ -208,7 +208,7 @@ namespace bytes_utility {
     std::vector<std::byte> get_bytes_from_string(const std::string & s) {
         std::vector<std::byte> res;
         for(const auto & b : s) {
-            res.emplace_back(std::byte{b});
+            res.emplace_back(std::byte{(unsigned char)(b)});
         }
         return res;
     }

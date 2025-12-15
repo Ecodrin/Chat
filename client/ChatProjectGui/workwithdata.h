@@ -20,7 +20,7 @@
 
 class WorkWithData {
 public:
-    WorkWithData(const std::string & files_path);
+    WorkWithData(const std::string & files_path, const std::string & login);
 
     ChatInfo add_chat(int alg, int enc_mode, int padd_mode, const std::string & interlocutor, const std::string & chat_id = "-1");
     std::pair<bool, ChatInfo> update_chat_status(const ChatInfo & info);
@@ -35,9 +35,10 @@ public:
     std::string delete_chat(const std::string & chat_id);
 private:
     std::string files_path;
+    const std::string & login;
     // потом переписать на бд
     std::mutex mutex;
-    std::unordered_map<std::string, std::pair<ChatData, std::vector<MsgData>>> data;
+    DB db;
 
 };
 
