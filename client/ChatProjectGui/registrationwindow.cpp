@@ -28,7 +28,8 @@ void RegistrationWindow::on_registerButton_clicked() {
         main_window = new MainWindow(client);
         connect(main_window, &MainWindow::requestBack, this, [this]() {
             this->show();
-            main_window->hide();
+            main_window->deleteLater();
+            main_window = nullptr;
         });
     }
 
@@ -50,7 +51,8 @@ void RegistrationWindow::on_AuthButton_clicked() {
         main_window = new MainWindow(client);
         connect(main_window, &MainWindow::requestBack, this, [this]() {
             this->show();
-            main_window->hide();
+            main_window->deleteLater();
+            main_window = nullptr;
         });
     }
 

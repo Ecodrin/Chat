@@ -19,3 +19,23 @@ bool has_suffix(const std::string & s, const std::string & suffix) {
     }
     return  i == s.size() - suffix.size();
 }
+
+
+std::vector<std::byte> qbyte_array_to_bytes_vector(const QByteArray & array) {
+    std::vector<std::byte> res;
+    res.reserve(array.size());
+    for(char c: array) {
+        res.emplace_back(std::byte{static_cast<unsigned char>(c)});
+    }
+    return res;
+}
+
+
+QByteArray bytes_vector_to_qbate_array(const std::vector<std::byte> & vector) {
+    QByteArray res;
+    res.reserve(vector.size());
+    for(auto c : vector) {
+        res.push_back(static_cast<unsigned char>(c));
+    }
+    return res;
+}

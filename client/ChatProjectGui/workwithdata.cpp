@@ -54,6 +54,7 @@ ChatInfo WorkWithData::add_chat(int alg, int enc_mode, int padd_mode, const std:
     return info;
 }
 
+
 std::pair<bool, ChatInfo> WorkWithData::update_chat_status(const ChatInfo & info) {
     std::unique_lock<std::mutex> locker(mutex);
     if (!db.check_exist_chat(info.chat_id)) {
@@ -207,7 +208,7 @@ std::pair<bool, MsgData> WorkWithData::send_msg(const MsgData & msg_data) {
         .data = bytes_utility::get_string_from_bytes(encr),
         .timestamp=msg_data.timestamp,
     };
-    db.add_msg_or_file(new_msg_data);
+    db.add_msg_or_file(msg_data);
     return {true, new_msg_data};
 }
 

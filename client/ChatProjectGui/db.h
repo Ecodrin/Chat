@@ -12,6 +12,7 @@
 
 #include "bytes_utility.hpp"
 #include "symmetric_context.hpp"
+#include "utility.h"
 
 struct KeyInfo{
     std::string ab;

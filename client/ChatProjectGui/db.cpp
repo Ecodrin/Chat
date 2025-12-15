@@ -9,7 +9,7 @@ DB::DB(const std::string & db_name): db_name{db_name} {
         }
     }
 
-    db = QSqlDatabase::addDatabase("QSQLITE");
+    db = QSqlDatabase::addDatabase("QSQLITE", QString::fromStdString(std::filesystem::path{db_name}.stem()));
     db.setDatabaseName(QDir::fromNativeSeparators(QString::fromStdString(db_name)));
     db.open();
     if(!db.isOpen()) {
@@ -29,11 +29,11 @@ DB::DB(const std::string & db_name): db_name{db_name} {
                 "key_ab TEXT, "
                 "key_g TEXT, "
                 "key_p TEXT, "
-                "key_key TEXT, "
+                "key_key BLOB, "
                 "iv_ab TEXT, "
                 "iv_g TEXT, "
                 "iv_p TEXT, "
-                "iv_key TEXT )"
+                "iv_key BLOB )"
                     )) {
         qDebug("error in create chats_info table sql");
         throw std::runtime_error("error in create chats_info table sql");
@@ -68,11 +68,11 @@ bool DB::add_chat(ChatData chat_data) {
     query.addBindValue(QString::fromStdString(chat_data.key_info.ab));
     query.addBindValue(QString::fromStdString(chat_data.key_info.g));
     query.addBindValue(QString::fromStdString(chat_data.key_info.p));
-    query.addBindValue(QString::fromStdString(bytes_utility::get_string_from_bytes(chat_data.key_info.key)));
+    query.addBindValue(bytes_vector_to_qbate_array(chat_data.key_info.key));
     query.addBindValue(QString::fromStdString(chat_data.iv_info.ab));
     query.addBindValue(QString::fromStdString(chat_data.iv_info.g));
     query.addBindValue(QString::fromStdString(chat_data.iv_info.p));
-    query.addBindValue(QString::fromStdString(bytes_utility::get_string_from_bytes(chat_data.iv_info.key)));
+    query.addBindValue(bytes_vector_to_qbate_array(chat_data.iv_info.key));
 
     if(!query.exec()) {
         qDebug() << "error in add chat " << query.lastError().text();
@@ -97,11 +97,11 @@ bool DB::update_chat(ChatData chat_data) {
     query.addBindValue(QString::fromStdString(chat_data.key_info.ab));
     query.addBindValue(QString::fromStdString(chat_data.key_info.g));
     query.addBindValue(QString::fromStdString(chat_data.key_info.p));
-    query.addBindValue(QString::fromStdString(bytes_utility::get_string_from_bytes(chat_data.key_info.key)));
+    query.addBindValue(bytes_vector_to_qbate_array(chat_data.key_info.key));
     query.addBindValue(QString::fromStdString(chat_data.iv_info.ab));
     query.addBindValue(QString::fromStdString(chat_data.iv_info.g));
     query.addBindValue(QString::fromStdString(chat_data.iv_info.p));
-    query.addBindValue(QString::fromStdString(bytes_utility::get_string_from_bytes(chat_data.iv_info.key)));
+    query.addBindValue(bytes_vector_to_qbate_array(chat_data.iv_info.key));
     query.addBindValue(QString::fromStdString(chat_data.chat_id));
 
     if(!query.exec()) {
@@ -143,13 +143,13 @@ ChatData DB::get_chat(const std::string & chat_id) {
             .ab = query.value(6).toString().toStdString(),
             .g  = query.value(7).toString().toStdString(),
             .p = query.value(8).toString().toStdString(),
-            .key = bytes_utility::get_bytes_from_string(query.value(9).toString().toStdString()),
+            .key = qbyte_array_to_bytes_vector(query.value(9).toByteArray()),
         },
         .iv_info{
             .ab = query.value(10).toString().toStdString(),
             .g  = query.value(11).toString().toStdString(),
             .p = query.value(12).toString().toStdString(),
-            .key = bytes_utility::get_bytes_from_string(query.value(13).toString().toStdString()),
+            .key = qbyte_array_to_bytes_vector(query.value(13).toByteArray()),
         },
         .alg_index = query.value(2).toInt(),
         .enc_mode_index = query.value(3).toInt(),
@@ -175,13 +175,13 @@ std::pair<bool, std::vector<ChatData>> DB::get_chats() {
                 .ab = query.value(6).toString().toStdString(),
                 .g  = query.value(7).toString().toStdString(),
                 .p = query.value(8).toString().toStdString(),
-                .key = bytes_utility::get_bytes_from_string(query.value(9).toString().toStdString()),
+                .key = qbyte_array_to_bytes_vector(query.value(9).toByteArray()),
             },
             .iv_info{
                 .ab = query.value(10).toString().toStdString(),
                 .g  = query.value(11).toString().toStdString(),
                 .p = query.value(12).toString().toStdString(),
-                .key = bytes_utility::get_bytes_from_string(query.value(13).toString().toStdString()),
+                .key = qbyte_array_to_bytes_vector(query.value(13).toByteArray()),
             },
             .alg_index = query.value(2).toInt(),
             .enc_mode_index = query.value(3).toInt(),
@@ -236,13 +236,43 @@ std::vector<MsgData> DB::get_msgs(const std::string & chat_id) {
 
 
 bool DB::delete_chat(const std::string & chat_id) {
-    QSqlQuery query(db);
-    query.prepare("DELETE FROM chats_data WHERE chat_id = ?");
-    query.addBindValue(QString::fromStdString(chat_id));
-    return query.exec();
+    if(!check_exist_chat(chat_id)) {
+        return true;
+    }
+    if (!db.transaction()) {
+        qDebug() << "error in delete_chat: " << db.lastError();
+        return false;
+    }
+    QSqlQuery query1(db);
+    query1.prepare("DELETE FROM chats_info WHERE chat_id = ?");
+    query1.addBindValue(QString::fromStdString(chat_id));
+    if(!query1.exec()) {
+        db.rollback();
+        qDebug() << "error in delete_chat: " << query1.lastError();
+        return false;
+    }
+    QSqlQuery query2(db);
+    query2.prepare("DELETE FROM chats_data WHERE chat_id = ?");
+    query2.addBindValue(QString::fromStdString(chat_id));
+    if(!query2.exec()) {
+        db.rollback();
+        qDebug() << "error in delete_chat: " << query2.lastError();
+        return false;
+    }
+
+    if (!db.commit()) {
+        qDebug() << "error in delete_chat: " << db.lastError();
+        return false;
+    }
+    return true;
 }
 
 
 DB::~DB() {
     db.close();
+    try {
+        QSqlDatabase::removeDatabase(db.connectionName());
+    } catch (std::exception & exp) {
+
+    }
 }

@@ -36,7 +36,6 @@ public:
 private:
     std::string files_path;
     const std::string & login;
-    // потом переписать на бд
     std::mutex mutex;
     DB db;
 

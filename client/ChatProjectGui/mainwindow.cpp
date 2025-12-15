@@ -153,14 +153,14 @@ void MainWindow::Disconnect() {
 
 MainWindow::~MainWindow()
 {
-    Disconnect();
     delete ui;
 }
 
 void MainWindow::on_DisconnectButton_clicked() {
     if (!std::filesystem::remove_all(files_path + "/" + client->get_login())) {
-        qDebug("error in remove dir");
+        qDebug("error in remove dir Disconnect");
     }
+    std::filesystem::remove_all(files_path + "/" + client->get_login());
     clientcontext_chat_session.TryCancel();
     auto res = client->disconnect();
     if (!res.first) {
@@ -172,6 +172,7 @@ void MainWindow::on_DisconnectButton_clicked() {
     ui->ChatWidgets->clear();
 
     chats_model->clear();
+
     for (auto &future: futures) {
         future.waitForFinished();
     }
