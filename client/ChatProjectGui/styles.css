@@ -1,0 +1,130 @@
+QMainWindow {
+    background-color: #2b2b2b;
+}
+
+QMainWindow::centralwidget {
+    background-color: #2b2b2d;
+}
+
+QWidget {
+    background-color: #2b2b2d;
+    color: #d3d3d3;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+QGroupBox {
+    background-color: #2f2f2f;
+    border: 1px solid #505050;
+    border-radius: 6px;
+    margin-top: 1ex;
+    color: #dcdcdc;
+    font-size: 14px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 7px;
+    padding: 0 3px 0 3px;
+}
+
+QPushButton {
+    background-color: #4a4a4a;
+    border: 1px solid #5a5a5a;
+    border-radius: 6px;
+    padding: 5px 16px;
+    font-size: 13px;
+    color: #e0e0e0;
+    text-align: center;
+}
+
+QGroupBox QPushButton {
+    background-color: #4a4a4a;
+    border: 1px solid #5a5a5a;
+    border-radius: 6px;
+    padding: 5px 16px;
+    font-size: 13px;
+    color: #e0e0e0;
+    text-align: center;
+}
+
+QPushButton:hover {
+    background-color: #5a5a5a;
+    border: 1px solid #6a6a6a;
+    color: white;
+}
+
+QPushButton:pressed {
+    background-color: #3a3a3a;
+    border: 1px solid #4a4a4a;
+    color: #f0f0f0;
+}
+
+QPushButton:disabled {
+    background-color: #3a3a3a;
+    color: #777;
+}
+
+QLineEdit {
+    background-color: #3a3a3a;
+    border: 1px solid #505050;
+    border-radius: 4px;
+    padding: 6px;
+    color: #f0f0f0;
+}
+
+QLineEdit:focus {
+    border: 1px solid #6b6b6b;
+}
+
+QListWidget QLineEdit {
+    background-color: #3a3a3a;
+    color: #f0f0f0;
+    border: 1px solid #6b6b6b;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+QLabel {
+    color: #dcdcdc;
+    font-size: 14px;
+    border: none;
+    background-color: transparent;
+}
+
+QListWidget, QListView {
+    background-color: #2d2d2d;
+    border: 2px solid #505050;
+    color: #e0e0e0;
+    outline: none;
+}
+
+QListWidget::item, QListView::item {
+    padding: 8px;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+QListWidget::item:selected, QListView::item:selected {
+    background-color: #5a7fb0;
+    color: white;
+}
+
+QListWidget::item:hover:!selected, QListView::item:hover:!selected {
+    background-color: #3a3a3a;
+}
+
+QScrollBar:vertical {
+    background: #2a2a2a;
+    width: 14px;
+    border-radius: 4px;
+}
+
+QScrollBar::handle:vertical {
+    background: #4a4a4a;
+    border-radius: 4px;
+    min-height: 20px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #5a5a5a;
+}

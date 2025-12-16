@@ -3,6 +3,7 @@
 ClickableWidget::ClickableWidget(const std::string & path, QWidget * parent)
     : path{path}, QLabel(parent) {
     setText(QString::fromStdString(path));
+    setMinimumSize(100, 30);
 }
 
 void ClickableWidget::mouseDoubleClickEvent(QMouseEvent * event) {

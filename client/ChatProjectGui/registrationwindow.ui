@@ -17,8 +17,21 @@
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
-   <item row="2" column="0">
+   <item row="2" column="1">
     <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0" alignment="Qt::AlignRight|Qt::AlignBottom">
+      <widget class="QLabel" name="label">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Логин</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignBottom">
       <widget class="QLineEdit" name="LoginLineEdit">
        <property name="sizePolicy">
@@ -33,6 +46,9 @@
          <height>0</height>
         </size>
        </property>
+       <property name="frame">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item row="2" column="0" alignment="Qt::AlignRight|Qt::AlignTop">
@@ -45,19 +61,6 @@
        </property>
        <property name="text">
         <string>Пароль</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0" alignment="Qt::AlignRight|Qt::AlignBottom">
-      <widget class="QLabel" name="label">
-       <property name="minimumSize">
-        <size>
-         <width>100</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>Логин</string>
        </property>
       </widget>
      </item>
@@ -80,23 +83,15 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="2">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
-   <item row="3" column="0">
+   <item row="2" column="0">
+    <layout class="QGridLayout" name="gridLayout_2"/>
+   </item>
+   <item row="2" column="2">
+    <layout class="QGridLayout" name="gridLayout_5"/>
+   </item>
+   <item row="3" column="0" colspan="3">
     <layout class="QGridLayout" name="gridLayout_4">
      <item row="0" column="1" alignment="Qt::AlignLeft|Qt::AlignTop">
       <widget class="QPushButton" name="AuthButton">

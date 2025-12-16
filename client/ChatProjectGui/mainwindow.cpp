@@ -5,8 +5,17 @@ MainWindow::MainWindow(GreeterClient * client, QWidget *parent)
     : QWidget(parent), client{client}, parent{parent}
     , ui(new Ui::MainWindow)
 {
+    QFile file(":/styles.css");
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QString style = file.readAll();
+        this->setStyleSheet(style);
+        file.close();
+    }
+
     ui->setupUi(this);
     ui->ChatWidgets->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+
+
 
 
     std::filesystem::create_directory(files_path);

@@ -83,6 +83,9 @@ bool DB::add_chat(ChatData chat_data) {
 
 
 bool DB::update_chat(ChatData chat_data) {
+    if(!check_exist_chat(chat_data.chat_id)) {
+        return true;
+    }
     QSqlQuery query(db);
     query.prepare("UPDATE chats_info SET "
                   "interlocutor = ?, chat_id = ?, alg_index = ?, "
@@ -163,7 +166,7 @@ std::pair<bool, std::vector<ChatData>> DB::get_chats() {
     std::vector<ChatData> result;
     QSqlQuery query(db);
     if (!query.exec("SELECT interlocutor, chat_id, alg_index, "
-                    "enc_mode_index, padd_mode_index, status, key_ab, key_g, key_p, key_key, iv_ab, iv_g, iv_p, iv_key from chats_info")) {
+                    "enc_mode_index, padd_mode_index, status, key_ab, key_g, key_p, key_key, iv_ab, iv_g, iv_p, iv_key from chats_info WHERE status = 2")) {
         qDebug() << "error in get_chats " << query.lastError().text();
         return {false, {}};
     }

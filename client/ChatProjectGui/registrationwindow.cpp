@@ -6,6 +6,12 @@ RegistrationWindow::RegistrationWindow(GreeterClient * client, QWidget *parent)
         QDialog(parent),
         ui(new Ui::RegistrationWindow)
 {
+    QFile file(":/styles.css");
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QString style = file.readAll();
+        this->setStyleSheet(style);
+        file.close();
+    }
     ui->setupUi(this);
 }
 

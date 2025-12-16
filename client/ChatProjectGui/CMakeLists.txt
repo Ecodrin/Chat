@@ -37,6 +37,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         clickablewidget.h clickablewidget.cpp
         deletechatdialog.h deletechatdialog.cpp deletechatdialog.ui
         db.h db.cpp
+        resources.qrc
+
 
 
 
