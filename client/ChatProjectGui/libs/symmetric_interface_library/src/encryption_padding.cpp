@@ -7,7 +7,13 @@ namespace symmetric_interface_library {
     }
 
     void Zeros::unpadding(std::vector<std::byte> & block) {
-
+        int i;
+        for(i = (int)block.size() - 1; i >= 0; --i) {
+            if (block[i] != std::byte{0}) {
+                break;
+            }
+        }
+        block.resize(i);
     }
 
     void ANSIX923::padding(std::vector<std::byte> & block, const size_t count_required_bytes) {
