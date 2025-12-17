@@ -13,6 +13,8 @@ add_library(symmetric_algorithms SHARED
     src/sp_network.cpp
     include/enc_utility.hpp
     src/enc_utility.cpp
+    include/rc5.hpp
+    src/rc5.cpp
 )
 
 target_include_directories(symmetric_algorithms PUBLIC include)
@@ -44,3 +46,9 @@ add_executable(tests_serpent
 )
 
 target_link_libraries(tests_serpent symmetric_algorithms bytes_utility)
+
+add_executable(tests_rc5
+    tests/tests_rc5.cpp
+)
+
+target_link_libraries(tests_rc5 symmetric_algorithms bytes_utility)

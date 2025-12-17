@@ -6,14 +6,15 @@
 #include "triple_des.hpp"
 #include "deal.hpp"
 #include "serpent.hpp"
-
+#include "rc5.hpp"
 
 namespace symmetric_algorithms {
     enum class SymmetricAlgorithmsEnum {
+        Serpent,
+        RC5,
         DES,
         DEAL,
         TripleDES,
-        Serpent
     };
     
     std::shared_ptr<symmetric_interface_library::InterfaceSymmetricAlgorithm> get_alg(const SymmetricAlgorithmsEnum &alg_enum, const std::vector<std::byte> & key);

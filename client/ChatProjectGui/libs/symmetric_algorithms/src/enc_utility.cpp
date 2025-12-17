@@ -12,6 +12,8 @@ namespace symmetric_algorithms {
             return std::make_shared<DEAL>(key);
         case SymmetricAlgorithmsEnum::Serpent:
             return std::make_shared<Serpent>(key);
+        case SymmetricAlgorithmsEnum::RC5:
+            return std::make_shared<RC5>(key);
         default:
             throw std::invalid_argument("incorrect alg");
         }
@@ -27,6 +29,8 @@ namespace symmetric_algorithms {
             return DEAL::standart_key_size;
         case SymmetricAlgorithmsEnum::Serpent:
             return Serpent::standart_key_size;
+        case SymmetricAlgorithmsEnum::RC5:
+            return RC5::standart_key_size;
         default:
             throw std::invalid_argument("incorrect alg");
         }
@@ -42,6 +46,8 @@ namespace symmetric_algorithms {
             return DEAL::block_size;
         case SymmetricAlgorithmsEnum::Serpent:
             return Serpent::block_size;
+        case SymmetricAlgorithmsEnum::RC5:
+            return RC5::standart_block_size;
         default:
             throw std::invalid_argument("incorrect alg");
         }
