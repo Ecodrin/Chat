@@ -14,7 +14,7 @@ namespace Diffie_Hellman_key_exchange {
 
     // a g p
     std::tuple<boost::multiprecision::cpp_int, boost::multiprecision::cpp_int, boost::multiprecision::cpp_int> get_random_keys(size_t number_p_bits=3072);
-    std::tuple<std::string, std::string, std::string> get_random_string_keys(size_t number_p_bits=3072);
+    std::tuple<std::string, std::string, std::string> get_random_string_keys(size_t number_p_bits=1024);
 
     // _ g p -> b g p
     boost::multiprecision::cpp_int generate_b(std::pair<boost::multiprecision::cpp_int, boost::multiprecision::cpp_int> keys);

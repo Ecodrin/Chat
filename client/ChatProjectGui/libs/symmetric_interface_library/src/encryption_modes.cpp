@@ -24,7 +24,7 @@ namespace symmetric_interface_library {
                     std::copy(encrypted_block.begin() + (j + i) * block_size, encrypted_block.begin() + (j + 1 + i) * block_size, block.begin());
                     std::vector<std::byte> new_block = alg->encryption(block);
                     std::copy(new_block.begin(), new_block.end(), res.begin() + (i + j) * block_size);
-                    }
+                }
                 }));
         }
 

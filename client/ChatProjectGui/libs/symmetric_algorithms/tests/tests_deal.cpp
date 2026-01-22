@@ -226,12 +226,12 @@ void tests() {
         }
     }
 
-    std::cout << "✅ Passed: " << passed << " / " << total << "\n";
+    std::cout << "Passed: " << passed << " / " << total << "\n";
     if (passed == total) {
-        std::cout << "🎉 All tests passed!\n";
+        std::cout << "All tests passed!\n";
         return;
     } else {
-        std::cerr << "❌ Some tests failed!\n";
+        std::cerr << "Some tests failed!\n";
         return;
     }
 }

@@ -15,6 +15,10 @@ add_library(symmetric_algorithms SHARED
     src/enc_utility.cpp
     include/rc5.hpp
     src/rc5.cpp
+    include/Rijndael.hpp
+    src/Rijndael.cpp
+    include/Galois_field_service.hpp
+    src/Galois_field_service.cpp
 )
 
 target_include_directories(symmetric_algorithms PUBLIC include)
@@ -52,3 +56,15 @@ add_executable(tests_rc5
 )
 
 target_link_libraries(tests_rc5 symmetric_algorithms bytes_utility)
+
+add_executable(tests_Rijndael
+    tests/tests_Rijndael.cpp
+)
+
+target_link_libraries(tests_Rijndael symmetric_algorithms bytes_utility)
+
+add_executable(tests_Galois_field_service
+    tests/tests_Galois_field_service.cpp
+)
+
+target_link_libraries(tests_Galois_field_service symmetric_algorithms bytes_utility)

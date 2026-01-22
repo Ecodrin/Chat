@@ -21,11 +21,11 @@ target_link_libraries(asymmetric_algorithms
 
 target_include_directories(asymmetric_algorithms PUBLIC include)
 
-# add_executable(tests_generate_symbols 
-#     tests/tests_generate_symbols.cpp
-# )
+add_executable(tests_generate_symbols 
+    tests/tests_generate_symbols.cpp
+)
 
-# target_link_libraries(tests_generate_symbols asymmetric_algorithms)
+target_link_libraries(tests_generate_symbols asymmetric_algorithms)
 
 add_executable(tests_primality_tests
     tests/tests_primality_tests.cpp

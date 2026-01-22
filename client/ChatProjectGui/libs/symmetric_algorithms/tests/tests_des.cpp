@@ -238,12 +238,12 @@ void tests() {
         }
     }
     
-    std::cout << "✅ Passed: " << passed << " / " << total << "\n";
+    std::cout << "Passed: " << passed << " / " << total << "\n";
     if (passed == total) {
-        std::cout << "🎉 All tests passed!\n";
+        std::cout << "All tests passed!\n";
         return;
     } else {
-        std::cerr << "❌ Some tests failed!\n";
+        std::cerr << "Some tests failed!\n";
         return;
     }
 
@@ -264,7 +264,7 @@ void check_file() {
     );
 
 
-    std::string s = ".mp4";
+    std::string s = ".png";
     std::string input_file_name = "/mnt/c/Users/Матвей/Documents/Unik/labs_C/sem5/CO/libs/symmetric_algorithms/tests/test";
     std::filesystem::path output_file_name = input_file_name + "_bin" + s;
     std::filesystem::path result_file_name = input_file_name + "_result" + s;
@@ -297,18 +297,23 @@ void check_time_tests(std::function<void(void)> f) {
 
 int main() {
     
-    tests();
-    // check_time_tests(check_file);
+    // tests();
+    check_time_tests(check_file);
 
-    // std::vector<std::byte> key = bytes_utility::random_bytes_vector(7);
+    // std::vector<std::byte> key = {
+    //                                 std::byte{0xAE}, std::byte{0xCB}, std::byte{0x81}, std::byte{0x71}, 
+    //                                 std::byte{0x15}, std::byte{0x83}, std::byte{0x3C}, std::byte{0xCF}
+    //                             };
     // symmetric_algorithms::DESGenerationRoundKeys d;
+    // std::cout << "Key:\n";
+    // bytes_utility::print_bytes_vector(std::cout, key);
     // auto res = d.generation_round_keys(key);
     // std::cout << "Key:\n";
-    // bytes_utility::print_bytes_vector(std::cout, key, "");
+    // bytes_utility::print_bytes_vector(std::cout, key);
     // std::cout << std::endl;
     // std::cout << "Round keys:\n";
     // for(const auto & rk : res) {
-    //     bytes_utility::print_bytes_vector(std::cout, rk, "");
+    //     bytes_utility::print_bytes_vector(std::cout, rk, true);
     //     std::cout << std::endl;
     // }
 }

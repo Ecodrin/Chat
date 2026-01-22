@@ -17,7 +17,7 @@
 
 #include "bytes_utility.hpp"
 #include "symmetric_context.hpp"
-#include "serpent.hpp"
+#include "Rijndael.hpp"
 
 using namespace symmetric_interface_library;
 
@@ -78,13 +78,13 @@ bool test_in_memory(
     PaddingModeEnum padding
 ) {
     const size_t block_size = 16;
-    std::vector<std::byte> key = random_bytes(32);
+    std::vector<std::byte> key = random_bytes(16);
     std::vector<std::byte> iv = (mode != EncryptionModeEnum::ECB)
         ? random_bytes(block_size)
         : std::vector<std::byte>{};
 
     auto cipher = SymmetricContext(
-        std::make_shared<symmetric_algorithms::Serpent>(key),
+        std::make_shared<symmetric_algorithms::Rijndael>(key, block_size),
         key,
         mode,
         padding,
@@ -132,7 +132,7 @@ bool test_file(
     }
 
     const size_t block_size = 16;
-    std::vector<std::byte> key = random_bytes(32);
+    std::vector<std::byte> key = random_bytes(16);
     std::vector<std::byte> iv = (mode != EncryptionModeEnum::ECB)
         ? random_bytes(block_size)
         : std::vector<std::byte>{};
@@ -142,7 +142,7 @@ bool test_file(
         additional_params.push_back(0); 
     }
     auto cipher = SymmetricContext(
-        std::make_shared<symmetric_algorithms::Serpent>(key),
+        std::make_shared<symmetric_algorithms::Rijndael>(key, block_size),
         key,
         mode,
         padding,
@@ -204,7 +204,7 @@ void tests() {
     };
 
     std::vector<PaddingModeEnum> paddings = {
-        PaddingModeEnum::Zeros,
+        // PaddingModeEnum::Zeros,
         PaddingModeEnum::ANSIX923,
         PaddingModeEnum::PKCS7,
         PaddingModeEnum::ISO10126,
@@ -223,14 +223,14 @@ void tests() {
                 if (test_in_memory(plaintext, mode, pad)){ 
                     passed++;
                 } else {
-                    // std::cout << "len: " << len << " memory " << "mode: " << (int) mode << " padding: " << (int)pad << std::endl;
+                    std::cout << "len: " << len << " memory " << "mode: " << (int) mode << " padding: " << (int)pad << std::endl;
                 }
 
                 total++;
                 if (test_file(plaintext, mode, pad)) {
                     passed++;
                 } else {
-                    // std::cout << "file   " << "mode: " << (int) mode << " padding: " << (int)pad << std::endl;
+                    std::cout << "file   " << "mode: " << (int) mode << " padding: " << (int)pad << std::endl;
                 }
             }
         }
@@ -254,7 +254,7 @@ void check_file() {
     std::vector<std::byte> key = random_bytes(32);
     std::vector<std::byte> iv = random_bytes(block_size);
     auto cipher = SymmetricContext(
-        std::make_shared<symmetric_algorithms::Serpent>(key),
+        std::make_shared<symmetric_algorithms::Rijndael>(key, block_size),
         key,
         EncryptionModeEnum::ECB,
         PaddingModeEnum::PKCS7,
@@ -272,8 +272,8 @@ void check_file() {
     
     auto start = std::chrono::high_resolution_clock::now();
 
-    cipher.encryption(input_file_name_path, output_file_name).get();
     std::cout << "start size: " << std::filesystem::file_size(input_file_name_path) << std::endl;
+    cipher.encryption(input_file_name_path, output_file_name).get();
     std::cout << "encrypt size: " << std::filesystem::file_size(output_file_name) << std::endl;
     cipher.decryption(output_file_name, result_file_name).get();
     std::cout << "decrypt size: " << std::filesystem::file_size(result_file_name) << std::endl;
@@ -307,21 +307,24 @@ void check_time_tests(std::function<void(void)> f) {
 
 }
 
+std::vector<std::byte> get_null_vector(size_t t) {
+	std::vector<std::byte> res;
+	for(size_t i = 0; i < t; ++i) {
+		res.push_back(std::byte{0});
+	}
+	return res;
+}
+
 int main() {
-    
+
+	
+    // symmetric_algorithms::Rijndael r(null, 16, 0);
+	// auto t = r.encryption(input);
+	// bytes_utility::print_bytes_vector(std::cout, t);
+	// auto rr = r.decryption(t);
+	// bytes_utility::print_bytes_vector(std::cout, rr);
+
     // tests();
     // check_time_tests(check_file);
     check_file();
-
-    // std::vector<std::byte> key = bytes_utility::random_bytes_vector(7);
-    // symmetric_algorithms::DESGenerationRoundKeys d;
-    // auto res = d.generation_round_keys(key);
-    // std::cout << "Key:\n";
-    // bytes_utility::print_bytes_vector(std::cout, key, "");
-    // std::cout << std::endl;
-    // std::cout << "Round keys:\n";
-    // for(const auto & rk : res) {
-    //     bytes_utility::print_bytes_vector(std::cout, rk, "");
-    //     std::cout << std::endl;
-    // }
 }

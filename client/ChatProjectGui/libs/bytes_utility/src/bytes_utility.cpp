@@ -38,13 +38,33 @@ namespace bytes_utility {
         return (input[desired_index / 8] >> (7 - desired_index % 8)) & std::byte{1};
     }
 
-    void print_byte(std::ostream & stream, const std::byte & byte) {
-        stream << std::bitset<8>(std::to_integer<int>(byte));
+    
+    void add_one(std::vector<std::byte> & input, size_t index, PermutationsOrderRule permutations_order_rule) {
+        char first_index = (permutations_order_rule == PermutationsOrderRule::ForwardOrderFirstIndex) || (permutations_order_rule == PermutationsOrderRule::ReverseOrderFirstIndex);
+        char bit_indexing_rule = (permutations_order_rule == PermutationsOrderRule::ReverseOrderZeroIndex) || (permutations_order_rule == PermutationsOrderRule::ReverseOrderFirstIndex);
+        if (index - first_index >= input.size() * 8 || (index == 0 && first_index)) {
+            throw std::runtime_error("incorrect index");
+        }
+        size_t desired_index;
+        if (bit_indexing_rule == 0) {
+            desired_index = index - first_index;
+        } else {
+            desired_index = input.size() * 8 - index - 1 + first_index;
+        }
+        input[desired_index / 8] |= (std::byte{1} << (7 - desired_index % 8)) ;
     }
 
-    void print_bytes_vector(std::ostream & stream, const std::vector<std::byte> & a, const std::string & sep, const std::string & end) {
+    void print_byte(std::ostream & stream, const std::byte & byte, bool hex) {
+        if (hex) {
+            stream << std::hex << (std::to_integer<int>(byte));
+        } else {
+            stream << std::bitset<8>(static_cast<int>(byte));
+        }
+    }
+
+    void print_bytes_vector(std::ostream & stream, const std::vector<std::byte> & a, bool hex, const std::string & sep, const std::string & end) {
         for (const auto & el: a) {
-            print_byte(stream, el);
+            print_byte(stream, el, hex);
             stream << sep;
         }
         stream << end;
@@ -220,5 +240,65 @@ namespace bytes_utility {
             str.push_back(static_cast<char>(b));
         }
         return str;
+    }
+
+
+    std::pair<std::vector<std::byte>, std::vector<std::byte>> divide_by_xor(const std::vector<std::byte> &a, const std::vector<std::byte> & b) {
+        std::vector<std::byte> q(a.size());
+        std::vector<std::byte> r(a);
+        bool fl = true;
+        std::vector<std::byte> vector_b{b};
+        size_t first_one_in_b = vector_b.size() * 8;
+        for(int i = vector_b.size() * 8 - 1; i >= 0; --i) {
+            if(bytes_utility::get_bit(vector_b, i, bytes_utility::PermutationsOrderRule::ReverseOrderZeroIndex) != std::byte{0}) {
+                first_one_in_b = i;
+                break;
+            }
+        }
+        if(first_one_in_b == vector_b.size() * 8) {
+            throw std::invalid_argument("incorrect b");
+        }
+        
+        while(fl) {
+            if(is_null(r)) {
+                break;
+            }
+            for(int i = static_cast<int>(r.size()) * 8 - 1; i >= 0; --i) {
+                if(i < first_one_in_b) {
+                    fl = false;
+                    break;
+                }
+                if(bytes_utility::get_bit(r, i, bytes_utility::PermutationsOrderRule::ReverseOrderZeroIndex) > std::byte{0}) {
+                    auto tt = bytes_utility::rotate_left(vector_b, i - first_one_in_b, vector_b.size() * 8);
+
+                    r = bytes_utility::xor_vector(tt, r);
+                    add_one(q, i - first_one_in_b, PermutationsOrderRule::ReverseOrderZeroIndex);
+                    break;
+                }
+            }
+        }
+        return {q, r};
+    }
+
+
+    
+    std::vector<std::byte> multiply_by_xor(const std::vector<std::byte> &a, const std::vector<std::byte> & b) {
+        std::vector<std::byte> res(2);
+        for(int i = static_cast<int>(a.size()) * 8 - 1; i >= 0; --i) {
+            if(get_bit(a, i, PermutationsOrderRule::ForwardOrderZeroIndex) != std::byte{0}) {
+                res = xor_vector(res, rotate_left(b, a.size() * 8 - i - 1, b.size() * 8));
+            }
+        }
+        return res;
+    }
+
+
+    bool is_null(const std::vector<std::byte> & b) {
+        for(const auto & el: b) {
+            if(el != std::byte{0}) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -68,21 +68,21 @@ void test_symbol_service() {
     std::cout << "Testing SymbolService...\n";
 
     // Legendre symbol
-    assert(asymmetric_algorithms::SymbolService::calculate_legendre_symbol(4, 7) == 1); // 4 - вычет
-    assert(asymmetric_algorithms::SymbolService::calculate_legendre_symbol(3, 7) == -1); // 3 - не вычет
-    assert(asymmetric_algorithms::SymbolService::calculate_legendre_symbol(0, 11) == 0); // (0|p) = 0
-    assert(asymmetric_algorithms::SymbolService::calculate_legendre_symbol(1, 13) == 1); // (1|p) = 1
-    assert(asymmetric_algorithms::SymbolService::calculate_legendre_symbol(10, 11) == -1); // (-1|11) = -1
+    assert(asymmetric_algorithms::SymbolService::calculate_Legendre_symbol(4, 7) == 1); // 4 - вычет
+    assert(asymmetric_algorithms::SymbolService::calculate_Legendre_symbol(3, 7) == -1); // 3 - не вычет
+    assert(asymmetric_algorithms::SymbolService::calculate_Legendre_symbol(0, 11) == 0); // (0|p) = 0
+    assert(asymmetric_algorithms::SymbolService::calculate_Legendre_symbol(1, 13) == 1); // (1|p) = 1
+    assert(asymmetric_algorithms::SymbolService::calculate_Legendre_symbol(10, 11) == -1); // (-1|11) = -1
 
     // Jacobi symbol
-    assert(asymmetric_algorithms::SymbolService::calculate_jakobi_symbol(2, 15) == 1); // (2|3)*(2|5) = (-1)*(-1) = 1
-    assert(asymmetric_algorithms::SymbolService::calculate_jakobi_symbol(6, 15) == 0); // gcd > 1
-    assert(asymmetric_algorithms::SymbolService::calculate_jakobi_symbol(-1, 7) == -1); // (-1)^((7-1)/2) = (-1)^3 = -1
-    assert(asymmetric_algorithms::SymbolService::calculate_jakobi_symbol(-9, 15) == 0); // gcd > 1
+    assert(asymmetric_algorithms::SymbolService::calculate_Jakobi_symbol(2, 15) == 1); // (2|3)*(2|5) = (-1)*(-1) = 1
+    assert(asymmetric_algorithms::SymbolService::calculate_Jakobi_symbol(6, 15) == 0); // gcd > 1
+    assert(asymmetric_algorithms::SymbolService::calculate_Jakobi_symbol(-1, 7) == -1); // (-1)^((7-1)/2) = (-1)^3 = -1
+    assert(asymmetric_algorithms::SymbolService::calculate_Jakobi_symbol(-9, 15) == 0); // gcd > 1
 
     // Jacobi должен совпадать с Legendre для простого модуля
-    assert(asymmetric_algorithms::SymbolService::calculate_jakobi_symbol(5, 7) == asymmetric_algorithms::SymbolService::calculate_legendre_symbol(5, 7));
-    assert(asymmetric_algorithms::SymbolService::calculate_jakobi_symbol(2, 11) == asymmetric_algorithms::SymbolService::calculate_legendre_symbol(2, 11));
+    assert(asymmetric_algorithms::SymbolService::calculate_Jakobi_symbol(5, 7) == asymmetric_algorithms::SymbolService::calculate_Legendre_symbol(5, 7));
+    assert(asymmetric_algorithms::SymbolService::calculate_Jakobi_symbol(2, 11) == asymmetric_algorithms::SymbolService::calculate_Legendre_symbol(2, 11));
 
     std::cout << "SymbolService tests passed.\n\n";
 }
@@ -100,8 +100,16 @@ int main() {
     // test_gcd();
     // test_extended_gcd();
     // test_symbol_service();
-    test_contiened_fractions();
+    // test_contiened_fractions();
 
-    std::cout << "All tests passed successfully!\n";
+    // std::cout << "All tests passed successfully!\n";
+
+
+
+
+    // std::cout << asymmetric_algorithms::SymbolService::mod_pow(23, 179, 331) << std::endl;
+    // auto [g, x, y] = asymmetric_algorithms::SymbolService::extended_gcd(552, 315);
+    // std::cout << g << " " << x << " " << y << std::endl;
+    std::cout << asymmetric_algorithms::SymbolService::calculate_Jakobi_symbol(552, 315) << std::endl;
     return 0;
 }

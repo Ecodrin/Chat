@@ -9,15 +9,22 @@ namespace Diffie_Hellman_key_exchange {
         boost::random::random_device rand_device;
         boost::random::uniform_int_distribution<boost::multiprecision::cpp_int> dist(boost::multiprecision::cpp_int{1} << (number_p_bits - 2), boost::multiprecision::cpp_int{1} << (number_p_bits - 1));
         asymmetric_algorithms::MillerRabinPrimalityTest primality_test;
-        boost::multiprecision::cpp_int q = dist(rand_device);
+        boost::multiprecision::cpp_int q;
         boost::multiprecision::cpp_int p;
-        while (!primality_test.check_primality(q, 0.99)) {
-            p = 2 * q + 1;
-            if(!primality_test.check_primality(p, 0.99)) {
+        while (true) {
+            // do {
+            //     q = dist(rand_device);
+            // } while(primality_test.check_primality(q, 0.999) < 0.999);
+            // q = dist(rand_device);
+            // p = 2 * q + 1;
+            p = dist(rand_device);
+
+            if (primality_test.check_primality(p, 0.999) >= 0.999) {
                 break;
             }
         }
-        boost::random::uniform_int_distribution<boost::multiprecision::cpp_int> dist_a(2, q);
+
+        boost::random::uniform_int_distribution<boost::multiprecision::cpp_int> dist_a(2, (p - 1) / 2);
         boost::multiprecision::cpp_int a = asymmetric_algorithms::SymbolService::mod_pow(g, dist_a(rand_device), p);
         return {a, g, p};
     }

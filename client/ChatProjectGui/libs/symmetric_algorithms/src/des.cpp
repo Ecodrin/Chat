@@ -59,8 +59,14 @@ namespace symmetric_algorithms {
             }
             tmp <<= 1;
         }
-
-        return bytes_utility::permutations(s_blocks, P_BLOCK, bytes_utility::PermutationsOrderRule::ForwardOrderFirstIndex);
+        std::vector<std::byte> new_sbox;
+        for(size_t i = 0; i < s_blocks.size(); ) {
+            std::byte p1 = s_blocks[i] >> 4;
+            std::byte p2 = s_blocks[i+1] & std::byte{0x0F};
+            new_sbox.push_back((p1 << 4) | p2);
+            i += 2;
+        }
+        return bytes_utility::permutations(new_sbox, P_BLOCK, bytes_utility::PermutationsOrderRule::ForwardOrderFirstIndex);
     }
 
     std::byte DESFeistelFunction::apply_sbox(std::byte input, size_t s_box_num) {
@@ -127,6 +133,9 @@ namespace symmetric_algorithms {
         D = bytes_utility::permutations(augmented_key, D0, bytes_utility::PermutationsOrderRule::ForwardOrderFirstIndex);
         std::vector<std::vector<std::byte>> keys;
         for(size_t i = 0; i < number_round_keys; ++i) {
+            std::cout << i << "\n----------------------------------------------" << std::endl;
+            bytes_utility::print_bytes_vector(std::cout, C);
+            bytes_utility::print_bytes_vector(std::cout, D);
             C = bytes_utility::cycling_rotate_left(C, KEY_SHIFTS[i], 28);
             D = bytes_utility::cycling_rotate_left(D, KEY_SHIFTS[i], 28);
             keys.push_back(generate_round_key(C, D, i));

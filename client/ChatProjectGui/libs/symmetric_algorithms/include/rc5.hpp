@@ -4,7 +4,6 @@
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #include <cmath>
 
-
 #include "symmetric_encryption_interfaces.hpp"
 #include "bytes_utility.hpp"
 
@@ -13,6 +12,7 @@ namespace symmetric_algorithms {
     class RC5GenerationKeys: public symmetric_interface_library::InterfaceGenerationRoundKeys {
     private:
         size_t w_len, b_len;
+        
 
         boost::multiprecision::cpp_dec_float_50 golden_ratio() const;
         static boost::multiprecision::cpp_int round_odd(boost::multiprecision::cpp_dec_float_50 number);
