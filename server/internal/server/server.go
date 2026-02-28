@@ -62,6 +62,7 @@ func (s *Server) Registration(ctx context.Context, req *pb.RegistrationRequest) 
 		s.logger.Println("database create user error: ", err)
 		return nil, status.Error(codes.InvalidArgument, "none exist user")
 	}
+	user.Password = ""
 	tokenString, err := handlers.GetTokenFromUser(user, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("jwt token generate error: ", err)
@@ -94,7 +95,7 @@ func (s *Server) Auth(ctx context.Context, req *pb.AuthRequest) (*pb.StatusRegis
 		s.logger.Println("database update user online error: ", err)
 		return nil, status.Error(codes.Internal, "")
 	}
-
+	user.Password = ""
 	tokenString, err := handlers.GetTokenFromUser(*user, s.config.JWTTokenSecret)
 	if err != nil {
 		s.logger.Println("jwt token generate error: ", err)
